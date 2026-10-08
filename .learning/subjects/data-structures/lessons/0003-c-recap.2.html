@@ -504,8 +504,8 @@ a.phone = 13800001111，b.phone = 13800001111
     "why": "b = a 做的是把 a 那一块的字节逐个复制到 b，\n连同对齐填充一起，32 个字节都复制了。\n复制完两个变量各占一块内存，\n&amp;a 与 &amp;b 是两个不同的编号，从此互不相干：\n改 b 里的任何字段都碰不到 a。\n上一课一个 int 的副本是 4 个字节，\n这里一整块 32 字节，道理一样。"
   },
   {
-    "q": "成员里也能装地址：\n\n```cpp\ntypedef struct Node {\n    int          value;\n    struct Node *next;\n} Node;\n\n    Node n2 = { 2, NULL };\n    Node n1 = { 1, &amp;n2 };\n    Node  x = n1;\n```\n\n① x.next 与 n1.next 装的是同一个地址吗？\n② 把 n1.value 改成 9，x.value 会不会跟着变？\n　　把 n1.next 改成 NULL 呢？\n③ ② 里这两问的答案为什么不一样？",
-    "answer": "① 是同一个地址，两个 next 都指着 n2。\nx = n1 把 n1 那一块的字节逐个复制过去，\nnext 那一格里装的就是 n2 的地址，\n复制过去的还是这个地址本身，\n地址指着的那块内容不会再复制一份。\n\n② x.value 不变，还是 1。\nn1.next 改成 NULL 之后，x.next 也还是原来那个地址，\n它照样指着 n2。\n\n③ 因为复制的是每一格里的内容，\n不是把两个变量绑在一起。\nx 与 n1 是两块独立的内存：\n改 n1 里任何一格，x 里对应的那一格都不受影响。\n① 说的「同一个地址」是两格里装的内容相同，\n不是说两格变成了同一格。",
+    "q": "成员里也能装地址：\n\n```cpp\ntypedef struct Node {\n    int          value;\n    struct Node *next;\n} Node;\n\n    Node n2 = { 2, NULL };\n    Node n1 = { 1, &amp;n2 };\n    Node  x = n1;\n```\n\n① x.next 与 n1.next 装的是同一个地址吗？\n② 把 n1.value 改成 9，x.value 会不会跟着变？\n　　把 n1.next 改成 NULL 呢？\n③ ① 说两个 next 装着同一个地址，\n　　② 里改 n1.next 却又影响不到 x.next——\n　　这两件事怎么同时成立？",
+    "answer": "① 是同一个地址，两个 next 都指着 n2。\nx = n1 把 n1 那一块的字节逐个复制过去，\nnext 那一格里装的就是 n2 的地址，\n复制过去的还是这个地址本身，\n地址指着的那块内容不会再复制一份。\n\n② x.value 不变，还是 1。\nn1.next 改成 NULL 之后，x.next 也还是原来那个地址，\n它照样指着 n2。\n\n③ 因为复制的是每一格里的内容，\n不是把两个变量绑在一起。\nx 与 n1 是两块独立的内存，\nx.next 与 n1.next 各在自己那一块里：\n改 n1.next 这一格，碰不到 x.next 那一格。\n① 说的「同一个地址」是两格里装的内容相同——\n两个 next 指着同一个结点，\n不是说两格变成了同一格。",
     "criteria": "① 答出是同一个地址（两个 next 都指着 n2）得 2 分。\n答成「x.next 是一份新复制出来的结点」的，不给分——\n那是把「复制一格地址」当成了「复制地址指着的那块」。\n② 两问都答对得 2 分：x.value 不变、\nn1.next 换成 NULL 后 x.next 也不变，\n只答对一问给 1 分。\n③ 说出「复制的是每一格的内容、两份各占一块内存」得 2 分；\n能再点出「两格装的内容相同、但不是同一格」的，再得 1 分。\n把 ③ 答成「地址成员不参与复制」的，不给分。"
   }
 ]'></div>
