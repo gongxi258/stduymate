@@ -1,0 +1,899 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>结构体：把字段打包带走 · 数据结构（408）</title>
+
+<!-- 共享层在 .learning/assets/，课件在 .learning/subjects/<slug>/lessons/ 下，所以是 ../../../assets/ -->
+<link rel="stylesheet" href="../../../assets/sayo/sayo.css">
+<link rel="stylesheet" href="../../../assets/learn-theme.css">
+<link rel="stylesheet" href="../assets/style.css">
+
+<!-- 主题要在首帧前应用，避免闪白/闪黑 -->
+<script src="../../../assets/learn-theme.js"></script>
+<script>LearnTheme.apply();</script>
+</head>
+
+<body class="lesson-body">
+
+<nav class="lesson-bar">
+  <a href="../index.html">← 返回课程</a>
+  <span>数据结构（408）</span>
+  <span class="lesson-bar__no">0003</span>
+  <!-- 课件页自带主题开关：学生从文件管理器直接打开课件时也能切暗色 -->
+  <label class="syo-toggle syo-toggle--theme lesson-bar__toggle" title="切换深浅主题" aria-label="切换深浅主题">
+    <input type="checkbox" id="lesson-theme-checkbox" checked>
+    <span class="syo-toggle-track"></span>
+    <span class="syo-toggle-knob">
+      <svg class="syo-toggle-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.5" stroke="#f57c00" stroke-width="1.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.34 4.34l1.77 1.77M13.89 13.89l1.77 1.77M4.34 15.66l1.77-1.77M13.89 6.11l1.77-1.77" stroke="#f57c00" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </span>
+  </label>
+</nav>
+
+<article class="lesson">
+
+  <header class="lesson-header">
+    <span class="lesson-header__eyebrow">0003 · 结构体：把字段打包带走</span>
+    <h1>结构体：把字段打包带走</h1>
+    <p class="lesson-goal"><b>本节目标：</b>能用结构体与 typedef 定义并访问一个数据记录</p>
+  </header>
+
+  <!-- ── 正文：渲染器按内容文件（lessons/<序号>-<节点id>.md）产出，块词汇见 docs/规范/课件内容格式.md ── -->
+
+  <h2>一条记录该放哪</h2>
+
+  <p>通讯录里每条记录有三个字段：姓名、电话、分组。字段不多，先用最直白的办法存——一个字段开一个数组：</p>
+
+  <pre data-lang="cpp"><code>char name[3][12]  = { "林小雨", "王工", "陈老师" };
+char phone[3][12] = { "13800001111", "13900002222", "13700003333" };
+char group[3][8]  = { "同学", "同事", "老师" };</code></pre>
+
+  <p>第 0 条记录的三个字段分别是 <code>name[0]</code>、<code>phone[0]</code>、<code>group[0]</code>。同一个人的三个数据项分散在三个数组里，靠下标凑在一起。</p>
+
+  <p>只在原地读一读还算顺手，一旦要动它，麻烦就出现了：</p>
+
+  <ul>
+    <li><b>删一个人要动三处</b>：把「王工」从通讯录里去掉，得在三个数组里各删一次第 1 个元素，漏掉一处就留下半条记录；</li>
+    <li><b>传出去要传三样</b>：写一个「打印一条通讯录记录」的函数，就得给它三个参数；哪天记录再加一个「备注」字段，这个函数以及每一处调用都要跟着改；</li>
+    <li><b>一条记录不是一个东西</b>：三个数组各自是一整份东西，没人替它们记住「第 1 个位置上的三段合起来才是王工」。</li>
+  </ul>
+
+  <p>第一课讲过，一个完整的数据结构除了存数据，还要有定义在它上面的运算；运算写得顺不顺，就看数据是怎么存的。三个字段本来属于同一条记录，却被摊成了三份互不相干的存储，运算自然要四处迁就。</p>
+
+  <p>C 给这件事提供的办法，是把几个字段<b>装进一个单位</b>里，让「一条记录」在程序里真的成为一个东西：</p>
+
+  <pre data-lang="cpp"><code>struct Contact {
+    char name[12];
+    char phone[12];
+    char group[8];
+};</code></pre>
+
+  <p>这一节之后，上面那三个数组就会被 <code>struct Contact</code> 取代，一次函数调用就能把整条记录传出去。</p>
+
+  <p>写下这条声明时只讲了「一种叫 <code>struct Contact</code> 的类型由哪几个字段组成」，还没有划出任何内存。</p>
+
+  <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="上方把姓名、电话、分组摊成三个并列数组，下方把三个字段装进一个结构体，成为一块连续的内存">
+<svg viewBox="0 0 680 380" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="20" y="30" text-anchor="start" font-size="14">字段各存一处：三个数组互不相干</text>
+<g fill="none">
+<rect x="60" y="46" width="120" height="34" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="180" y="46" width="120" height="34" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="300" y="46" width="120" height="34" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="60" y="110" width="120" height="34" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="180" y="110" width="120" height="34" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="300" y="110" width="120" height="34" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="60" y="174" width="120" height="34" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="180" y="174" width="120" height="34" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="300" y="174" width="120" height="34" rx="4" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="44" y="68" text-anchor="end" font-size="14">name</text>
+<text x="44" y="132" text-anchor="end" font-size="14">phone</text>
+<text x="44" y="196" text-anchor="end" font-size="14">group</text>
+<text x="120" y="68" text-anchor="middle" font-size="14">林小雨</text>
+<text x="240" y="68" text-anchor="middle" font-size="14">王工</text>
+<text x="360" y="68" text-anchor="middle" font-size="14">陈老师</text>
+<text x="120" y="132" text-anchor="middle" font-size="13">138…1111</text>
+<text x="240" y="132" text-anchor="middle" font-size="13">139…2222</text>
+<text x="360" y="132" text-anchor="middle" font-size="13">137…3333</text>
+<text x="120" y="196" text-anchor="middle" font-size="14">同学</text>
+<text x="240" y="196" text-anchor="middle" font-size="14">同事</text>
+<text x="360" y="196" text-anchor="middle" font-size="14">老师</text>
+<text x="440" y="132" text-anchor="start" font-size="14">下标 1 的三段，</text>
+<text x="440" y="156" text-anchor="start" font-size="14">才是同一个人</text>
+<text x="340" y="242" text-anchor="middle" font-size="14">把三个字段装进一个结构体</text>
+<line x1="340" y1="252" x2="340" y2="278" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<rect x="60" y="288" width="360" height="52" rx="6" fill="currentColor" fill-opacity="0.13" stroke="currentColor" stroke-width="1.5"/>
+<text x="72" y="320" text-anchor="start" font-size="15">c</text>
+<text x="110" y="320" text-anchor="start" font-size="14">name 12 字节｜phone 12 字节｜group 8 字节</text>
+<text x="440" y="320" text-anchor="start" font-size="14">一块 32 字节，就是一个变量</text>
+<text x="340" y="364" text-anchor="middle" font-size="14">一条记录是一个单位：可以整个赋值、整个传参、整个返回</text>
+</svg>
+
+    <figcaption>图 1 · 三个字段从三份存储并成一块，一条记录成了一个单位</figcaption>
+  </figure>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "通讯录一开始是三个数组分开存的：\n\n```cpp\nchar name[3][12];\nchar phone[3][12];\nchar group[3][8];\n```\n\n删一个人要在三个数组里各删一次，\n写打印函数也得同时收三个参数。\n这些麻烦的根源是什么？",
+    "opts": [
+      "一条记录的三段被摊成三份存储，没有哪一样是那条记录本身",
+      "三个数组的长度必须一样长，对不齐的地方得按最长的补齐",
+      "数组的下标从零起算，删掉中间一条后后面的下标全对不上",
+      "三个数组装不下三条以上的记录，字段一多就得再开一个数组"
+    ],
+    "ans": 0,
+    "why": "三个数组各自是一整份东西：\n删一个人要在三处各删一次，漏一处就留下半条记录；\n写打印函数也得同时收三个参数。\n把字段装进一个结构体之后，\n一条记录才在程序里成为一个东西，\n一次调用只传它一个。"
+  }
+]'></div>
+
+  <h2>先有类型，再有变量</h2>
+
+  <p>上面那段 <code>struct Contact { … };</code> 是一条<b>声明</b>。要读懂它，先分清花括号里外两件事。</p>
+
+  <p><code>struct Contact</code> 是整个类型的名字：关键字 <code>struct</code> 加上一个名字（这个 <code>Contact</code> 叫<b>标签</b>）。花括号里列的是一串<b>成员</b>，每个成员的写法与声明普通变量一样——先写类型，再写名字，末尾一个分号。分号不能省，漏掉最后一个分号时，编译器给出的报错往往指到下一行，找起来容易白费功夫。</p>
+
+  <p><b>这条声明只讲清了一种新类型长什么样，还没有划出任何内存。</b> 这与第一课讲的类型与变量是同一回事：<code>int</code> 是一种类型，<code>int x;</code> 才是一个变量；<code>struct Contact</code> 是一种类型，下面这一行才是变量：</p>
+
+  <pre data-lang="cpp"><code>struct Contact c;          /* 一个结构体变量，三个字段都在里面 */</code></pre>
+
+  <p>声明变量时就能直接把字段填好，按成员的书写顺序给：</p>
+
+  <pre data-lang="cpp"><code>struct Contact c = { "林小雨", "13800001111", "同学" };</code></pre>
+
+  <p>要访问某个字段，写变量名、一个点、成员名：</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+struct Contact {
+    char name[4];
+    char phone[12];
+    char group[8];
+};
+
+int main(void) {
+    struct Contact c = { "Lin", "13800001111", "friend" };
+
+    printf("姓名：%s\n", c.name);
+    printf("电话：%s\n", c.phone);
+    printf("分组：%s\n", c.group);
+
+    c.group[0] = 'X';               /* 改的是 c 里 group 这一段 */
+    printf("改过之后：%s\n", c.group);
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>姓名：Lin
+电话：13800001111
+分组：friend
+改过之后：Xriend</code></pre>
+
+  <p>三点值得记住：</p>
+
+  <ul>
+    <li><b>点运算符</b>（<code>.</code>）取的是「这个变量里的哪个成员」，<code>c.name</code> 这种写法在表达式里与一个同类型的普通变量用起来一样，可以读、可以写、可以再取下标；</li>
+    <li><b>命名互不干扰</b>：结构体里的 <code>name</code> 与外面另有一个叫 <code>name</code> 的变量互不影响，<code>c.name</code> 里的那个 <code>name</code> 只在 <code>c</code> 这个类型里有意义；</li>
+    <li><b>成员的量法与上一课一样</b>：<code>c.name</code> 是 <code>char</code> 数组，<code>sizeof(c.name)</code> 就是它占的字节数；<code>c.group[0]</code> 是数组里的一格，用 <code>%c</code> 打印字符、用 <code>%d</code> 打印会得到一个数（负数在这里是正常的）。一个汉字要占两个字节以上，所以「改一格」这类操作只适合英文那类一字一字节的内容——本课练习的第 1 步有一小问可以自己试。</li>
+  </ul>
+
+  <p>最后把「传出去要传三样」这件事解决掉。上一课的参数框架在这里第一次显出好处：</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+typedef struct Contact {
+    char name[12];
+    char phone[12];
+    char group[8];
+} Contact;
+
+void print_contact(Contact c) {
+    printf("整条记录：%s  %s  %s\n", c.name, c.phone, c.group);
+}
+
+int main(void) {
+    Contact c = { "林小雨", "13800001111", "同学" };
+    print_contact(c);
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>整条记录：林小雨  13800001111  同学</code></pre>
+
+  <p>函数的括号里可以直接写 <code>Contact</code>，调用处一次只传 <code>c</code> 这一个东西。这一行能写成这样，靠的正是上一节把三个字段并进了一个单位。</p>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "读到这一段声明：\n\n```cpp\nstruct Contact {\n    char name[12];\n    char phone[12];\n    char group[8];\n};\n```\n\n花括号里列的三个成员，此刻在哪里？",
+    "opts": [
+      "已经在内存里排好：三个成员各占一段，合起来 32 字节",
+      "还没划出任何内存：它只讲清了这种类型由哪几段组成",
+      "在栈上占好一块：等下面写出变量名，这块就归它用",
+      "给这种类型留了一个编号：写下变量名时按编号取内存"
+    ],
+    "ans": 1,
+    "why": "花括号里写的是这种类型由哪几段组成，\n这条声明没有划出任何内存。\nint 是类型、int x; 才是划出一格，\n这里也一样：\nstruct Contact 是类型，\nstruct Contact c; 才是那个变量。"
+  }
+]'></div>
+
+  <h2>点与箭头</h2>
+
+  <p>上一课留了一句：<code>p-&gt;name</code> 这样的写法下一课再讲。现在补上。</p>
+
+  <p>结构体变量用点取成员，那「指向结构体的指针」怎么取成员？先看它的地址：</p>
+
+  <pre data-lang="cpp"><code>struct Contact  c = { "林小雨", "13800001111", "同学" };
+struct Contact *pc = &amp;c;          /* pc 是指向 struct Contact 的指针 */</code></pre>
+
+  <p><code>pc</code> 里装的是 <code>c</code> 那一块的起点地址，与上一课的指针是同一套东西：声明时星号前面的类型写 <code>struct Contact</code>，指针就指向那种结构体。要取成员，有两种写法，说的是同一个成员：</p>
+
+  <pre data-lang="cpp"><code>printf("(*pc).phone = %s\n", (*pc).phone);
+printf("pc-&gt;phone   = %s\n", pc-&gt;phone);</code></pre>
+
+  <pre data-lang="term"><code>(*pc).phone = 13800001111
+pc-&gt;phone   = 13800001111</code></pre>
+
+  <p>第一种写法拆成两步读：<code>*pc</code> 先顺着地址找到那个结构体，再对找到的结构体用点取成员。这里的<b>括号不能省</b>：点运算符比 <code>*</code> 先结合，写 <code>*pc.phone</code> 会被理解成 <code>*(pc.phone)</code>，也就是拿 <code>pc</code> 去取成员，而 <code>pc</code> 是指针，编译器会报错。</p>
+
+  <p>第二种写法 <code>pc-&gt;phone</code> 就是第一种的简写，省掉那对括号，念作「顺着 <code>pc</code> 去取成员」。</p>
+
+  <p>一个符号，两种对象，配两种写法。这张表按「左边那个东西是什么」来分：</p>
+
+  <table>
+    <thead>
+      <tr><th>左边的写法</th><th>它是</th><th>取成员写</th><th>例子</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>c</code></td><td>结构体变量本身</td><td><code>.</code></td><td><code>c.phone</code></td></tr>
+      <tr><td><code>pc</code></td><td>指向结构体的指针</td><td><code>-&gt;</code>（或 <code>(*pc).</code>）</td><td><code>pc-&gt;phone</code></td></tr>
+    </tbody>
+  </table>
+
+  <p>写反了都会报错：对指针用点、对结构体变量用箭头，编译器都不接受。读别人的代码时先看左边那一项是什么，写法就定下来了。</p>
+
+  <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="左边是结构体变量 c 的三个成员，右边是装着 c 的地址的指针 pc，箭头从 pc 指回 c，下面列出 c.phone、(*pc).phone、pc-&gt;phone 三种等价写法">
+<svg viewBox="0 0 680 470" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="20" y="30" text-anchor="start" font-size="14">同一块内存，两种写法：结构体变量用 . ，指向它的指针用 -&gt;</text>
+<text x="60" y="86" text-anchor="start" font-size="14">c：整个结构体，占 32 字节</text>
+<g fill="none">
+<rect x="60" y="100" width="250" height="44" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="60" y="144" width="250" height="44" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="60" y="188" width="250" height="44" rx="6" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="74" y="128" text-anchor="start" font-size="15">c.name</text>
+<text x="180" y="128" text-anchor="start" font-size="14">林小雨</text>
+<text x="74" y="172" text-anchor="start" font-size="15">c.phone</text>
+<text x="180" y="172" text-anchor="start" font-size="14">13800001111</text>
+<text x="74" y="216" text-anchor="start" font-size="15">c.group</text>
+<text x="180" y="216" text-anchor="start" font-size="14">同学</text>
+<text x="60" y="258" text-anchor="start" font-size="14">c 是一整个结构体变量：它的成员用点取</text>
+<text x="60" y="282" text-anchor="start" font-size="14">&amp;c = 0x7ffd20（这一块的起点）</text>
+<text x="420" y="86" text-anchor="start" font-size="14">pc：指向结构体的指针，占 8 字节</text>
+<rect x="420" y="100" width="220" height="44" rx="6" fill="currentColor" fill-opacity="0.13" stroke="currentColor" stroke-width="1.5"/>
+<text x="434" y="128" text-anchor="start" font-size="15">pc</text>
+<text x="480" y="128" text-anchor="start" font-size="14">内容 0x7ffd20</text>
+<text x="420" y="170" text-anchor="start" font-size="14">pc 自己的地址是 &amp;pc = 0x7ffd00</text>
+<text x="420" y="194" text-anchor="start" font-size="14">格子里装的是 c 那一块的起点</text>
+<line x1="412" y1="122" x2="318" y2="122" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="365" y="110" text-anchor="middle" font-size="14">顺着地址</text>
+<text x="340" y="320" text-anchor="middle" font-size="14">三种写法说的是同一个成员：</text>
+<rect x="90" y="335" width="160" height="28" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<text x="104" y="354" text-anchor="start" font-size="15">c.phone</text>
+<text x="266" y="354" text-anchor="start" font-size="14">对结构体变量本身取成员</text>
+<rect x="90" y="371" width="160" height="28" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<text x="104" y="390" text-anchor="start" font-size="15">(*pc).phone</text>
+<text x="266" y="390" text-anchor="start" font-size="14">先顺着 pc 找到 c，再取成员（这对括号不能省）</text>
+<rect x="90" y="407" width="160" height="28" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<text x="104" y="426" text-anchor="start" font-size="15">pc-&gt;phone</text>
+<text x="266" y="426" text-anchor="start" font-size="14">同上的简写：-&gt; 读作「顺着指针去取成员」</text>
+<text x="340" y="456" text-anchor="middle" font-size="14">左边写点、右边写箭头，看的是「左边这个东西是结构体本身，还是它的地址」</text>
+</svg>
+
+    <figcaption>图 2 · 点对结构体变量、箭头对指针，两种写法落到同一个成员</figcaption>
+  </figure>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "c 是结构体变量，pc 是指向它的指针。\n同事写了两行，编译器两行都不接受：\n\n```cpp\nprintf(\"%s\\n\", c-&gt;phone);\nprintf(\"%s\\n\", pc.name);\n```\n\n两行都错在同一个地方，是哪里？",
+    "opts": [
+      "写法与左边那个东西对不上：左边是变量还是指针，写法就定了",
+      "两个运算符的位置换错了：点该写在箭头后面、箭头写在点前面",
+      "printf 收不了结构体成员，两行都得先转成字符串再打印一次",
+      "成员名写得不够全：phone 与 name 都得带上类型名才算数"
+    ],
+    "ans": 0,
+    "why": "一个符号，两种对象，配两种写法：\n左边是结构体变量本身，取成员用点；\n左边是指向它的指针，取成员用箭头。\nc 是变量、pc 是指针，\n所以 c-&gt;phone 与 pc.name 都写反了——\n编译器对指针用点、对变量用箭头都不接受。\n读别人的代码时先看左边那一项是什么。"
+  },
+  {
+    "q": "同一块内存有三种写法：\n\n```cpp\nstruct Contact  c  = { \"Lin\", \"138\", \"friend\" };\nstruct Contact *pc = &amp;c;\n```\n\n① c.phone、(*pc).phone、pc-&gt;phone\n　　这三种写法说的是同一个成员吗？\n② 为什么 (*pc).phone 这一对括号不能省？",
+    "answer": "① 是同一个成员。三种写法都落在 c 里 phone 那一格上。\npc 这一格里装着 c 那一块的起点，\n顺着它找到的就是 c 本身。\n\n② 省了括号就变成 *(pc.phone)：\n点比星号先结合，编译器先拿 pc 去取成员。\npc 是指针，对它用点编译器不接受。\n括号是先把 *pc 算出来的那一步，不能省。",
+    "criteria": "① 答出三种写法落到同一个成员（c 里的 phone）得 2 分。\n答成「pc 里也有一份 phone」的，不给分。\n② 答出点比星号先结合、括号是为了先算 *pc，得 2 分；\n能说清省掉括号会被读成 *(pc.phone) 的，再得 1 分。\n答成「加括号是标准写法」「括号为了看着清楚」的，\n第 ② 条不给分。\n两句合起来要落到：写法看的是左边那个东西是结构体本身，\n还是它的地址。"
+  }
+]'></div>
+
+  <h2>给类型起个短名字</h2>
+
+  <p><code>struct Contact</code> 每次都要写全，声明一个指针要写 <code>struct Contact *pc</code>，函数参数也要写 <code>struct Contact</code>。C 提供了一个给已有类型起新名字的工具：</p>
+
+  <pre data-lang="cpp"><code>typedef struct Contact Contact;</code></pre>
+
+  <p><code>typedef</code> 这一行的读法是「把 <code>struct Contact</code> 这个名字，另外叫做 <code>Contact</code>」。从此两种写法完全等价，<code>Contact c;</code> 与 <code>struct Contact c;</code> 声明的是同一种类型。</p>
+
+  <p>它的作用范围要说准：<b><code>typedef</code> 只是给一个已经存在的类型加了个名字，没有造出新类型。</b> 上一节里 <code>struct Contact</code> 与 <code>Contact</code> 是同一种类型，能互相赋值、能互相传参，编译器看它们没有半点区别。标准库里的 <code>size_t</code>、<code>time_t</code> 就是这么来的名字，那些以 <code>_t</code> 结尾的名字由标准库占用，自己写代码时不要起这种名字。</p>
+
+  <p>给结构体起名字有一段惯用写法，把两行并成一行：</p>
+
+  <pre data-lang="cpp"><code>typedef struct Contact {
+    char name[12];
+    char phone[12];
+    char group[8];
+} Contact;</code></pre>
+
+  <p>花括号后面那个 <code>Contact</code> 是新起的名字，前面那个 <code>Contact</code> 是标签。两者同名是允许的，代码里最常见；名字不同也可以（例如标签叫 <code>struct contact_tag</code>、新名叫 <code>Contact</code>），只是多了一个要想的名字。</p>
+
+  <p>类型有了短名字，后面几节的代码都只用 <code>Contact</code>。</p>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "类型是这样起的名字：\n\n```cpp\ntypedef struct Contact Contact;\nstruct Contact c = { \"Lin\", \"138\", \"friend\" };\nContact d = { \"Wang\", \"139\", \"friend\" };\n```\n\nc 与 d 声明的是同一种类型吗？",
+    "opts": [
+      "对：typedef 只给已有类型加个名字，没有造出新类型",
+      "错：typedef 造出了一个新类型，内容与原来那个相同",
+      "对：typedef 在预处理阶段把新名字展开成原来的类型",
+      "错：写法不同，编译器把两个名字记成两种不同的类型"
+    ],
+    "ans": 0,
+    "why": "typedef 只做一件事：\n给一个已经存在的类型另加一个名字，不造新类型。\n所以 struct Contact 与 Contact 是同一种类型：\n能互相赋值、能互相传参，\n编译器看这两个名字没有半点区别。\n标准库里的 size_t、time_t 就是这么来的名字。"
+  }
+]'></div>
+
+  <h2>字段在内存里怎么排</h2>
+
+  <p>结构体是「几个字段装进一个单位」，这个单位在内存里是一块连续的内存：字段按声明的先后顺序依次排开，整块的起点就是这块内存的编号。</p>
+
+  <p>拿通讯录那条记录问一下尺寸：</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+#include &lt;stddef.h&gt;          /* offsetof 在这个头文件里 */
+
+typedef struct Contact {
+    char name[12];
+    char phone[12];
+    char group[8];
+} Contact;
+
+int main(void) {
+    printf("sizeof(Contact) = %zu\n", sizeof(Contact));
+    printf("name 从第 %zu 字节起\n", offsetof(Contact, name));
+    printf("phone 从第 %zu 字节起\n", offsetof(Contact, phone));
+    printf("group 从第 %zu 字节起\n", offsetof(Contact, group));
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>sizeof(Contact) = 32
+name 从第 0 字节起
+phone 从第 12 字节起
+group 从第 24 字节起</code></pre>
+
+  <p><code>sizeof</code> 量这一块整占几个字节，量出来是 32，正好等于 12 + 12 + 8。<code>offsetof</code> 回答的是「某个成员从整块的起点算起，落在第几字节上」，这个量叫<b>偏移</b>（offset）。这两样都不用手算：字段一改、类型一换，把程序再跑一遍就有准数。</p>
+
+  <p>上面这个例子里三个成员都是 <code>char</code> 数组、宽度都是 1 的倍数，排得严丝合缝。换个成员类型就没这么整齐了：</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+#include &lt;stddef.h&gt;
+
+typedef struct Record {
+    char   tag;
+    int    number;
+    double score;
+} Record;
+
+int main(void) {
+    Record r = { 'A', 7, 92.5 };
+
+    printf("sizeof(Record) = %zu\n", sizeof(Record));
+    printf("tag 从第 %zu 字节起\n", offsetof(Record, tag));
+    printf("number 从第 %zu 字节起\n", offsetof(Record, number));
+    printf("score 从第 %zu 字节起\n", offsetof(Record, score));
+    printf("三个字段的宽度之和 = %zu\n",
+           sizeof(char) + sizeof(int) + sizeof(double));
+    printf("r.tag=%c r.number=%d r.score=%.1f\n", r.tag, r.number, r.score);
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>sizeof(Record) = 16
+tag 从第 0 字节起
+number 从第 4 字节起
+score 从第 8 字节起
+三个字段的宽度之和 = 13
+r.tag=A r.number=7 r.score=92.5</code></pre>
+
+  <p>一个 <code>char</code>、一个 <code>int</code>、一个 <code>double</code> 合起来是 13 字节，<code>sizeof</code> 给出来的却是 16。多出来的那 3 个字节在 <code>tag</code> 与 <code>number</code> 之间：<code>tag</code> 只占 1 字节，<code>number</code> 的起点落在第 4 字节上，中间这 3 个字节就空着。</p>
+
+  <p>这 3 个字节不算某个成员的存储，谁也没用到它。原因在上一课讲过的单位上：指针加减的单位是所指类型的宽度，<code>int</code> 一次读写 4 个字节、<code>double</code> 一次读写 8 个字节。硬件按这种宽度一次取一块内存，取的时候要求这一段从一个能被宽度整除的位置开始——<code>int</code> 从 4 的倍数地址开始、<code>double</code> 从 8 的倍数地址开始。这种「起始位置必须落在宽度的整数倍上」的要求叫<b>对齐</b>（alignment），编译器在成员之间空出来的那几个字节叫<b>对齐填充</b>（padding）。</p>
+
+  <p>于是布局规则有两条：</p>
+
+  <ol>
+    <li>每个成员从自己对齐要求允许的位置开始，前面不够就垫几个填充字节；</li>
+    <li>整块的长度补到最大的那个对齐要求的整数倍——这样连续放 <code>Record</code> 数组时，每个元素都还满足对齐要求。</li>
+  </ol>
+
+  <p>这两条都是编译器按平台定的，C 标准只要求成员能对齐、并规定成员按声明顺序依次排开（N2310 §6.7.2.1 第 14–17 段），填充几个字节、填在哪里由实现决定。所以 <code>sizeof(struct S)</code> 不能拿字段宽度相加去估，用 <code>sizeof</code> 与 <code>offsetof</code> 量出来才准。把字段换个顺序有时能省下几个字节，涉及大量记录时才值得计较。</p>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "这段程序打印了两行：\n\n```term\nsizeof(Record) = 16\n三个字段的宽度之和 = 13\n```\n\n一个 char、一个 int、一个 double 合起来是 13，\nsizeof 却给出 16。为什么？",
+    "opts": [
+      "每个成员都要从自己宽度的倍数处开始，中间空的字节不算成员",
+      "三个成员之外还存了一份类型信息，占了剩下的那 3 个字节",
+      "编译器按 4 字节一批分配，宽度不满一批的都按一批算",
+      "结构体整体要有一个编号，剩下的那几个字节留给扩容用"
+    ],
+    "ans": 0,
+    "why": "int 一次读写 4 个字节，硬件要求它\n从一个能被 4 整除的位置开始；\ndouble 是 8 个字节，要求更严。\ntag 只占 1 字节，后面垫 3 个字节之后，\nnumber 的起点才落到第 4 字节上，\n中间那 3 个字节就是对齐填充，谁也没用到。\n整块还要补到最大对齐要求 8 的倍数，\n这一例排到 16 正好够，末尾不必再垫。"
+  },
+  {
+    "q": "练习里的 Record 换成这个顺序：\n\n```cpp\ntypedef struct Record {\n    char   tag;\n    double score;\n    int    number;\n} Record;\n```\n\n① 这样改之后 sizeof(Record) 是几？\n② 按本课的两条规则，把你数出来的过程说一遍：\n　　哪些字节空着、末尾补到了几的倍数。",
+    "answer": "① 24。\n\n② 按声明顺序一格一格排：\ntag 占第 0 字节。\nscore 是 double，起点要落在 8 的倍数上，\n所以第 1 到第 7 字节空着，score 占 8 到 15。\nnumber 是 int，起点落在 4 的倍数上就行，\n第 16 字节正好可以，占 16 到 19。\n排到这里用了 20 字节，\n整块长度还要补到最大对齐要求 8 的整数倍，\n于是末尾再补 4 个字节，总共 24。",
+    "criteria": "① 答出 24 得 2 分。\n答 20 的给 1 分（只记得开头垫、忘了末尾补齐）；\n答 16 或 13 的不给分。\n② 说清「成员从自己对齐要求允许的位置起」，\n并指出 tag 与 score 之间空了 7 个字节，得 2 分；\n再说出末尾补到 8 的倍数，得 1 分。\n只写结论不排过程的，第 ② 条给 1 分。\n把 ① 答成「只能跑一遍才知道」的，\n按它给的那个数字记分，第 ② 条不给分。"
+  }
+]'></div>
+
+  <h2>结构体赋值是整份复制</h2>
+
+  <p>结构体让「一条记录」成了一个单位，赋值这件事也跟着变简单了：<b>结构体变量可以用 <code>=</code> 整体赋值。</b></p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+typedef struct Contact {
+    char name[12];
+    char phone[12];
+    char group[8];
+} Contact;
+
+int main(void) {
+    Contact a = { "Tom", "13800001111", "同学" };
+    Contact b = a;                 /* 把 a 那一块整个复制给 b */
+
+    printf("复制之后：b.name = %s\n", b.name);
+
+    b.name[0] = 'J';               /* 只改 b */
+    printf("改过 b 之后：a.name = %s，b.name = %s\n", a.name, b.name);
+    printf("a.phone = %s，b.phone = %s\n", a.phone, b.phone);
+    printf("&amp;a = %p\n", (void *)&amp;a);
+    printf("&amp;b = %p\n", (void *)&amp;b);
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>复制之后：b.name = Tom
+改过 b 之后：a.name = Tom，b.name = Jom
+a.phone = 13800001111，b.phone = 13800001111
+&amp;a = 000000468F3FF7B0
+&amp;b = 000000468F3FF790</code></pre>
+
+  <p>两点从输出里读出来：</p>
+
+  <ul>
+    <li>改 <code>b.name</code> 之后 <code>a.name</code> 还是 <code>Tom</code>。<code>b = a</code> 做的事是把 <code>a</code> 那一块的字节<b>逐个复制</b>到 <code>b</code> 那一块里去——这一整块连同对齐填充一起复制。复制完两个变量各占一块内存，<code>&amp;a</code> 与 <code>&amp;b</code> 是两个不同的编号（这两个数每次运行都会变，看的是它们不相等这一件事），从此互不相干：改 <code>b</code> 里的任何字段都碰不到 <code>a</code>。</li>
+    <li>两个变量各自占一块 32 字节。在上一课，一个 <code>int</code> 变量的副本是 4 个字节；这里一个结构体变量的副本是整块 32 字节，道理一样，只是拷贝的东西变大了。</li>
+  </ul>
+
+  <p>C 对结构体另有一条限制值得记住：<b>结构体可以用 <code>=</code> 赋值，不能用 <code>==</code> 或 <code>!=</code> 比较。</b> 想判断两条记录是不是同一个人，得自己挑字段比，例如 <code>strcmp(a.phone, b.phone) == 0</code>。原因不在本课范围内，先记住这条规矩。</p>
+
+  <p>成员里若装的是地址，复制过去的也是那个地址：</p>
+
+  <pre data-lang="cpp"><code>typedef struct Node {
+    int          value;
+    struct Node *next;
+} Node;</code></pre>
+
+  <p><code>Node x = y;</code> 会把 <code>y.next</code> 里那个地址原样复制给 <code>x.next</code>——两份结构体里的成员指向同一个地方，不会替你把那个地方再复制一份。这一点到链表那一课会天天用到。</p>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "这段程序跑完打印成这样：\n\n```term\n复制之后：b.name = Tom\n改过 b 之后：a.name = Tom，b.name = Jom\n```\n\nb.name 只改了第一个字符，a.name 为什么还是 Tom？",
+    "opts": [
+      "b = a 把 a 那一块整个复制了一份，两个变量各占一块内存",
+      "b 与 a 是同一块内存的两个名字，打印的时候各读各的",
+      "name 是数组，数组赋值时会自己复制，别的成员仍然共用",
+      "改 b.name 只动了第一个字符，剩下的位置还与 a 共用着"
+    ],
+    "ans": 0,
+    "why": "b = a 做的是把 a 那一块的字节逐个复制到 b，\n连同对齐填充一起，32 个字节都复制了。\n复制完两个变量各占一块内存，\n&amp;a 与 &amp;b 是两个不同的编号，从此互不相干：\n改 b 里的任何字段都碰不到 a。\n上一课一个 int 的副本是 4 个字节，\n这里一整块 32 字节，道理一样。"
+  },
+  {
+    "q": "成员里也能装地址：\n\n```cpp\ntypedef struct Node {\n    int          value;\n    struct Node *next;\n} Node;\n\n    Node n2 = { 2, NULL };\n    Node n1 = { 1, &amp;n2 };\n    Node  x = n1;\n```\n\n① x.next 与 n1.next 装的是同一个地址吗？\n② 把 n1.value 改成 9，x.value 会不会跟着变？\n　　把 n1.next 改成 NULL 呢？\n③ ② 里这两问的答案为什么不一样？",
+    "answer": "① 是同一个地址，两个 next 都指着 n2。\nx = n1 把 n1 那一块的字节逐个复制过去，\nnext 那一格里装的就是 n2 的地址，\n复制过去的还是这个地址本身，\n地址指着的那块内容不会再复制一份。\n\n② x.value 不变，还是 1。\nn1.next 改成 NULL 之后，x.next 也还是原来那个地址，\n它照样指着 n2。\n\n③ 因为复制的是每一格里的内容，\n不是把两个变量绑在一起。\nx 与 n1 是两块独立的内存：\n改 n1 里任何一格，x 里对应的那一格都不受影响。\n① 说的「同一个地址」是两格里装的内容相同，\n不是说两格变成了同一格。",
+    "criteria": "① 答出是同一个地址（两个 next 都指着 n2）得 2 分。\n答成「x.next 是一份新复制出来的结点」的，不给分——\n那是把「复制一格地址」当成了「复制地址指着的那块」。\n② 两问都答对得 2 分：x.value 不变、\nn1.next 换成 NULL 后 x.next 也不变，\n只答对一问给 1 分。\n③ 说出「复制的是每一格的内容、两份各占一块内存」得 2 分；\n能再点出「两格装的内容相同、但不是同一格」的，再得 1 分。\n把 ③ 答成「地址成员不参与复制」的，不给分。"
+  }
+]'></div>
+
+  <h2>结构体作参数</h2>
+
+  <p>上一课留下了一套问两次的框架，用来读任何一次函数调用：<b>① 函数拿到的是原件还是副本？② 副本里装的是什么？</b> 现在把结构体放进这套框架里，两问都还在。</p>
+
+  <p><b>第一问的答案没有变：函数拿到的是副本。</b> 结构体作参数时，副本是整整一块——<code>main</code> 里那个变量占 32 字节，函数里的参数就另占 32 字节，调用时把整块复制过去。C 标准在讲参数传递时写的是「每个参数被赋予对应实参的值」，结构体变量的「值」就是整块内容，所以整块都被赋了过去。</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+#include &lt;string.h&gt;
+
+typedef struct Contact {
+    char name[12];
+    char phone[12];
+    char group[8];
+} Contact;
+
+void set_group_copy(Contact c, const char *g) {
+    strcpy(c.group, g);            /* 改的是函数里这一份 */
+    printf("函数里：c.group = %s，&amp;c = %p\n", c.group, (void *)&amp;c);
+}
+
+void set_group(Contact *pc, const char *g) {
+    strcpy(pc-&gt;group, g);          /* 顺着地址写回调用方那一块 */
+    printf("函数里：pc = %p\n", (void *)pc);
+}
+
+int main(void) {
+    Contact c = { "林小雨", "13800001111", "同学" };
+    printf("main 里：&amp;c = %p，c.group = %s\n", (void *)&amp;c, c.group);
+
+    set_group_copy(c, "同事");
+    printf("按值传之后：c.group = %s\n", c.group);
+
+    set_group(&amp;c, "同事");
+    printf("传地址之后：c.group = %s\n", c.group);
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>main 里：&amp;c = 00000090889FFB00，c.group = 同学
+函数里：c.group = 同事，&amp;c = 00000090889FFAE0
+按值传之后：c.group = 同学
+函数里：pc = 00000090889FFB00
+传地址之后：c.group = 同事</code></pre>
+
+  <p>函数里那个 <code>c.group</code> 确实变成了「同事」，可第二行给出的地址与第一行不一样（这两个数每次运行都会变，看的是它们不相等这一件事）：<code>main</code> 那一份在 <code>…FB00</code>，函数里那一份在 <code>…FAE0</code>。两块内存，两份数据；函数改的是自己那 32 字节，<code>main</code> 这一份没人碰，所以第三行打印出来还是「同学」。上一课 <code>swap_wrong</code> 的 <code>a</code>、<code>b</code> 是这样，这里的 <code>c</code> 还是这样——<b>差别只在于副本变大了：从一个 <code>int</code> 的 4 个字节，变成了一整块 32 字节。</b></p>
+
+  <p>第二版才是那个能把记录改成的版本。参数写成 <code>Contact *pc</code>，收到的是一个装着地址的副本，里面是 <code>main</code> 那个 <code>c</code> 的起点；这一次 <code>pc</code> 打印出来的编号与 <code>main</code> 的 <code>&amp;c</code> 完全一样（都是 <code>…FB00</code>）。函数里用 <code>pc-&gt;group</code> 顺着地址摸回调用方那一块，改的就是原件了：最后一行打印的分组变成了「同事」。传下去的还是副本，只是副本里装的是地址。</p>
+
+  <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="左侧 main 里的 c 与函数里的 c 各占一块内存、地址不同，函数改的是自己那份；右侧传地址时函数里的 pc 装着 main 那份的起点，顺着它写回原件">
+<svg viewBox="0 0 680 470" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="20" y="30" text-anchor="start" font-size="14">结构体作参数：函数拿到的是整份副本</text>
+<text x="20" y="54" text-anchor="start" font-size="14">要改原件，把它的地址传下去</text>
+<text x="60" y="104" text-anchor="start" font-size="14">&amp;c = 0x7ffd20（main 那一份的起点）</text>
+<rect x="60" y="120" width="300" height="40" rx="6" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<text x="74" y="145" text-anchor="start" font-size="15">main 里的 c</text>
+<text x="190" y="145" text-anchor="start" font-size="14">name 林小雨｜group 同学</text>
+<text x="60" y="238" text-anchor="start" font-size="14">&amp;c = 0x7ffd00（另一块）</text>
+<rect x="60" y="250" width="300" height="40" rx="6" fill="currentColor" fill-opacity="0.13" stroke="currentColor" stroke-width="1.5"/>
+<text x="74" y="275" text-anchor="start" font-size="15">函数里的 c</text>
+<text x="190" y="275" text-anchor="start" font-size="14">name 林小雨｜group 同事</text>
+<line x1="210" y1="162" x2="210" y2="242" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4" marker-end="url(#tip)"/>
+<text x="240" y="206" text-anchor="start" font-size="14">调用 set_group_copy(c, "同事")</text>
+<text x="240" y="230" text-anchor="start" font-size="14">把 c 占的 32 个字节整份复制一份</text>
+<text x="150" y="324" text-anchor="middle" font-size="14">函数里改 group，改的是副本这一块</text>
+<text x="150" y="348" text-anchor="middle" font-size="14">main 里那一块没人碰</text>
+<text x="430" y="104" text-anchor="start" font-size="14">还是同一块内存</text>
+<rect x="430" y="120" width="190" height="40" rx="6" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<text x="444" y="145" text-anchor="start" font-size="15">main 里的 c</text>
+<text x="550" y="145" text-anchor="start" font-size="14">0x7ffd20</text>
+<line x1="490" y1="190" x2="490" y2="164" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<rect x="460" y="190" width="130" height="40" rx="6" fill="currentColor" fill-opacity="0.13" stroke="currentColor" stroke-width="1.5"/>
+<text x="474" y="215" text-anchor="start" font-size="15">pc</text>
+<text x="502" y="215" text-anchor="start" font-size="14">0x7ffd20</text>
+<text x="430" y="252" text-anchor="start" font-size="14">函数拿到的是地址的副本：</text>
+<text x="430" y="276" text-anchor="start" font-size="14">顺着它写回 main 那一块</text>
+<text x="430" y="306" text-anchor="start" font-size="14">set_group(&amp;c, "同事")</text>
+<text x="430" y="330" text-anchor="start" font-size="14">改完 main 里 c.group 变成 同事</text>
+<text x="430" y="372" text-anchor="start" font-size="14">两种写法都只传一样东西下去，</text>
+<text x="430" y="396" text-anchor="start" font-size="14">差别在传的是整块内容还是它的起点地址</text>
+<text x="340" y="446" text-anchor="middle" font-size="14">上一课的框架照样用：差别仍在副本里装的是什么，只是副本从 4 个字节变成了 32 个</text>
+</svg>
+
+    <figcaption>图 3 · 结构体作参数传的是整份副本，传地址才改得到原件</figcaption>
+  </figure>
+
+  <div class="lesson-tip">
+    <b>卡住时先翻这两页</b>
+    <p>上一课的格子模型、<code>&amp;x</code> 与 <code>*p</code>、两问框架、两个 <code>swap</code> 的逐行走查，都收在<a href="../reference/指针与传参速查.html">指针与传参速查</a>。本节这两段代码与 <code>swap_right</code> 的走法完全一样，只是把 <code>int</code> 换成了 <code>Contact</code>；卡住就先翻它，再回来看正文。</p>
+  </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "set_group_copy(c, \"同事\") 这一版跑完，屏幕上是：\n\n```term\nmain 里：&amp;c = 00000090889FFB00，c.group = 同学\n函数里：c.group = 同事，&amp;c = 00000090889FFAE0\n按值传之后：c.group = 同学\n```\n\n按值这一版，传出去的是什么？",
+    "opts": [
+      "装着一整块内容的副本：c 那 32 字节被复制了一份",
+      "c 那一块的起点地址：函数顺着这个地址写回去",
+      "c 里三个成员各自的地址，函数按地址找到字段",
+      "c 这个名字本身：函数拿到名字再回 main 取内容"
+    ],
+    "ans": 0,
+    "why": "结构体作参数时，函数拿到的是整整一块副本：\nmain 里那个变量占 32 字节，\n函数里的参数就另占 32 字节。\n两个 &amp;c 打印出来的编号不一样，\n看的就是它们不相等这一件事——\n函数改的是自己那 32 字节。"
+  },
+  {
+    "q": "同一段程序里还有第二版：\n\n```cpp\nvoid set_group(Contact *pc, const char *g) {\n    strcpy(pc-&gt;group, g);\n}\n```\n\n调用处写 set_group(&amp;c, \"同事\")，\n跑完 main 里的 c.group 变成「同事」了。\n\n① 函数拿到的还是副本吗？副本里装的是什么？\n② 为什么这一次函数改得到 main 里的 c？",
+    "answer": "① 还是副本。参数传递的规则没有变：\n函数拿到的永远是调用处那个东西的副本。\n这一版的副本里装的是一个地址，\n也就是 main 里 c 那一块的起点，\n和 &amp;c 打印出来的是同一个编号。\n\n② 因为副本里装的是地址。\n函数里用 pc-&gt;group 顺着这个地址摸回 main 那一块，\n写进去的就是原件的内容——\n副本自己没被改，改的是它指着的那个地方。",
+    "criteria": "① 答出「还是副本」得 1 分；\n答出副本里装的是 c 的地址（与 &amp;c 同一个编号）得 2 分。\n答成「这一版不是副本了」「传的是原件」的，第 ① 条不给分。\n② 说出「顺着副本里的地址摸回原件、写的是原件那一块」得 2 分。\n只答「传指针就能改」而说不清路径的，给 1 分。\n两问合起来要落到：副本不副本管的是「改的是不是原件那一格」，\n副本里装什么管的是「能不能顺着它摸到原件」。"
+  }
+]'></div>
+
+  <h2>链表结点的最后一块拼图</h2>
+
+  <p>现在可以把结构体接到本科目的主线上。项目「C 小容器库」要做的第一个链式结构是单链表，它的结点需要两样东西：一份数据，和一个指向下一个结点的地址。这两样正好是结构体的两个成员：</p>
+
+  <pre data-lang="cpp"><code>typedef struct Node {
+    int          value;          /* 数据 */
+    struct Node *next;           /* 下一个结点在哪 */
+} Node;</code></pre>
+
+  <p>第二行的写法里有一处新东西：成员的声明用了 <code>struct Node *</code>，而这个标签 <code>Node</code> 正是当前这条声明本身。C 标准规定结构体不能直接装一个自己的实例（那样长度没法算完），但<b>可以装一个指向自己的指针</b>（N2310 §6.7.2.1 第 3 段）。指针的长度是固定的 8 字节，装得下。</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+typedef struct Node {
+    int          value;
+    struct Node *next;
+} Node;
+
+int main(void) {
+    Node  n2 = { 2, NULL };            /* 尾结点的 next 是空指针 */
+    Node  n1 = { 1, &amp;n2 };             /* n1 的 next 装着 n2 的地址 */
+    Node *p  = &amp;n1;
+
+    printf("n1.value = %d，n1.next-&gt;value = %d\n", n1.value, n1.next-&gt;value);
+    printf("p-&gt;value = %d，p-&gt;next-&gt;value = %d\n", p-&gt;value, p-&gt;next-&gt;value);
+    printf("sizeof(Node) = %zu\n", sizeof(Node));
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>n1.value = 1，n1.next-&gt;value = 2
+p-&gt;value = 1，p-&gt;next-&gt;value = 2
+sizeof(Node) = 16</code></pre>
+
+  <p><code>n1.next-&gt;value</code> 从里往外读：先取 <code>n1</code> 的 <code>next</code> 成员，它是一个指向 <code>Node</code> 的指针；再顺着它取 <code>value</code>。<code>p-&gt;next-&gt;value</code> 一样是多走一步。读这种连起来的箭头，从左往右一步一步落到具体的格子上就不会乱。</p>
+
+  <p><code>sizeof(Node)</code> 是 16：<code>int</code> 占 4 字节，指针占 8 字节，前一个成员后面垫了 4 字节填充——正是上一节讲的两条规则在这里的应用。</p>
+
+  <p>单链表的每一个结点都是这个 <code>Node</code>：函数收到的每一个结点、头指针指向的每一个结点，都是这样一块 16 字节的内存。有了它，下一课就能把结点一个个申请出来、用 <code>next</code> 串成一条链。</p>
+
+  <h2>把类型放进头文件</h2>
+
+  <p>到了一个源文件放不下的时候，这个类型要被好几处用到：链表容器有 <code>list.h</code> 与 <code>list.c</code> 两个文件，结点类型两边都要看得见；测试文件也要用到它。</p>
+
+  <p>C 的做法是把类型声明放进<b>头文件</b>（<code>.h</code>），要用它的源文件写一行 <code>#include</code>。比如 <code>list.h</code> 里放结点与链表的类型，<code>list.c</code> 与测试文件各自 <code>#include "list.h"</code>。一条类型声明只写一份，改一处就够了——这也是 <code>print_contact</code> 那个「多一个字段要改几处」的问题在文件层面的答案。</p>
+
+  <p>头文件有个必须防的坑：同一个源文件可能把它<b>包含两次</b>。例如 <code>list.c</code> 自己包含 <code>list.h</code>，它包含的另一个头文件里也包含了 <code>list.h</code>；而 <code>struct Node</code> 这种声明在同一个文件里出现两次就会报重复定义。办法是给头文件加一对包含卫兵：</p>
+
+  <pre data-lang="cpp"><code>#ifndef LIST_H
+#define LIST_H
+
+typedef struct Node {
+    int          value;
+    struct Node *next;
+} Node;
+
+#endif</code></pre>
+
+  <p>读法是：第一行问「<code>LIST_H</code> 这个名字还没被定义过吗」。第一次处理这个文件时它确实没定义，于是往下走、第二行把它定义掉；文件被第二次包含时，第一行发现名字已经有了，就一路跳到末尾的 <code>#endif</code>，整段不再重复。一句话说明它在挡什么：挡的是同一个头文件被重复读进同一个源文件。名字按文件名取、全大写（这里是 <code>LIST_H</code>），是这一行的惯例。</p>
+
+  <p>上一节那个结点类型就照这个办法放进 <code>list.h</code>：一块一块申请出来，再用 <code>next</code> 串成一条链。</p>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "list.h 的开头三行是这样：\n\n```cpp\n#ifndef LIST_H\n#define LIST_H\n```\n\n这对包含卫兵在挡什么？",
+    "opts": [
+      "挡同一个头文件被重复读进同一个源文件，类型声明出现两次",
+      "挡两个不同的源文件同时包含它，各自抢一份类型声明",
+      "挡没定义过 LIST_H 的源文件包含它，没定义就不让用",
+      "挡头文件里的类型被别的文件改写，名字定下来就不许动"
+    ],
+    "ans": 0,
+    "why": "它挡的是同一个源文件把同一个头文件读进来两次：\nlist.c 自己包含 list.h，\n它包含的另一个头文件里又包含了一次。\nstruct Node 这种声明出现两次编译器不接受，\n所以第二次读到时，第一行发现名字已经有了，\n一路跳到末尾的 #endif，整段不再重复。"
+  }
+]'></div>
+
+  <div class="lesson-note">
+    <b>本课只写几行</b>
+    <p>本课的代码都在十几行以内，一节一段，敲一遍、改一行、看输出。结构体的写法在后面的每一课里都会出现：链表的结点、二叉树的结点、哈希表的桶，都是先定义一种结构体，再定一组运算。</p>
+  </div>
+
+  <h2>练习：改一行，看谁变</h2>
+
+  <p>把下面这段存成 <code>contact.c</code>，编译时把警告开关带上：</p>
+
+  <pre data-lang="sh"><code>gcc -std=c17 -Wall -Wextra -o contact contact.c
+./contact</code></pre>
+
+  <p>下面三步都用这条命令。每一步都在上一步的基础上改，改完再跑一次，对着输出说话。</p>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">练习</span>
+      <span class="lesson-practice__title">第 1 步 · 打印一条记录</span>
+    </div>
+
+      <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+typedef struct Contact {
+    char name[12];
+    char phone[12];
+    char group[8];
+} Contact;
+
+int main(void) {
+    Contact c = { "林小雨", "13800001111", "同学" };
+
+    printf("sizeof(Contact) = %zu\n", sizeof(Contact));
+    printf("%s  %s  %s\n", c.name, c.phone, c.group);
+    return 0;
+}</code></pre>
+
+      <ol>
+        <li>输出里 <code>sizeof(Contact)</code> 是几？它与你把三个成员的宽度加起来算的数一样吗？</li>
+        <li>把 <code>c.group[0]</code> 改成另外的字符再打印 <code>c.group</code>，输出变了几个字符？</li>
+        <li>在 <code>main</code> 里加一句 <code>Contact d = c;</code>，再把 <code>d.name</code> 换一个值，两次打印 <code>c.name</code> 与 <code>d.name</code>——哪一份变了？</li>
+      </ol>
+  </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "练习第 1 步那段程序里加了这一句：\n\n```cpp\nc.group[0] = &#39;X&#39;;\n```\n\n原来打印 friend，改完打印 Xriend。\n为什么只换了开头那一个字符？",
+    "opts": [
+      "group 是一格一个字符的数组，改的是第 0 格",
+      "group 里存的是一整串的两个字节，改一个只换半个",
+      "printf 打印时只认第一个字符，后面的照抄旧内容",
+      "结构体成员按顺序覆盖，改第一个会盖掉后面同名的"
+    ],
+    "ans": 0,
+    "why": "c.group 是一个 char 数组，\n下标 0 就是它的第 0 格，一格一个字符。\n所以改了第 0 格，只有开头那个字符换掉，\n后面的 r-i-e-n-d 都还在。\n一个汉字要占两个字节以上，\n「改一格」这类操作只适合英文那类一字一字节的内容。"
+  }
+]'></div>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">练习</span>
+      <span class="lesson-practice__title">第 2 步 · 传进去改一个字段</span>
+    </div>
+
+      <p>在上面那个文件里加两个函数，一个按值收、一个按地址收：</p>
+
+      <pre data-lang="cpp"><code>#include &lt;string.h&gt;
+
+void set_group_copy(Contact c, const char *g) {
+    strcpy(c.group, g);
+    printf("函数里：c.group = %s，&amp;c = %p\n", c.group, (void *)&amp;c);
+}
+
+void set_group(Contact *pc, const char *g) {
+    strcpy(pc-&gt;group, g);
+    printf("函数里：pc = %p\n", (void *)pc);
+}</code></pre>
+
+      <p>在 <code>main</code> 里先打印 <code>(void *)&amp;c</code> 与 <code>c.group</code>，再分别调用这两个函数，每次调用后都打印一次 <code>c.group</code>。</p>
+
+      <ol>
+        <li>按值那一版：函数里打印的 <code>&amp;c</code> 与 <code>main</code> 里打印的 <code>&amp;c</code>，是同一个编号吗？调用之后 <code>main</code> 里 <code>c.group</code> 变了没有？</li>
+        <li>按地址那一版：函数里打印的 <code>pc</code> 与 <code>main</code> 里哪个编号相同？调用之后 <code>c.group</code> 变了吗？</li>
+        <li>两版都把 <code>group</code> 改成了「同事」，为什么一版看得出来、一版看不出来？</li>
+      </ol>
+  </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "传地址那一版跑完，屏幕上出现两行：\n\n```term\n函数里：pc = 00000090889FFB00\nmain 里：&amp;c = 00000090889FFB00\n```\n\n两个编号相同，说明什么？",
+    "opts": [
+      "pc 里装的是 c 那一块的起点，顺着它写的就是原件",
+      "函数里的 pc 与 main 那个变量，就是同一个东西",
+      "c 被搬进了函数里，main 里已经没有这条记录了",
+      "两个变量恰好落在同一位置上，是编译器特意安排的"
+    ],
+    "ans": 0,
+    "why": "pc 是一个装着地址的副本，\n里面那个编号就是 main 里 c 那一块的起点，\n和 &amp;c 打印出来的一样。\n所以 pc-&gt;group 顺着地址摸回去，\n写的就是 main 里那一块。\n按值那一版两个编号不同，那才是另一块内存。"
+  }
+]'></div>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">练习</span>
+      <span class="lesson-practice__title">第 3 步 · 一个结点，两个成员</span>
+    </div>
+
+      <p>把类型换成链表的结点，串两个结点起来：</p>
+
+      <pre data-lang="cpp"><code>typedef struct Node {
+    int          value;
+    struct Node *next;
+} Node;</code></pre>
+
+      <p>在 <code>main</code> 里声明 <code>Node n2 = { 2, NULL };</code> 与 <code>Node n1 = { 1, &amp;n2 };</code>，再声明 <code>Node *p = &amp;n1;</code>。</p>
+
+      <ol>
+        <li>用 <code>p-&gt;next-&gt;value</code> 打印第二个结点里的数，它是几？</li>
+        <li>把 <code>p-&gt;next</code> 与 <code>&amp;n2</code> 都打印出来：两个编号一样吗？</li>
+        <li><code>sizeof(Node)</code> 是几？与「<code>int</code> 4 字节加指针 8 字节」相比多出来的那几个字节是什么？</li>
+      </ol>
+  </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "这一段打印出 n1.next-&gt;value = 2：\n\n```cpp\nNode n2 = { 2, NULL };\nNode n1 = { 1, &amp;n2 };\n```\n\nn1.next-&gt;value 这一串是怎么一步步落下去的？",
+    "opts": [
+      "取 n1 的 next 得到地址，再顺着它取 value",
+      "取 n1 的 value 得到一个数，再顺着它找到下一个",
+      "取 n1 的两个成员一起算，箭头把两端的地址合起来",
+      "顺着箭头先找到 n1，再取 next 与 value 两个"
+    ],
+    "ans": 0,
+    "why": "n1.next 是一个指向 Node 的指针，\n它的值是 n2 那一块的起点；\n再顺着这个地址取 value，才是 n2 里的 2。\n连起来的箭头（p-&gt;next-&gt;value）就是多走一步，\n从左往右一步一步落到具体的格子上就不会乱。"
+  }
+]'></div>
+
+  <h2>自测</h2>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "换成另一条记录来问：\n\n```cpp\ntypedef struct Point {\n    int x;\n    int y;\n} Point;\n\n    Point p = { 3, 4 };\n    Point q = p;\n    q.x = 9;\n```\n\n① q 改过之后 p.x 是几？为什么？\n② 把 p 整个传给一个函数、函数里写改 p.x 的那一句，\n　　main 里的 p.x 会变吗？要让它变，调用处该怎么写？",
+    "answer": "① p.x 还是 3。\nq = p 把 p 那一块的字节逐个复制给 q，\n两块 8 字节的副本各占一块内存，\n改 q 这一块碰不到 p。\n\n② 不会变。\n函数拿到的还是一整块副本（这里 8 字节），\n函数里改的是自己那一块，调用方看不见。\n要让它变，调用处传 p 的地址：写成 set(&amp;p) 这样，\n函数那边收地址、顺着它写回原件。",
+    "criteria": "① 答出 p.x 还是 3 得 1 分；\n说出「q = p 是整块复制、两份各占一块内存」得 2 分。\n答成「q 与 p 指向同一块、改一个另一个也变」的，不给分。\n② 答出「不会变」得 1 分；\n答出函数拿到的仍是一整块副本、改的是自己那一份，得 2 分；\n答出「调用处要传地址（&amp;p）」得 1 分。\n只答「要加一个星号」而没说传的是地址的，这一条给 1 分。\n两问合起来要落到：赋值与传参复制的东西是整块，\n副本里装什么决定函数能不能摸到原件。"
+  }
+]'></div>
+
+  <h2>小结</h2>
+
+  <ul>
+    <li><b>结构体</b>把几个字段装进一个单位：<code>struct 标签 { 成员声明; … };</code> 声明出一种新类型，<code>struct Contact c;</code> 才划出内存；<code>typedef</code> 只是给这个类型另起一个短名字。</li>
+    <li><b>取成员两种写法</b>：结构体变量用点（<code>c.name</code>），指向结构体的指针用箭头（<code>pc-&gt;name</code>，等价于 <code>(*pc).name</code>）；左边是什么，写法就定了。</li>
+    <li><b>字段按声明顺序排在一块连续内存里</b>，每个成员从对齐允许的位置起，中间和末尾可能有对齐填充；所以 <code>sizeof</code> 未必等于字段宽度之和，用 <code>sizeof</code> 与 <code>offsetof</code> 量。</li>
+    <li><b>赋值是整份复制</b>：<code>b = a</code> 之后两个变量各占一块内存，互不相干；结构体可以用 <code>=</code> 赋值，不能用 <code>==</code> 比较。</li>
+    <li><b>结构体作参数也是整份副本</b>：函数改的是自己那一块，调用方看不见；要改原件就传它的地址，函数里用箭头写回去。副本大小从上一课的 4 个字节变成了整块。</li>
+    <li><b>链表的结点就是结构体</b>：一个数据成员加一个指向下一个同种结点的指针成员——有了这一课，结点这块拼图就齐了。</li>
+  </ul>
+
+  <ul class="lesson-resources">
+    <li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2310.pdf">ISO/IEC 9899（C17）标准草案 N2310：6.7.2.1 结构与联合说明符</a><span class="lesson-resources__meta">官方草案 · 本机已落盘；第 6 段是结构体的定义（成员按顺序分配存储）、第 8 段是「带成员列表的声明声明了一个新类型」、第 3 段是「结构体不能装自己的实例，但可以装指向自己的指针」、第 14–17 段是对齐与填充（成员按声明顺序地址递增、开头没有填充、末尾可以有填充）</span></li>
+    <li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2310.pdf">ISO/IEC 9899（C17）标准草案 N2310：6.5.2.3 结构与联合成员</a><span class="lesson-resources__meta">官方草案 · 本机已落盘；第 1–2 段是 <code>.</code> 与 <code>-&gt;</code> 各自要求左边是什么类型，脚注 100 写明 <code>(&amp;E)-&gt;MOS</code> 与 <code>E.MOS</code> 是同一件事</span></li>
+    <li><a href="https://inria.hal.science/hal-02383654v1/file/ModernC.pdf">Modern C（Jens Gustedt，第 2 版）第 6 章 · 派生数据类型</a><span class="lesson-resources__meta">书 · 本机已落盘；§6.3 是结构体（成员、初始化、嵌套），§6.4 是 <code>typedef</code>（「只给已有类型加名字，不造新类型」）</span></li>
+    <li><a href="https://inria.hal.science/hal-02383654v1/file/ModernC.pdf">Modern C（Jens Gustedt，第 2 版）第 12 章 · C 的内存模型</a><span class="lesson-resources__meta">书 · 本机已落盘；§12.7 讲对齐：对象通常从字边界开始，强行放到不对齐的位置会出错</span></li>
+    <li>K&amp;R《The C Programming Language》（第 2 版）第 6 章 Structures<span class="lesson-resources__meta">书 · 结构体与链表的经典入门一章；本机无正文，作为书目备查</span></li>
+  </ul>
+
+  <div class="lesson-related">
+    <a href="0002-c-recap.1.html">上节课：指针：变量住在哪里</a>
+    <a href="../reference/指针与传参速查.html">速查页：指针与传参速查</a>
+  </div>
+
+  <!-- ── 提问提示：固定写法，别删 ── -->
+
+  <div class="lesson-ask">
+    <b>没看懂？随时问</b>
+    把看不懂的段落（或报错）原样复制回会话，说一句哪里不懂就行，我只解释这一段，不打断你的进度。
+  </div>
+
+  <!-- ── 上/下节课指针由渲染器按 curriculum.yaml 的 nodes 顺序算（第一课无 --prev、最后一课无 --next） ── -->
+
+  <nav class="lesson-nav" aria-label="上一课 / 下一课">
+    <a class="lesson-nav__link lesson-nav__link--prev" href="0002-c-recap.1.html">
+      <span class="lesson-nav__dir">上节课</span>
+      <span class="lesson-nav__title">指针：变量住在哪里</span>
+    </a>
+    <a class="lesson-nav__link lesson-nav__link--next" href="0004-c-recap.3.html">
+      <span class="lesson-nav__dir">下节课</span>
+      <span class="lesson-nav__title">指针进阶与 const</span>
+    </a>
+  </nav>
+
+  <footer class="lesson-footer">
+    StudyMate · 0003 结构体：把字段打包带走 · 本地学习工作区
+  </footer>
+
+</article>
+
+<script src="../../../assets/sayo/sayo.js"></script>
+
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/lesson-toc.js" defer></script>
+<script>LearnTheme.wire(document.getElementById('lesson-theme-checkbox'));</script>
+</body>
+</html>

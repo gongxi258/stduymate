@@ -1,0 +1,35 @@
+<svg viewBox="0 0 680 400" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="20" y="30" text-anchor="start" font-size="14">一条记录占一块内存：字段按声明顺序排好</text>
+<g fill="none">
+<rect x="100" y="100" width="70" height="58" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="170" y="100" width="70" height="58" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="240" y="100" width="70" height="58" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="310" y="100" width="70" height="58" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="380" y="100" width="70" height="58" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="450" y="100" width="70" height="58" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="520" y="100" width="70" height="58" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="590" y="100" width="70" height="58" rx="0" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<rect x="100" y="100" width="560" height="58" rx="0" fill="currentColor" fill-opacity="0.07" stroke="currentColor" stroke-width="1.5"/>
+<line x1="100" y1="108" x2="100" y2="162" stroke="currentColor" stroke-width="1.5"/>
+<line x1="310" y1="108" x2="310" y2="162" stroke="currentColor" stroke-width="1.5"/>
+<line x1="380" y1="108" x2="380" y2="162" stroke="currentColor" stroke-width="1.5"/>
+<line x1="590" y1="108" x2="590" y2="162" stroke="currentColor" stroke-width="1.5"/>
+<text x="100" y="88" text-anchor="start" font-size="14">name[12]：从第 0 字节起</text>
+<text x="310" y="88" text-anchor="start" font-size="14">phone[12]：从第 12 字节起</text>
+<text x="510" y="88" text-anchor="start" font-size="14">group[8]：从第 24 字节起</text>
+<text x="96" y="122" text-anchor="end" font-size="14">字节 0</text>
+<text x="205.0" y="126" text-anchor="middle" font-size="14">林小雨</text>
+<text x="415.0" y="146" text-anchor="middle" font-size="13">13800001111</text>
+<text x="625.0" y="126" text-anchor="middle" font-size="14">同学</text>
+<text x="625.0" y="148" text-anchor="middle" font-size="14">汉字占 3 字节</text>
+<line x1="100" y1="166" x2="100" y2="252" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<line x1="660" y1="166" x2="660" y2="252" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<line x1="652" y1="252" x2="108" y2="252" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<line x1="108" y1="252" x2="652" y2="252" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="380.0" y="244" text-anchor="middle" font-size="14">整块 32 字节</text>
+<text x="340.0" y="300" text-anchor="middle" font-size="14">c.name、c.phone、c.group 是这一块里的三段：字段先后的顺序，决定它们各自从第几字节起</text>
+<text x="340.0" y="326" text-anchor="middle" font-size="14">12 + 12 + 8 = 32，本机 sizeof(struct Contact) 打印出来正是 32</text>
+<text x="340.0" y="358" text-anchor="middle" font-size="14">改哪一段都在这一块里改；这一块整体就是一个变量 c</text>
+</svg>

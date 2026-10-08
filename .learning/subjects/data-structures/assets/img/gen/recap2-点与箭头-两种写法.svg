@@ -1,0 +1,37 @@
+<svg viewBox="0 0 680 470" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="20" y="30" text-anchor="start" font-size="14">同一块内存，两种写法：结构体变量用 . ，指向它的指针用 -></text>
+<text x="60" y="86" text-anchor="start" font-size="14">c：整个结构体，占 32 字节</text>
+<g fill="none">
+<rect x="60" y="100" width="250" height="44" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="60" y="144" width="250" height="44" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="60" y="188" width="250" height="44" rx="6" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="74" y="128" text-anchor="start" font-size="15">c.name</text>
+<text x="180" y="128" text-anchor="start" font-size="14">林小雨</text>
+<text x="74" y="172" text-anchor="start" font-size="15">c.phone</text>
+<text x="180" y="172" text-anchor="start" font-size="14">13800001111</text>
+<text x="74" y="216" text-anchor="start" font-size="15">c.group</text>
+<text x="180" y="216" text-anchor="start" font-size="14">同学</text>
+<text x="60" y="258" text-anchor="start" font-size="14">c 是一整个结构体变量：它的成员用点取</text>
+<text x="60" y="282" text-anchor="start" font-size="14">&c = 0x7ffd20（这一块的起点）</text>
+<text x="420" y="86" text-anchor="start" font-size="14">pc：指向结构体的指针，占 8 字节</text>
+<rect x="420" y="100" width="220" height="44" rx="6" fill="currentColor" fill-opacity="0.13" stroke="currentColor" stroke-width="1.5"/>
+<text x="434" y="128" text-anchor="start" font-size="15">pc</text>
+<text x="480" y="128" text-anchor="start" font-size="14">内容 0x7ffd20</text>
+<text x="420" y="170" text-anchor="start" font-size="14">pc 自己的地址是 &pc = 0x7ffd00</text>
+<text x="420" y="194" text-anchor="start" font-size="14">格子里装的是 c 那一块的起点</text>
+<line x1="412" y1="122.0" x2="318" y2="122.0" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="365.0" y="110.0" text-anchor="middle" font-size="14">顺着地址</text>
+<text x="340.0" y="320" text-anchor="middle" font-size="14">三种写法说的是同一个成员：</text>
+<rect x="90" y="331" width="160" height="28" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<text x="104" y="350" text-anchor="start" font-size="15">c.phone</text>
+<text x="266" y="350" text-anchor="start" font-size="14">对结构体变量本身取成员</text>
+<rect x="90" y="367" width="160" height="28" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<text x="104" y="386" text-anchor="start" font-size="15">(*pc).phone</text>
+<text x="266" y="386" text-anchor="start" font-size="14">先顺着 pc 找到 c，再取成员（这对括号不能省）</text>
+<rect x="90" y="403" width="160" height="28" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<text x="104" y="422" text-anchor="start" font-size="15">pc->phone</text>
+<text x="266" y="422" text-anchor="start" font-size="14">同上的简写：-> 读作「顺着指针去取成员」</text>
+<text x="340.0" y="452" text-anchor="middle" font-size="14">左边写点、右边写箭头，看的是「左边这个东西是结构体本身，还是它的地址」</text>
+</svg>
