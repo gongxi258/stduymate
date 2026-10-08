@@ -1,0 +1,28 @@
+<svg viewBox="0 0 640 320" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="16" y="26" text-anchor="start" font-size="15">内存：一格一格排好，每格有一个编号（地址）</text>
+<line x1="56" y1="52" x2="56" y2="286" stroke="currentColor" stroke-width="1.5"/>
+<text x="64" y="44" text-anchor="start" font-size="13">地址</text>
+<text x="64" y="72" text-anchor="middle" font-size="13">0x7ffd44</text>
+<line x1="108" y1="72" x2="172" y2="72" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="64" y="116" text-anchor="middle" font-size="13">0x7ffd3c</text>
+<line x1="108" y1="116" x2="172" y2="116" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="64" y="160" text-anchor="middle" font-size="13">0x7ffd38</text>
+<line x1="108" y1="160" x2="172" y2="160" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<line x1="108" y1="204" x2="172" y2="204" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<g fill="none">
+<rect x="172" y="72" width="288" height="44" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="172" y="116" width="288" height="44" rx="6" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<rect x="172" y="160" width="288" height="44" rx="6" fill="currentColor" fill-opacity="0.13" stroke="currentColor" stroke-width="1.5"/>
+<text x="186" y="99" text-anchor="start" font-size="15">p</text>
+<text x="224" y="99" text-anchor="start" font-size="13">占 8 字节</text>
+<text x="186" y="143" text-anchor="start" font-size="15">y</text>
+<text x="224" y="143" text-anchor="start" font-size="13">占 4 字节</text>
+<text x="186" y="187" text-anchor="start" font-size="15">x</text>
+<text x="224" y="187" text-anchor="start" font-size="13">占 4 字节，里面装着 20</text>
+<line x1="492" y1="204" x2="492" y2="164" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="504" y="172" text-anchor="start" font-size="13">x 的地址就是</text>
+<text x="504" y="190" text-anchor="start" font-size="13">这一格的编号</text>
+<text x="320" y="300" text-anchor="middle" font-size="13">号码大的格子画在上面；两个格子的编号差几，就说明它们在内存里隔了几字节</text>
+</svg>

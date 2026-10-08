@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>指针：变量住在哪里 · 数据结构（408）</title>
+
+<!-- 共享层在 .learning/assets/，课件在 .learning/subjects/<slug>/lessons/ 下，所以是 ../../../assets/ -->
+<link rel="stylesheet" href="../../../assets/sayo/sayo.css">
+<link rel="stylesheet" href="../../../assets/learn-theme.css">
+<link rel="stylesheet" href="../assets/style.css">
+
+<!-- 主题要在首帧前应用，避免闪白/闪黑 -->
+<script src="../../../assets/learn-theme.js"></script>
+<script>LearnTheme.apply();</script>
+</head>
+
+<body class="lesson-body">
+
+<nav class="lesson-bar">
+  <a href="../index.html">← 返回课程</a>
+  <span>数据结构（408）</span>
+  <span class="lesson-bar__no">0002</span>
+  <!-- 课件页自带主题开关：学生从文件管理器直接打开课件时也能切暗色 -->
+  <label class="syo-toggle syo-toggle--theme lesson-bar__toggle" title="切换深浅主题" aria-label="切换深浅主题">
+    <input type="checkbox" id="lesson-theme-checkbox" checked>
+    <span class="syo-toggle-track"></span>
+    <span class="syo-toggle-knob">
+      <svg class="syo-toggle-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.5" stroke="#f57c00" stroke-width="1.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.34 4.34l1.77 1.77M13.89 13.89l1.77 1.77M4.34 15.66l1.77-1.77M13.89 6.11l1.77-1.77" stroke="#f57c00" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </span>
+  </label>
+</nav>
+
+<article class="lesson">
+
+  <header class="lesson-header">
+    <span class="lesson-header__eyebrow">0002 · 指针：变量住在哪里</span>
+    <h1>指针：变量住在哪里</h1>
+    <p class="lesson-goal"><b>本节目标：</b>能用地址与解引用解释一段指针代码的每一步</p>
+  </header>
+
+  <!-- ── 正文：渲染器按内容文件（lessons/<序号>-<节点id>.md）产出，块词汇见 docs/规范/课件内容格式.md ── -->
+
+  <h2>一个值，两个名字</h2>
+
+  <p>先读一段程序。它只有十行，但包含了本课要讲的每一个动作：声明一个变量、取它的地址、把地址存进另一个变量、顺着这个地址把值改掉。</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int x = 20;
+    int *p = &amp;x;          /* &amp;x 是 x 的地址，p 把这个地址存了下来 */
+
+    printf("x  = %d\n", x);
+    printf("*p = %d\n", *p);   /* *p 是「按 p 里这个地址去访问」 */
+
+    *p = 35;              /* 顺着地址写进去 */
+
+    printf("x = %d, *p = %d\n", x, *p);
+    return 0;
+}</code></pre>
+
+  <p>输出的关键部分是：</p>
+
+  <pre data-lang="term"><code>x  = 20
+*p = 20
+x = 35, *p = 35</code></pre>
+
+  <p><code>*p = 35</code> 这一行里，<code>p</code> 从头到尾没有被赋值，可 <code>x</code> 从 20 变成了 35。要解释这一步，需要回答两个问题：<code>&amp;x</code> 取到的究竟是什么？<code>*p</code> 访问的究竟是哪一格？本课的目标就是让这段程序里的每一行都能读出一个确定的地址。</p>
+
+  <h2>变量住在哪个格子里</h2>
+
+  <p>程序运行时用到的数据都放在<b>内存</b>（memory）里。内存按字节编号，每个字节有一个编号，这个编号称为<b>地址</b>（address）。编号是一串数字，用 <code>%p</code> 打印出来就能看到，程序里任何一格都能按编号找到。</p>
+
+  <p>一个变量就是给一块数据起的名字。编译器在编程序时给它划出若干字节，从此这个名字与那段地址绑在一起。所以每个变量同时有两个可以观察的量：<b>名字</b>与<b>地址</b>。</p>
+
+  <p>前一段程序里 <code>x</code> 的地址是这么打印出来的：</p>
+
+  <pre data-lang="cpp"><code>printf("&amp;x = %p\n", (void *)&amp;x);</code></pre>
+
+  <p><code>&amp;</code> 是<b>取地址运算符</b>，<code>&amp;x</code> 读作「x 的地址」。打印地址要写成 <code>(void *)&amp;x</code>，<code>%p</code> 这个格式只接受这种通用指针，原因留到后面几课再讲，这里照写即可。程序跑起来，屏幕上会出现一行像这样的输出：</p>
+
+  <pre data-lang="term"><code>&amp;x = 00000011D5DFFDB4</code></pre>
+
+  <p>这一串数字每次运行都会变：操作系统给程序分到的内存位置不固定。所以读地址时值得看的是两个地址之间的关系，某一次的具体数字看过就算。下面这段程序把变量的宽度与彼此的距离都问了出来：</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int x = 20;
+    int y = 30;
+
+    printf("sizeof(int) = %zu\n", sizeof(int));
+    printf("&amp;x = %p\n", (void *)&amp;x);
+    printf("&amp;y = %p\n", (void *)&amp;y);
+    printf("&amp;y - &amp;x = %td\n", (char *)&amp;y - (char *)&amp;x);
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>sizeof(int) = 4
+&amp;x = 0000004B409FFD0C
+&amp;y = 0000004B409FFD08
+&amp;y - &amp;x = -4</code></pre>
+
+  <p><code>sizeof(int)</code> 是 4，说明一个 <code>int</code> 变量占 4 个字节；这一版编译器把 <code>y</code> 安排在了 <code>x</code> 下面 4 个字节处。最后一行写成 <code>(char *)&amp;y - (char *)&amp;x</code>，是因为两个 <code>char *</code> 相减的单位是字节：结果 -4 说明 <code>y</code> 的编号比 <code>x</code> 小 4。</p>
+
+  <p>图里画的就是这段程序的内存状态。编号大的格子画在上面，格子上标的是它的起始编号；两个变量的编号差多少，就是它们在内存里隔了多少字节。</p>
+
+  <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="三个变量格子在内存里的位置，每格标出地址与内容，箭头指出 x 的地址就是它所在格子的编号">
+<svg viewBox="0 0 640 320" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="16" y="26" text-anchor="start" font-size="15">内存：一格一格排好，每格有一个编号（地址）</text>
+<line x1="56" y1="52" x2="56" y2="286" stroke="currentColor" stroke-width="1.5"/>
+<text x="64" y="44" text-anchor="start" font-size="13">地址</text>
+<text x="64" y="72" text-anchor="middle" font-size="13">0x7ffd44</text>
+<line x1="108" y1="72" x2="172" y2="72" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="64" y="116" text-anchor="middle" font-size="13">0x7ffd3c</text>
+<line x1="108" y1="116" x2="172" y2="116" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="64" y="160" text-anchor="middle" font-size="13">0x7ffd38</text>
+<line x1="108" y1="160" x2="172" y2="160" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<line x1="108" y1="204" x2="172" y2="204" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<g fill="none">
+<rect x="172" y="72" width="288" height="44" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="172" y="116" width="288" height="44" rx="6" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<rect x="172" y="160" width="288" height="44" rx="6" fill="currentColor" fill-opacity="0.13" stroke="currentColor" stroke-width="1.5"/>
+<text x="186" y="99" text-anchor="start" font-size="15">p</text>
+<text x="224" y="99" text-anchor="start" font-size="13">占 8 字节</text>
+<text x="186" y="143" text-anchor="start" font-size="15">y</text>
+<text x="224" y="143" text-anchor="start" font-size="13">占 4 字节</text>
+<text x="186" y="187" text-anchor="start" font-size="15">x</text>
+<text x="224" y="187" text-anchor="start" font-size="13">占 4 字节，里面装着 20</text>
+<line x1="492" y1="208" x2="492" y2="164" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="504" y="176" text-anchor="start" font-size="13">x 的地址就是</text>
+<text x="504" y="194" text-anchor="start" font-size="13">这一格的编号</text>
+<text x="320" y="300" text-anchor="middle" font-size="13">号码大的格子画在上面；两个格子的编号差几，就说明它们在内存里隔了几字节</text>
+</svg>
+
+    <figcaption>图 1 · 变量在内存里各占一格，每一格有自己的编号</figcaption>
+  </figure>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "同事在指针代码里看到这么一句，问你按这个写行不行：\n\n```c\nprintf(\"&amp;x = %p\\n\", &amp;x);\n```\n\n这一句的问题是什么？",
+    "opts": [
+      "没写强制转换：%p 只收通用指针，要写成 (void *)&amp;x",
+      "取错了对象：&amp;x 是 x 里存的值，地址要写 x 自己",
+      "用错了格式：地址用 %d 打印就行，%p 是给变量值用的",
+      "取错了层次：&amp;x 是 x 所在格子的编号，要多取一次才是地址"
+    ],
+    "ans": 0,
+    "why": "&amp;x 取到的就是 x 所在格子的编号，这一点没错。\n问题在打印这一步：%p 这个格式只接受通用指针，\n课件的写法是 printf(\"%p\\n\", (void *)&amp;x) 这种带转换的形式。\n其余三项都把「取地址」与「打印地址」两件事混了起来。"
+  },
+  {
+    "q": "你在课件那段程序里多加了一个变量，又加了一行打印距离。\n某一次运行，两行打印出来是这样：\n\n```term\n&amp;x = 0000004B409FFD0C\n&amp;y = 0000004B409FFD08\n```\n\n① 再跑一遍程序，两个地址会变吗？\n② 两个地址一减，结果是多少？单位是字节还是格子？\n③ 相减之前为什么要先把它们转成 (char *)？",
+    "answer": "① 不会变（这一版编译器上打印的是 -4）。\n两个变量都由编译器安排在栈上，相对位置固定；\n变的是它们整体的起始地址，地址之差不受影响。\n\n② 单位是字节。这一版 int 占 4 个字节，\n结果 -4 说明 y 的编号比 x 小 4，正好是相邻的下一格。\n\n③ 因为相减的单位跟着指针类型走。\n两个 int * 相减，结果按「隔了几个 int」算，\n差 4 字节会打印成 1；先转成 char *，单位才是一字节，\n隔多少字节就打印多少。",
+    "criteria": "① 答「不变」，得 1 分；\n再说出变的是起始地址、相对位置固定，得 1 分。\n② 答「字节」，得 1 分；\n能拿 4 字节与 int 的宽度对上（-4 就是相邻一格），得 1 分。\n③ 说出相减单位跟着所指类型走、char * 的单位是 1 字节，得 1 分。\n只答「先转一下才对」而说不出单位差异的，这一条不给分。"
+  }
+]'></div>
+
+  <h2>指针就是存放地址的变量</h2>
+
+  <p>知道了变量有地址，就可以说明本课的主角了。</p>
+
+  <p><b>指针</b>（pointer）是存放地址的变量；这个地址指向哪块内存，指针就能间接访问哪块内存。声明指针时要把所指的类型写在星号前面：</p>
+
+  <pre data-lang="cpp"><code>int  *p;    /* p 是指向 int 的指针：装着一个 int 变量的地址 */
+char *c;    /* 同样是「类型名 + 星号 + 变量名」；这里 c 用来装一个 char 变量的地址 */</code></pre>
+
+  <p>星号前面写什么类型，指针就指向什么类型。<code>int *p</code> 里的这个 <code>*</code> 是声明的一部分，它的作用是把 p 声明成指针类型，读作「<code>p</code> 是指向 <code>int</code> 的指针」。写 <code>int* p</code> 也合法、意思完全相同，两种写法在程序里的效果一样。</p>
+
+  <p>指针自己也是一个变量，因此它同样住在某个格子里、同样有自己的地址。这一点值得单独看一眼：<code>&amp;p</code> 与 <code>&amp;x</code> 是两个不同的编号，<code>p</code> 的内容是 <code>x</code> 的地址，而 <code>p</code> 自己的地址是另一个数。</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int x = 20;
+    int *p = &amp;x;
+
+    printf("x  = %d\n", x);
+    printf("p  = %p   （p 的内容：x 的地址）\n", (void *)p);
+    printf("&amp;p = %p   （p 自己的地址）\n", (void *)&amp;p);
+    printf("sizeof(p) = %zu\n", sizeof(p));
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>x  = 20
+p  = 00000011D5DFFDB4   （p 的内容：x 的地址）
+&amp;p = 00000011D5DFFDA8   （p 自己的地址）
+sizeof(p) = 8</code></pre>
+
+  <p><code>sizeof(p)</code> 是 8，而 <code>sizeof(int)</code> 是 4：在这一版编译器上，一个指针固定占 8 字节，与它指向什么类型无关。</p>
+
+  <p>这里有一个最容易混的地方，值得单独摆出来。<code>*</code> 在 C 里承担了两个不同的角色：</p>
+
+  <table>
+    <thead>
+      <tr><th>出现的位置</th><th>例子</th><th>含义</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>声明里</td><td><code>int *p = &amp;x;</code></td><td>类型记号：<code>p</code> 是一个指向 <code>int</code> 的指针</td></tr>
+      <tr><td>表达式里</td><td><code>*p</code></td><td>解引用：按 <code>p</code> 里的地址去访问那一格</td></tr>
+    </tbody>
+  </table>
+
+  <p>同一个符号，前者描述「<code>p</code> 是什么」，后者描述「顺着 <code>p</code> 去哪里」。读别人的代码时先看清它落在哪一边。与之配对的是 <code>&amp;</code>：<code>&amp;x</code> 取变量的地址，<code>&amp;p</code> 取指针变量自己的地址。</p>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "这一行一次声明了两个东西：\n\n```c\nint *p, k;\n```\n\np 与 k 各是什么类型？",
+    "opts": [
+      "两个都是指针：两个名字前面都跟着同一个类型 int",
+      "p 是指向 int 的指针，k 是普通的 int 变量",
+      "k 是指针、p 是普通变量：星号只作用在它后面的那个名字上",
+      "两个都是 int：这一行没写初始化，星号不参与类型声明"
+    ],
+    "ans": 1,
+    "why": "声明里的星号只跟着紧邻的那个名字走：\n它把 p 声明成指针，k 没被星号跟上，仍然是普通的 int。\n想让两个都是指针，得写成 int *p, *q;。\n所以读声明时先看星号贴着谁，别把整行当一个类型。"
+  },
+  {
+    "q": "有人把一段代码里的签名换成了下面三份之一，\n要在 main 里把 x 从 3 改成 8。\n哪一份能改到 main 里那个 x？\n\n```c\n/* A */\nvoid set8(int v) { v = 8; }\n\n/* B */\nint *set8(int v) { int t = v; t = 8; return &amp;t; }\n\n/* C */\nvoid set8(int *pv) { *pv = 8; }\n```",
+    "opts": [
+      "B：把新的值装在 t 里返回，调用方顺着返回的地址取回 8",
+      "A：参数 v 与 x 都是 int，赋值就是把 8 放进同一个格子里",
+      "C：调用方传 &amp;x，函数里 *pv = 8 写的就是 main 里的 x",
+      "三份都改不到：三份拿到的都只是 x 的一份副本，改不到原件"
+    ],
+    "ans": 2,
+    "why": "C 里调用方传的是 &amp;x，函数拿到的副本 pv 装着 x 的地址，\n*pv = 8 顺着地址写回 main 那一格。\nA 改的是参数副本 v，与 x 无关。\nB 返回的是局部变量 t 的地址——函数一返回那块内存就失效了；\n而且它连 x 的地址都没拿到。"
+  }
+]'></div>
+
+  <h2>顺着地址取值</h2>
+
+  <p><b>解引用</b>（dereference）指按一个指针里记的地址去访问它所指向的那一格，也就是「顺着地址取值」。它是本课最核心的动作，因为它把「间接」这件事落到了具体的一格上：<code>*p</code> 访问的那一格由 <code>p</code> 的内容决定，与 <code>p</code> 自己所在的格子无关。</p>
+
+  <p>上一节那段程序已经演示了它。接下来换个角度：让 <code>p</code> 先指 <code>x</code>、再指 <code>y</code>，看同一个 <code>*p</code> 两次读到的东西是否相同。</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int x = 20, y = 30;
+    int *p = &amp;x;
+
+    printf("*p = %d\n", *p);     /* p 指着 x */
+    p = &amp;y;                      /* 改成指着 y：改的是 p 自己的内容 */
+    printf("*p = %d\n", *p);
+    *p = 35;                     /* 顺着地址写 */
+    printf("*p = %d, y = %d, x = %d\n", *p, y, x);
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>*p = 20
+*p = 30
+*p = 35, y = 35, x = 20</code></pre>
+
+  <p>三行输出连起来是解引用的完整语义：</p>
+
+  <ul>
+    <li><code>p = &amp;y</code> 只改了 <code>p</code> 装着哪个地址，<code>x</code> 与 <code>y</code> 的内容都没动；</li>
+    <li><code>*p = 35</code> 改的是 <code>p</code> 当前指着的 <code>y</code>，所以 <code>y</code> 变成 35，而 <code>x</code> 仍然是 20；同一个写法在前一段程序里改的是 <code>x</code>，因为那时 <code>p</code> 指 <code>x</code>。</li>
+  </ul>
+
+  <p><b>解引用写在赋值号左边，改的就是那一格的内容；写在右边，读到的是那一格的内容。</b></p>
+
+  <p>关于空指针与未初始化指针：<code>int *p;</code> 这样只声明不赋值，<code>p</code> 里是一段没有意义的比特，这时候读或写 <code>*p</code>，结果是不可预期的，可能给出一个乱七八糟的值，也可能让程序直接结束。C 用空指针表示「不指向任何东西」：</p>
+
+  <pre data-lang="cpp"><code>int *p = NULL;      /* p 显式地不指向任何对象 */</code></pre>
+
+  <p>对空指针求值是有明确规定的：判定 <code>p == NULL</code> 或 <code>if (p)</code> 都是合法操作，也是后面接住内存申请结果的落点；而 <code>*p</code> 里的 <code>p</code> 一旦为空，程序的行为就没有规定了。这条阅读习惯可以现在就养成：<b>看到 <code>*p</code> 或者 <code>p-&gt;name</code> 这样的写法，先确认 <code>p</code> 指着东西。</b>（<code>-&gt;</code> 读作「顺着指针去取成员」，下一课讲结构体时再展开。）</p>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "同一段程序后面又接了四行：\n\n```c\n    p = &amp;y;      /* y 是另一个 int，内容是 30 */\n    *p = 35;\n    printf(\"x = %d\\n\", x);\n    printf(\"y = %d\\n\", y);\n```\n\n两行 printf 分别打印什么？\n\n① 把要说清的这一步写出来：\n第一行改的是哪一格的内容？第二行写的又是哪一格？\n② 为什么同一个写法写第二行，换了前面那一行，改的就变成了另一个变量？",
+    "answer": "① p = &amp;y; 只改 p 自己这一格，往里面装了 y 的地址；\nx 与 y 的内容都没动。\n*p = 35; 按 p 当前装的地址写进去，落到 y 那一格。\n\n所以两行打印是 x = 20、y = 35。\n\n② 因为 *p 落到哪一格，由 p 的内容决定，与 p 自己的位置无关。\np 指着 x 时它改 x，改成指着 y 之后同一句就改 y。\n解引用写在赋值号左边，改的是那一格的内容。",
+    "criteria": "① 打印结果对（x = 20、y = 35），得 1 分；\n说清 p = &amp;y 只改 p 这一格、*p = 35 落在 y 上，得 2 分。\n② 说出「落到哪一格由 p 的内容决定」，得 2 分。\n答成「*p 总是改最后一个赋值的那个变量」这类口诀的，不给分——\n要落到「p 里装的是哪个地址」这一步。"
+  },
+  {
+    "q": "同事写了一个函数，说是「把传进来的数清零」：\n\n```c\nvoid clear(int *pv) {\n    *pv = 0;\n}\n```\n\n他在 main 里这样调用，编译运行都没报错，\n但程序一跑就结束了：\n\n```c\n    int *q;\n    clear(q);\n```\n\n① 出问题的根源在哪一格？\n② 这一句要改对，该往里传什么？\n③ 由此说一条读指针代码的习惯：看到 *pv 这种写法，先确认什么？",
+    "answer": "① 根源在 q 这一格：int *q; 只声明不赋值，\nq 里是没有意义的比特，它没有指着任何一块内存。\n函数里 *pv = 0 就顺着这个没有意义的地址去写，行为没有规定。\n\n② 传一个真实变量的地址，例如先 int x = 5; 再 clear(&amp;x);。\n要让 q 自己先指着东西，也可以写 int *q = NULL;，\n等它真的指向某个变量之后再用。\n\n③ 先确认 pv（或任何一个要被解引用的指针）指着东西：\n它有没有被赋过地址、是不是 NULL。\nC 用空指针表示「不指向任何东西」，\n而 *pv 里的 pv 一旦为空或没初始化，程序的行为就没有规定了。",
+    "criteria": "① 指出 q 未初始化、里面没有有效地址，得 2 分。\n只说「野指针」而不指出 q 这一格的状态，给 1 分。\n② 答出要传真实变量的地址（或先让 q 指向某块内存），得 1 分。\n③ 答出「先确认指针指着东西／不是 NULL／已初始化」，得 2 分。\n把根因说成「clear 函数写错了」的，第 ① 条不给分。"
+  }
+]'></div>
+
+  <h2>传出去的是副本</h2>
+
+  <p>函数调用是解引用最常见的用场。先看一个没起作用的交换：</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+void swap_wrong(int a, int b) {
+    int t = a;
+    a = b;
+    b = t;
+}
+
+int main(void) {
+    int x = 3, y = 8;
+    swap_wrong(x, y);
+    printf("x = %d, y = %d\n", x, y);
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>x = 3, y = 8</code></pre>
+
+  <p>函数体里那三行确实交换了两个值，可调用方这份 <code>x</code>、<code>y</code> 一点没变。原因在参数传递这一步：调用 <code>swap_wrong(x, y)</code> 时，函数得到的 <code>a</code>、<code>b</code> 是 <code>x</code>、<code>y</code> 的<b>副本</b>。函数里改的一直是 <code>a</code>、<code>b</code> 这两格，<code>main</code> 里的 <code>x</code>、<code>y</code> 从头到尾没被碰过。</p>
+
+  <p>要让函数改动调用方的变量，就得把地址传进去，让它在函数里通过解引用写回原格：</p>
+
+  <pre data-lang="cpp"><code>void swap_right(int *pa, int *pb) {
+    int t = *pa;
+    *pa = *pb;
+    *pb = t;
+}
+
+int main(void) {
+    int x = 3, y = 8;
+    swap_right(&amp;x, &amp;y);
+    printf("x = %d, y = %d\n", x, y);
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>x = 8, y = 3</code></pre>
+
+  <p>这次两个名字都换过来了。函数体同样只有三行赋值，起作用的差别发生在参数传递那一步：<code>swap_wrong</code> 收到的是 <code>3</code> 和 <code>8</code>，<code>swap_right</code> 收到的是 <code>x</code> 与 <code>y</code> 的地址。<code>pa</code>、<code>pb</code> 依然是副本，但副本里装的是地址，顺着地址就能回到调用方那一格。C 里只有一套参数传递规则，都是传值；要让函数改动调用方的变量，就传地址过去。</p>
+
+  <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="左边传值时函数里的 a、b 是副本，右边传地址时函数里的 pa、pb 里装着 x、y 的地址">
+<svg viewBox="0 0 640 410" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<line x1="320" y1="30" x2="320" y2="348" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="160" y="24" text-anchor="middle" font-size="15">传值：函数里的 a 是副本</text>
+<text x="480" y="24" text-anchor="middle" font-size="15">传地址：函数里的 pa 记着 x 的地址</text>
+<g fill="none">
+<rect x="60" y="50" width="200" height="38" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="60" y="88" width="200" height="38" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="380" y="50" width="200" height="38" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="380" y="88" width="200" height="38" rx="6" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="74" y="74" text-anchor="start" font-size="15">x</text>
+<text x="108" y="74" text-anchor="start" font-size="13">内容 3</text>
+<text x="248" y="74" text-anchor="end" font-size="13">0x7ffd38</text>
+<text x="74" y="112" text-anchor="start" font-size="15">y</text>
+<text x="108" y="112" text-anchor="start" font-size="13">内容 8</text>
+<text x="248" y="112" text-anchor="end" font-size="13">0x7ffd3c</text>
+<text x="394" y="74" text-anchor="start" font-size="15">x</text>
+<text x="428" y="74" text-anchor="start" font-size="13">内容 3</text>
+<text x="568" y="74" text-anchor="end" font-size="13">0x7ffd38</text>
+<text x="394" y="112" text-anchor="start" font-size="15">y</text>
+<text x="428" y="112" text-anchor="start" font-size="13">内容 8</text>
+<text x="568" y="112" text-anchor="end" font-size="13">0x7ffd3c</text>
+<text x="160" y="146" text-anchor="middle" font-size="13">main 里这两个变量，调用中一直没动</text>
+<text x="480" y="146" text-anchor="middle" font-size="13">main 里这两个变量，调用中一直没动</text>
+<line x1="60" y1="136" x2="60" y2="214" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<line x1="260" y1="136" x2="260" y2="214" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<line x1="380" y1="136" x2="380" y2="214" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<line x1="580" y1="136" x2="580" y2="214" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<g fill="none">
+<rect x="60" y="214" width="200" height="38" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="60" y="252" width="200" height="38" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="380" y="214" width="200" height="38" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="380" y="252" width="200" height="38" rx="6" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="74" y="238" text-anchor="start" font-size="15">a</text>
+<text x="96" y="238" text-anchor="start" font-size="13">副本 3</text>
+<text x="96" y="276" text-anchor="start" font-size="13">副本 8</text>
+<text x="394" y="238" text-anchor="start" font-size="15">pa</text>
+<text x="424" y="238" text-anchor="start" font-size="13">内容 0x7ffd38</text>
+<text x="424" y="276" text-anchor="start" font-size="13">内容 0x7ffd3c</text>
+<line x1="60" y1="208" x2="60" y2="214" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<line x1="380" y1="208" x2="380" y2="214" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="160" y="314" text-anchor="middle" font-size="13">函数里改 a、b，改的是这两格，main 看不见</text>
+<text x="480" y="314" text-anchor="middle" font-size="13">函数里写 *pa，改的是 main 里那一格</text>
+<text x="160" y="366" text-anchor="middle" font-size="13">左：副本里装的是值</text>
+<text x="480" y="366" text-anchor="middle" font-size="13">右：副本里装的是地址</text>
+<text x="320" y="392" text-anchor="middle" font-size="13">两次调用传出去的都是副本；副本里装地址的那份，顺着地址能回到原件</text>
+</svg>
+
+    <figcaption>图 2 · 两次调用都传了副本，差别在于副本里装的是值还是地址</figcaption>
+  </figure>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "课件里那个没起作用的交换：\n\n```c\nvoid swap_wrong(int a, int b) {\n    int t = a;\n    a = b;\n    b = t;\n}\n\nint main(void) {\n    int x = 3, y = 8;\n    swap_wrong(x, y);\n    printf(\"x = %d, y = %d\\n\", x, y);\n    return 0;\n}\n```\n\n它打印 x = 3, y = 8。为什么？",
+    "opts": [
+      "函数里的三行确实交换了，但交换是在副本上做的，与 main 里那两个无关",
+      "函数里三行交换的顺序写错了，正确顺序要先交换 b 再交换 a，值才会传出来",
+      "参数 a、b 是 x、y 的别名，本应一起变，是编译器把这三行优化掉了",
+      "x、y 其实是交换过的，只是 printf 按声明顺序打印，看起来像没换"
+    ],
+    "ans": 0,
+    "why": "参数传递这一步给出的是副本：函数得到的 a、b 各自占一格，\n初始化成 3 和 8。三行赋值改的一直是这两格，\nmain 里的 x、y 从头到尾没被碰过。\n要改到调用方，就得把地址传进去（swap_right 那一版）。"
+  },
+  {
+    "q": "换成带地址参数的交换版本之后，同样只有三行赋值，\n可它把 x、y 真的换了过来：\n\n```c\nvoid swap_right(int *pa, int *pb) {\n    int t = *pa;\n    *pa = *pb;\n    *pb = t;\n}\n```\n\n① 调用 swap_right(&amp;x, &amp;y) 时，传出去的那两个值是什么？\n② pa、pb 是副本这件事没有变，为什么这次却能改到调用方的变量？",
+    "answer": "① 传出去的是 x 与 y 的地址，也就是 &amp;x 与 &amp;y 这两个编号。\n不是 3 和 8。\n\n② 副本里装的东西不一样。\n传值时副本里装的是值，函数怎么改都出不了自己那一格；\n传地址时副本 pa、pb 里装的是 x、y 的地址，\n顺着地址解引用写作 *pa、*pb，落的还是调用方那两格。\nC 里只有一套传递规则，都是传值；\n要让函数改到调用方的变量，就把地址传过去。",
+    "criteria": "① 答出传的是地址（&amp;x、&amp;y 两个编号），得 2 分。\n答成「传的是 x、y 本身」或「传的是 3 和 8」的，不给分。\n② 说出「副本里装的是地址、顺着地址能回到原件」，得 2 分；\n能顺带说出 C 只有传值一条规则、差别在副本装什么，再得 1 分。\n只答「传指针就是传址，所以能改」而说不出机制的，第 ② 条给 1 分。"
+  }
+]'></div>
+
+  <h2>数组名与指针</h2>
+
+  <p>指针与数组的关系，是上面这套地址算术最直接的用法。看 <code>int a[4] = {10, 20, 30, 40};</code> 这一行：数组在内存里就是 4 个挨着的 <code>int</code> 格，<code>a</code> 这个名字在多数场合被当作首元素的地址来用。</p>
+
+  <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int a[4] = {10, 20, 30, 40};
+    int *p = a;                  /* 数组名在这里就是首元素的地址 */
+
+    printf("a      = %p\n", (void *)a);
+    printf("p      = %p\n", (void *)p);
+    printf("a[2]   = %d\n", a[2]);
+    printf("*(p+2) = %d\n", *(p + 2));
+    printf("(p+1) 比 p 大 %td 字节\n", (char *)(p + 1) - (char *)p);
+    return 0;
+}</code></pre>
+
+  <pre data-lang="term"><code>a      = 000000E4975FFB10
+p      = 000000E4975FFB10
+a[2]   = 30
+*(p+2) = 30
+(p+1) 比 p 大 4 字节</code></pre>
+
+  <p><code>p = a</code> 之后 <code>p</code> 与 <code>a</code> 打印出同一个编号，说明数组名给出的就是首元素的地址。更值得看的是最后一行：<code>p + 1</code> 只加了 1，地址却前进了 4 个字节——正好是一个 <code>int</code> 的宽度。</p>
+
+  <p>这里就显出了前面留下的那个问题：指针类型为什么必须写清楚。<code>p + 1</code> 指的是「下一个 <code>int</code>」，编译器按 <code>sizeof(int)</code> 折算出要加的字节数；如果 <code>p</code> 是 <code>char *</code>，同样写 <code>p + 1</code> 就只前进 1 个字节。<b>指针加减的单位是它所指类型的宽度，指针类型决定解引用读几字节、加减走几步。</b></p>
+
+  <p>由此，C 里访问数组元素有两种写法，它们说的是同一个格子：</p>
+
+  <table>
+    <thead>
+      <tr><th>写法</th><th>含义</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>a[2]</code></td><td>数组第 2 个元素</td></tr>
+      <tr><td><code>*(p + 2)</code></td><td>从 <code>a</code> 出发走 2 个元素，再解引用</td></tr>
+    </tbody>
+  </table>
+
+  <p>这两种写法可以互相替换，正是 C 把数组与指针绑在一起的起点。</p>
+
+  <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="数组四个连续格子的地址与内容，指针 p 装着首元素地址，p 加 2 落在第三个格子上">
+<svg viewBox="0 0 640 300" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="16" y="26" text-anchor="start" font-size="15">数组 a 的 4 个格子挨着放，指针 p 里装着 a[0] 的地址</text>
+<g fill="none">
+<rect x="60" y="46" width="130" height="56" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="190" y="46" width="130" height="56" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="320" y="46" width="130" height="56" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="450" y="46" width="130" height="56" rx="0" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<rect x="320" y="46" width="130" height="56" rx="0" fill="currentColor" fill-opacity="0.14" stroke="currentColor" stroke-width="1.5"/>
+<text x="125" y="36" text-anchor="middle" font-size="14">a[0]</text>
+<text x="255" y="36" text-anchor="middle" font-size="14">a[1]</text>
+<text x="385" y="36" text-anchor="middle" font-size="14">a[2]</text>
+<text x="515" y="36" text-anchor="middle" font-size="14">a[3]</text>
+<text x="125" y="80" text-anchor="middle" font-size="15">10</text>
+<text x="255" y="80" text-anchor="middle" font-size="15">20</text>
+<text x="385" y="80" text-anchor="middle" font-size="15">30</text>
+<text x="515" y="80" text-anchor="middle" font-size="15">40</text>
+<text x="125" y="122" text-anchor="middle" font-size="13">0x7ffd10</text>
+<text x="255" y="122" text-anchor="middle" font-size="13">0x7ffd14</text>
+<text x="385" y="122" text-anchor="middle" font-size="13">0x7ffd18</text>
+<text x="515" y="122" text-anchor="middle" font-size="13">0x7ffd1c</text>
+<text x="255" y="146" text-anchor="middle" font-size="13">每格占 4 字节，相邻两格差 4 号</text>
+<rect x="60" y="196" width="300" height="44" rx="6" fill="currentColor" fill-opacity="0.13" stroke="currentColor" stroke-width="1.5"/>
+<text x="74" y="224" text-anchor="start" font-size="15">p</text>
+<text x="112" y="224" text-anchor="start" font-size="13">内容 0x7ffd10，就是 a 的地址</text>
+<line x1="80" y1="196" x2="80" y2="104" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<line x1="385" y1="128" x2="385" y2="182" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<line x1="385" y1="182" x2="385" y2="104" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="399" y="174" text-anchor="start" font-size="13">p + 2 落在这里</text>
+<text x="320" y="272" text-anchor="middle" font-size="13">a[i] 与 *(p + i) 说的是同一个格子：p 加 1 不是一个字节，是一个 int 的宽度</text>
+</svg>
+
+    <figcaption>图 3 · 指针加 1 前进的是一个元素的宽度，不是一个字节</figcaption>
+  </figure>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "同一个地址，按两种类型去算：\n\n```c\n    int a[4] = {10, 20, 30, 40};\n    int *p = a;\n\n    char *c = (char *)a;\n    printf(\"%td %td\\n\", (char *)(p + 2) - (char *)p,\n                          (c + 2) - c);\n```\n\n这一行会打印什么？为什么？",
+    "opts": [
+      "打印 2 和 2：两个指针加的是同一个 2，前进的字节数一样",
+      "打印 2 和 8：p 指的元素占字节多，所以它走得更远一些",
+      "打印 8 和 2：p 加的是 int 宽度，c 加的是 char 宽度",
+      "打印 4 和 4：加 2 就是加两字节，两个都只前进 2 字节"
+    ],
+    "ans": 2,
+    "why": "指针加减的单位是它所指类型的宽度，不是 1 个字节。\np 是 int *，p + 1 前进 sizeof(int) = 4 字节，p + 2 前进 8；\nc 是 char *，c + 2 就只前进 2 字节。\n同一个地址、同一个 2，走出的距离不同——\n这正是声明里必须写清所指类型的原因。"
+  },
+  {
+    "q": "还看这个数组：\n\n```c\n    int a[4] = {10, 20, 30, 40};\n    int *p = a;\n\n    printf(\"%d\\n\", p[2]);\n```\n\n① p[2] 打印几？它说的是数组里哪一个格子？\n② p[2] 与 *(p + 2)、a[2] 这三种写法之间是什么关系？\n③ 数组名 a 与指针 p 有一处并不等价——两处对 sizeof 会给出不同的数，\n各是多少？为什么？",
+    "answer": "① 打印 30，说的是 a[2] 那一格（数组第 3 个元素）。\n\n② 三种写法说的是同一个格子。\np[i] 就是 *(p + i) 的另一种写法，\na[2] 与 *(p + 2) 也等价。\n这正是「数组名在多数场合被当作首元素地址来用」的落点。\n\n③ sizeof(a) 是 16，sizeof(p) 是 8。\na 是整个数组，4 个 int 一共 16 字节；\np 是一个指针变量，本机上一个指针固定 8 字节。\n所以在 sizeof 这类少数场合，数组名不退化，a 还是那个数组。",
+    "criteria": "① 答出 30 并指出是 a[2]，得 1 分。\n② 说出三种写法等价（p[i] 即 *(p + i)），得 2 分。\n③ 两个数各自对（16 与 8），得 2 分；\n能说出「a 是整个数组、p 是指针变量」，得 1 分。\n③ 里答成 4 与 8（以为 sizeof(a) 是元素个数）的，这一条不给分。"
+  }
+]'></div>
+
+  <p>把这一课与本科目的主线接上。链表的每一个结点里，除了数据，还要存一个指向下一个结点的指针；所谓「从头结点开始往后走一个」，就是取 <code>next</code> 里那个地址，再解引用到下一个结点上。下一课把这些指针对准结构体，链表的结点就是「数据加一个装地址的成员」。项目里结点的申请与释放还要再往后一课，而指针是走通那条链的唯一入口。</p>
+
+  <div class="lesson-note">
+    <b>本课只写几行</b>
+    <p>本课的代码都只有十行上下，不要求写完整程序：敲一遍、改一行、看输出。本课之后，指针会在每一课里出现——结构体的成员访问、链表结点的串联、动态数组返回的那块内存，用的都是这一套地址与解引用。</p>
+  </div>
+
+  <h2>练习：把每一步的地址读出来</h2>
+
+  <p>把这段存成 <code>addr.c</code>，编译时把警告开关也带上：</p>
+
+  <pre data-lang="sh"><code>gcc -std=c17 -Wall -Wextra -o addr addr.c
+./addr</code></pre>
+
+  <p>下面四步都用这条命令。<code>-Wall -Wextra</code> 会让编译器把可疑的地方报出来，写指针代码时这个习惯很值钱。</p>
+
+  <p>编译通过以后跑一遍，屏幕上会出现三四行输出。下面的问题都对着这几行输出问。</p>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">练习</span>
+      <span class="lesson-practice__title">第 1 步 · 打印一个变量的地址</span>
+    </div>
+
+      <p>先只写这几行，跑出你自己的那份输出。</p>
+
+      <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+int main(void) {
+    int x = 20;
+
+    printf("x  = %d\n", x);
+    printf("&amp;x = %p\n", (void *)&amp;x);
+    printf("sizeof(x) = %zu, sizeof(int) = %zu\n", sizeof(x), sizeof(int));
+    return 0;
+}</code></pre>
+
+      <ol>
+        <li>输出里哪一个是 x 的内容，哪一个是它的地址？</li>
+        <li>再跑一遍程序，地址变了吗？内容变了吗？</li>
+        <li>把 <code>int x = 20;</code> 改成 <code>int x = 20, y = 30;</code>，再加一行 <code>printf("&amp;y - &amp;x = %td\n", (char *)&amp;y - (char *)&amp;x);</code>——两个变量的编号差几个字节？</li>
+      </ol>
+  </div>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">练习</span>
+      <span class="lesson-practice__title">第 2 步 · 改一行，看谁变了</span>
+    </div>
+
+      <p>在上面那段程序后面加上三行，再跑一次。</p>
+
+      <pre data-lang="cpp"><code>    int *p = &amp;x;
+    *p = 35;
+    printf("x = %d, *p = %d\n", x, *p);</code></pre>
+
+      <ol>
+        <li><code>p</code> 没有被赋值，<code>x</code> 为什么会变？</li>
+        <li>把 <code>*p = 35;</code> 换成 <code>p = &amp;y;</code>（先声明 <code>int y = 30;</code>）——这一行还能改到 x 吗？为什么？</li>
+        <li>在 <code>*p = 35;</code> 这一行前后各加一句 <code>printf("x = %d\n", x);</code>，把三次 x 的值写下来。</li>
+      </ol>
+  </div>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">练习</span>
+      <span class="lesson-practice__title">第 3 步 · 一个指针换两个目标</span>
+    </div>
+
+      <p>写一段小程序，让 <code>p</code> 先指 <code>x</code>、再指 <code>y</code>，中间各打印一次 <code>*p</code>。</p>
+
+      <pre data-lang="cpp"><code>    int x = 20, y = 30;
+    int *p = &amp;x;
+
+    printf("*p = %d\n", *p);
+    p = &amp;y;
+    printf("*p = %d\n", *p);
+    printf("&amp;p = %p\n", (void *)&amp;p);</code></pre>
+
+      <ol>
+        <li>两次 <code>*p</code> 输出不同，是 <code>p</code> 的内容变了还是 <code>*p</code> 这条写法变了？</li>
+        <li>最后一行打印的 <code>&amp;p</code> 与前面两个变量的地址有什么关系？它是 x 或 y 的地址吗？</li>
+        <li>加一句 <code>*p = *p + 1;</code>，输出里哪一个数变了？</li>
+      </ol>
+  </div>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">练习</span>
+      <span class="lesson-practice__title">第 4 步 · 看看交换到底改了谁</span>
+    </div>
+
+      <p>先只写 <code>swap_wrong</code> 和它的调用，跑一次：</p>
+
+      <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
+
+void swap_wrong(int a, int b) {
+    int t = a;
+    a = b;
+    b = t;
+}
+
+int main(void) {
+    int x = 3, y = 8;
+    swap_wrong(x, y);
+    printf("x = %d, y = %d\n", x, y);
+    return 0;
+}</code></pre>
+
+      <p>然后把 <code>swap_right</code> 加进去，把 <code>main</code> 里的调用换成 <code>swap_right(&amp;x, &amp;y);</code>，再跑一次：</p>
+
+      <pre data-lang="cpp"><code>void swap_right(int *pa, int *pb) {
+    int t = *pa;
+    *pa = *pb;
+    *pb = t;
+}</code></pre>
+
+      <ol>
+        <li>调用 <code>swap_wrong(x, y)</code> 之后打印 <code>x</code>、<code>y</code>，为什么还是原来的两个数？</li>
+        <li>调用 <code>swap_right(&amp;x, &amp;y)</code> 时传进去的是哪两个值？</li>
+        <li>在 <code>swap_right</code> 里加一行 <code>printf("pa = %p\n", (void *)pa);</code>，它打印的地址和 <code>main</code> 里哪个变量对得上？</li>
+      </ol>
+  </div>
+
+  <h2>小结</h2>
+
+  <ul>
+    <li><b>地址</b>是内存里某一格的编号；变量一旦被划出空间，就有名字与地址两个可观察的量。</li>
+    <li><b>指针</b>是存放地址的变量；<code>&amp;x</code> 取变量的地址，<code>*p</code> 按 <code>p</code> 里的地址访问它指向的那一格。</li>
+    <li><code>*</code> 在声明里是类型记号（<code>int *p</code> 说明 <code>p</code> 的类型），在表达式里是解引用（<code>*p</code> 是那一格的内容），两者的读法要分开。</li>
+    <li>指针类型决定解引用读几字节、加减走几步：<code>p + 1</code> 前进的是「一个所指类型的宽度」。</li>
+    <li>函数参数是副本；副本里装的是地址时，函数才能顺着地址改到调用方的变量——<code>swap</code> 正是这件事最小的一例。</li>
+    <li>数组名在多数场合就是首元素地址，<code>a[i]</code> 与 <code>*(p + i)</code> 等价。</li>
+    <li>下一课把这些指针对准结构体：链表的结点就是「数据加一个装地址的成员」。</li>
+  </ul>
+
+  <ul class="lesson-resources">
+    <li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2310.pdf">ISO/IEC 9899（C17）标准草案 N2310 第 7.22.3 节 内存管理函数</a><span class="lesson-resources__meta">官方草案 · 本机已落盘；「返回空指针」「free 之后不能再用」这些契约的原文，本课的空指针一节按它写</span></li>
+    <li><a href="https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html">GCC 的 C 方言选项 <code>-std=c17 / -std=c23</code>（GCC 官方手册）</a><span class="lesson-resources__meta">官方文档 · 本机已落盘；编译命令里那个 <code>-std=c17</code> 是什么，按它核对</span></li>
+    <li>王道《2027 数据结构考研复习指导》第 1 章 绪论（1.1–1.2）<span class="lesson-resources__meta">书 · 本机有目录与章节结构（含原书页码），可查本章在这本书里的位置</span></li>
+  </ul>
+
+  <div class="lesson-related">
+    <a href="0001-intro.html">上节课：从一次插入看数据结构</a>
+  </div>
+
+  <!-- ── 提问提示：固定写法，别删 ── -->
+
+  <div class="lesson-ask">
+    <b>没看懂？随时问</b>
+    把看不懂的段落（或报错）原样复制回会话，说一句哪里不懂就行，我只解释这一段，不打断你的进度。
+  </div>
+
+  <!-- ── 上/下节课指针由渲染器按 curriculum.yaml 的 nodes 顺序算（第一课无 --prev、最后一课无 --next） ── -->
+
+  <nav class="lesson-nav" aria-label="上一课 / 下一课">
+    <a class="lesson-nav__link lesson-nav__link--prev" href="0001-intro.html">
+      <span class="lesson-nav__dir">上节课</span>
+      <span class="lesson-nav__title">从一次插入看数据结构</span>
+    </a>
+    <a class="lesson-nav__link lesson-nav__link--next" href="0003-c-recap.2.html">
+      <span class="lesson-nav__dir">下节课</span>
+      <span class="lesson-nav__title">结构体：把字段打包带走</span>
+    </a>
+  </nav>
+
+  <footer class="lesson-footer">
+    StudyMate · 0002 指针：变量住在哪里 · 本地学习工作区
+  </footer>
+
+</article>
+
+<script src="../../../assets/sayo/sayo.js"></script>
+
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/lesson-toc.js" defer></script>
+<script>LearnTheme.wire(document.getElementById('lesson-theme-checkbox'));</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<svg viewBox="0 0 700 460" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif" xmlns="http://www.w3.org/2000/svg">
+<text x="20" y="22" font-size="15" text-anchor="start" font-weight="600">一帧画面由几层叠成</text>
+<text x="20" y="60" font-size="15" text-anchor="start" font-weight="600">图层栈</text>
+<text x="20" y="84" font-size="14" text-anchor="start">同一块画布，一层挨着一层</text>
+<g fill="none">
+<rect x="20" y="126" width="260" height="240" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="42" y="142" width="140" height="42" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="42" y="196" width="140" height="42" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="42" y="250" width="140" height="42" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="42" y="304" width="140" height="42" rx="4" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="52" y="168" font-size="14" text-anchor="start">字幕</text>
+<text x="52" y="222" font-size="14" text-anchor="start">光效</text>
+<text x="52" y="276" font-size="14" text-anchor="start">主体</text>
+<text x="52" y="330" font-size="14" text-anchor="start">背景视频</text>
+<text x="196" y="168" font-size="14" text-anchor="start">后画</text>
+<text x="196" y="330" font-size="14" text-anchor="start">先画</text>
+<text x="366" y="168" font-size="14" text-anchor="start">上</text>
+<text x="366" y="330" font-size="14" text-anchor="start">下</text>
+<text x="330" y="96" font-size="14" text-anchor="end">叠放顺序</text>
+<line x1="340" y1="142" x2="340" y2="346" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<line x1="340" y1="142" x2="334" y2="142" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<line x1="340" y1="346" x2="334" y2="346" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="400" y="60" font-size="15" text-anchor="start" font-weight="600">合成结果</text>
+<text x="400" y="84" font-size="14" text-anchor="start">观众看到的就是这一层</text>
+<g fill="none">
+<rect x="400" y="126" width="260" height="164" rx="6" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="414" y="152" font-size="14" text-anchor="start">字幕</text>
+<text x="646" y="152" font-size="14" text-anchor="end">光效</text>
+<text x="414" y="210" font-size="14" text-anchor="start">主体</text>
+<text x="414" y="266" font-size="14" text-anchor="start">背景视频</text>
+<text x="20" y="418" font-size="14" text-anchor="start">合成把这几层从下往上合并成一张画面：底层先画，上层后画，每画一层都可能盖住</text>
+<text x="20" y="442" font-size="14" text-anchor="start">下面一部分。画布尺寸、帧率与时长，在新建合成的时候定下。</text>
+</svg>

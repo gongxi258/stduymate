@@ -1,0 +1,43 @@
+<svg viewBox="0 0 700 580" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif" xmlns="http://www.w3.org/2000/svg">
+<text x="20" y="22" font-size="15" text-anchor="start" font-weight="600">同一段素材，两种改法</text>
+<text x="20" y="56" font-size="15" text-anchor="start" font-weight="600">剪辑软件：改时间线上的位置</text>
+<text x="20" y="82" font-size="14" text-anchor="start">片段沿时间线排列，改的是顺序、长短与落点</text>
+<g fill="none">
+<rect x="20" y="96" width="660" height="88" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="46" y="112" width="190" height="36" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="256" y="112" width="150" height="36" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="426" y="112" width="190" height="36" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<line x1="46" y1="172" x2="636" y2="172" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5"/>
+<line x1="46" y1="168" x2="46" y2="176" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<line x1="256" y1="168" x2="256" y2="176" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<line x1="426" y1="168" x2="426" y2="176" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<line x1="616" y1="168" x2="616" y2="176" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+</g>
+<text x="141" y="135" font-size="15" text-anchor="middle">片段 A</text>
+<text x="331" y="135" font-size="15" text-anchor="middle">片段 B</text>
+<text x="521" y="135" font-size="15" text-anchor="middle">片段 C</text>
+<text x="46" y="200" font-size="14" text-anchor="start">0s</text>
+<text x="256" y="200" font-size="14" text-anchor="start" font-weight="600">拖到这里</text>
+<text x="616" y="200" font-size="14" text-anchor="end">10s</text>
+<text x="20" y="234" font-size="14" text-anchor="start">画面一个像素没动，动的只是「谁在什么时候出现」。</text>
+<line x1="20" y1="248" x2="680" y2="248" stroke="currentColor" stroke-opacity="0.2" stroke-width="1.5"/>
+<text x="20" y="292" font-size="15" text-anchor="start" font-weight="600">合成软件：改一帧里的画面</text>
+<text x="20" y="318" font-size="14" text-anchor="start">元素一层层叠进同一块画布，改的是画面本身的构成</text>
+<rect x="20" y="332" width="400" height="154" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="32" y="366" font-size="14" text-anchor="start">一帧</text>
+<rect x="80" y="450" width="300" height="28" rx="3" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5"/>
+<text x="92" y="469" font-size="14" text-anchor="start">背景视频</text>
+<rect x="80" y="416" width="300" height="28" rx="3" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5"/>
+<text x="92" y="435" font-size="14" text-anchor="start">主体</text>
+<rect x="80" y="382" width="300" height="28" rx="3" fill="currentColor" fill-opacity="0.09" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5"/>
+<text x="92" y="401" font-size="14" text-anchor="start">光效</text>
+<rect x="80" y="348" width="300" height="28" rx="3" fill="currentColor" fill-opacity="0.09" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5"/>
+<text x="92" y="367" font-size="14" text-anchor="start">字幕</text>
+<text x="440" y="367" font-size="14" text-anchor="middle">底层先画</text>
+<text x="440" y="469" font-size="14" text-anchor="middle">上层后画</text>
+<line x1="620" y1="348" x2="620" y2="478" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<line x1="620" y1="348" x2="614" y2="348" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<line x1="620" y1="478" x2="614" y2="478" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="20" y="530" font-size="14" text-anchor="start">观众看到的是叠完之后的那一张，不是任何单独一层。</text>
+<text x="20" y="558" font-size="14" text-anchor="start">改画面里有什么，是合成软件的事；改谁排在什么时候，是剪辑软件的事。</text>
+</svg>

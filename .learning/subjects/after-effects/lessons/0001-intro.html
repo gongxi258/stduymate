@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>从一段录屏说起 · After Effects 合成与后期</title>
+
+<!-- 共享层在 .learning/assets/，课件在 .learning/subjects/<slug>/lessons/ 下，所以是 ../../../assets/ -->
+<link rel="stylesheet" href="../../../assets/sayo/sayo.css">
+<link rel="stylesheet" href="../../../assets/learn-theme.css">
+<link rel="stylesheet" href="../assets/style.css">
+
+<!-- 主题要在首帧前应用，避免闪白/闪黑 -->
+<script src="../../../assets/learn-theme.js"></script>
+<script>LearnTheme.apply();</script>
+</head>
+
+<body class="lesson-body">
+
+<nav class="lesson-bar">
+  <a href="../index.html">← 返回课程</a>
+  <span>After Effects 合成与后期</span>
+  <span class="lesson-bar__no">0001</span>
+  <!-- 课件页自带主题开关：学生从文件管理器直接打开课件时也能切暗色 -->
+  <label class="syo-toggle syo-toggle--theme lesson-bar__toggle" title="切换深浅主题" aria-label="切换深浅主题">
+    <input type="checkbox" id="lesson-theme-checkbox" checked>
+    <span class="syo-toggle-track"></span>
+    <span class="syo-toggle-knob">
+      <svg class="syo-toggle-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.5" stroke="#f57c00" stroke-width="1.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.34 4.34l1.77 1.77M13.89 13.89l1.77 1.77M4.34 15.66l1.77-1.77M13.89 6.11l1.77-1.77" stroke="#f57c00" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </span>
+  </label>
+</nav>
+
+<article class="lesson">
+
+  <header class="lesson-header">
+    <span class="lesson-header__eyebrow">0001 · 从一段录屏说起</span>
+    <h1>从一段录屏说起</h1>
+    <p class="lesson-goal"><b>本节目标：</b>能说出成片取景与时间线拼接是两件不同的事。</p>
+  </header>
+
+  <!-- ── 正文：渲染器按内容文件（lessons/<序号>-<节点id>.md）产出，块词汇见 docs/规范/课件内容格式.md ── -->
+
+  <h2>开场：三段素材，一个共同点</h2>
+
+  <p>手上有一段自己做的 MMD 输出，还有一段游戏录屏、一段屏幕录制。三段素材的样子完全不同，从一个角度看却是同一类东西：都是一串静态画面按顺序播下去的结果，每秒播多少张由帧率定。后期要做的改动发生在这串画面的两个位置——改它什么时候出现，或者改它出现时里面有什么。这两件事由两类软件各管一头。本课先把这个分界认下来，再交代这门课怎么走。</p>
+
+  <h2>现象：同一段素材，两边能改的不一样</h2>
+
+  <p>把同一段 MMD 输出在剪映专业版里放一遍，能做的事大致有这么几类：</p>
+
+  <ul>
+    <li>把片段在时间线上往前拖或往后拖，决定它第几秒出现</li>
+    <li>裁掉开头结尾，决定它播多久</li>
+    <li>在中间切一刀，让别的片段插进来</li>
+    <li>变速、加转场、配音乐、加滤镜图层</li>
+  </ul>
+
+  <p>这些操作有一个共同点：一旦片段放定，它里面那几百张画面就是原样搬过去的。拖到时间线的哪一格，那一格显示的就是素材里的某一帧，帧内部的内容没有被改动过。</p>
+
+  <p>这一段是本课的观察起点。等装好 AE，同样的素材会再放一次，那时看的还是这个问题：两边能改的，究竟是「时间线上的位置」，还是「画面里的东西」。</p>
+
+  <h2>成片＝画面 + 时间 + 声音</h2>
+
+  <p>把上面的现象推开一步看。任何一支成片都可以拆成三样东西：</p>
+
+  <table>
+    <thead>
+      <tr><th>组成</th><th>指的是什么</th><th>一支片子里的例子</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>画面</td><td>具体每一帧里看到的内容</td><td>这一帧里有个人、左边有一束光</td></tr>
+      <tr><td>时间</td><td>这些帧按什么顺序排、每段出现多久</td><td>0 到 3 秒是开场，3 秒起切主体</td></tr>
+      <tr><td>声音</td><td>与画面同步的音轨</td><td>背景音乐、解说、音效</td></tr>
+    </tbody>
+  </table>
+
+  <p>三样里，「时间」和「画面」恰好对应两类软件各自的活儿：</p>
+
+  <ul>
+    <li>剪辑干的事在时间上：选哪一段、排什么顺序、每段多长、什么时候切换。</li>
+    <li>合成干的事在画面上：一个镜头内部由哪些元素组成、这层放哪里、亮度和颜色是什么样。</li>
+  </ul>
+
+  <p>剪辑软件把一段素材当成一个不可分割的整块来搬动，合成软件把这一整块拆开，重新决定里面有什么。这是两件事，所以两类软件同时存在。</p>
+
+  <h2>修一帧，还是挪一段</h2>
+
+  <p>把两类操作摆在一起看，边界更清楚：</p>
+
+  <table>
+    <thead>
+      <tr><th>想改动的东西</th><th>属于哪一类</th><th>手上用什么做</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>这段素材从第几秒开始播</td><td>时间</td><td>把片段放到时间线的位置</td></tr>
+      <tr><td>这段素材在第 5 秒切出去</td><td>时间</td><td>裁掉后半段</td></tr>
+      <tr><td>这一帧里，人物后面加一束光</td><td>画面</td><td>在合成里往这一帧上叠一层光效</td></tr>
+      <tr><td>这一帧里，人物挪到画面右边</td><td>画面</td><td>在合成里改这一层的位置</td></tr>
+      <tr><td>这一帧里，人物之外的部分压暗</td><td>画面</td><td>在合成里限定改动范围，只作用在人物以外</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="上：剪辑软件里片段沿时间线排列，拖动只改出现的位置；下：合成软件里元素一层层叠进同一块画布">
+<svg viewBox="0 0 700 580" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif" xmlns="http://www.w3.org/2000/svg">
+<text x="20" y="22" font-size="15" text-anchor="start" font-weight="600">同一段素材，两种改法</text>
+<text x="20" y="56" font-size="15" text-anchor="start" font-weight="600">剪辑软件：改时间线上的位置</text>
+<text x="20" y="82" font-size="14" text-anchor="start">片段沿时间线排列，改的是顺序、长短与落点</text>
+<g fill="none">
+<rect x="20" y="96" width="660" height="88" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="46" y="112" width="190" height="36" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="256" y="112" width="150" height="36" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="426" y="112" width="190" height="36" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<line x1="46" y1="172" x2="636" y2="172" stroke="currentColor" stroke-opacity="0.4" stroke-width="1.5"/>
+<line x1="46" y1="168" x2="46" y2="176" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<line x1="256" y1="168" x2="256" y2="176" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<line x1="426" y1="168" x2="426" y2="176" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+<line x1="616" y1="168" x2="616" y2="176" stroke="currentColor" stroke-opacity="0.6" stroke-width="1.5"/>
+</g>
+<text x="141" y="135" font-size="15" text-anchor="middle">片段 A</text>
+<text x="331" y="135" font-size="15" text-anchor="middle">片段 B</text>
+<text x="521" y="135" font-size="15" text-anchor="middle">片段 C</text>
+<text x="46" y="200" font-size="14" text-anchor="start">0s</text>
+<text x="256" y="200" font-size="14" text-anchor="start" font-weight="600">拖到这里</text>
+<text x="616" y="200" font-size="14" text-anchor="end">10s</text>
+<text x="20" y="234" font-size="14" text-anchor="start">画面一个像素没动，动的只是「谁在什么时候出现」。</text>
+<line x1="20" y1="248" x2="680" y2="248" stroke="currentColor" stroke-opacity="0.2" stroke-width="1.5"/>
+<text x="20" y="292" font-size="15" text-anchor="start" font-weight="600">合成软件：改一帧里的画面</text>
+<text x="20" y="318" font-size="14" text-anchor="start">元素一层层叠进同一块画布，改的是画面本身的构成</text>
+<rect x="20" y="332" width="400" height="154" rx="6" fill="none" stroke="currentColor" stroke-opacity="0.35" stroke-width="1.5" stroke-dasharray="4 3"/>
+<text x="32" y="366" font-size="14" text-anchor="start">一帧</text>
+<rect x="80" y="450" width="300" height="28" rx="3" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5"/>
+<text x="92" y="469" font-size="14" text-anchor="start">背景视频</text>
+<rect x="80" y="416" width="300" height="28" rx="3" fill="currentColor" fill-opacity="0.05" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.5"/>
+<text x="92" y="435" font-size="14" text-anchor="start">主体</text>
+<rect x="80" y="382" width="300" height="28" rx="3" fill="currentColor" fill-opacity="0.09" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5"/>
+<text x="92" y="401" font-size="14" text-anchor="start">光效</text>
+<rect x="80" y="348" width="300" height="28" rx="3" fill="currentColor" fill-opacity="0.09" stroke="currentColor" stroke-opacity="0.7" stroke-width="1.5"/>
+<text x="92" y="367" font-size="14" text-anchor="start">字幕</text>
+<text x="440" y="367" font-size="14" text-anchor="middle">底层先画</text>
+<text x="440" y="469" font-size="14" text-anchor="middle">上层后画</text>
+<line x1="620" y1="348" x2="620" y2="478" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<line x1="620" y1="348" x2="614" y2="348" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<line x1="620" y1="478" x2="614" y2="478" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="20" y="530" font-size="14" text-anchor="start">观众看到的是叠完之后的那一张，不是任何单独一层。</text>
+<text x="20" y="558" font-size="14" text-anchor="start">改画面里有什么，是合成软件的事；改谁排在什么时候，是剪辑软件的事。</text>
+</svg>
+    <figcaption>图 1 · 剪辑改的是片段在时间线上的位置，合成改的是一帧里的画面</figcaption>
+  </figure>
+
+  <p>上半部分里，片段 A、B、C 沿时间线排开，把它们拖来拖去，画面内容不会跟着变；下半部分里，同一块画布上叠了四层，加一层、减一层、改一层的位置，画面就换一副样子。上半那份工作关心「什么时候」，下半那份关心「里面有什么」。</p>
+
+  <div class="lesson-note">
+    <b>剪映里也能找到「效果」</b>
+    <p>剪映专业版里有滤镜、转场、贴纸这些功能，确实也会改变画面的样子，这一点不用回避。区别在于改动的层次：滤镜是套在整段素材上的一套参数，转场是两段之间的衔接。要往一帧里加一层自己的光、把人物之外的部分单独压暗、让一个元素跟着画面里的某一点走，这些要在合成软件里做。本课说的分界指的是主干：时间线上的拼接归剪辑，一帧里的构成归合成。</p>
+  </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "你手上有 MMD 输出、游戏录屏、屏幕录制三段素材。\n下面四件事里，哪一件得放到合成软件里做？",
+    "opts": [
+      "把这段素材往后拖 2 秒才出现",
+      "把这段素材的最后 1 秒裁掉",
+      "在同一帧里，给人物背后加一层光",
+      "在两段素材之间插入一个转场"
+    ],
+    "ans": 2,
+    "why": "加光改的是这一帧里有什么，得在合成里往上叠一层。\n拖动、裁剪、转场改的都是时间线上的安排：\n什么时候出现、播多长、两段怎么接，剪辑软件就能做。"
+  },
+  {
+    "q": "同一段 MMD 输出，你想做下面四件事。\n逐条判断它属于「时间」还是「画面」：\n\n① 让这段素材从第 8 秒才开始播\n② 让人物整体往画面右边挪一点\n③ 让人物之外的部分暗下去\n④ 把这段换成另一段素材接在后面",
+    "answer": "① 时间：改的是它第几秒出现。\n② 画面：人物的位置是这一帧里的内容。\n③ 画面：只改这一帧里一部分的明暗。\n④ 时间：换的是哪一段在什么时候出现，帧里的内容没动。",
+    "criteria": "①④ 判成时间、②③ 判成画面，四条全对得 3 分；\n错一条得 1 分，错两条及以上不得分。\n每条能补一句理由（改的是时间线上的位置，还是帧里的内容），加 1 分。\n只写「剪辑」「合成」也算对：它指的就是这两类活。"
+  }
+]'></div>
+
+  <h2>合成：一块画布与一叠图层</h2>
+
+  <p>Adobe 的官方文档里，合成（composition）被定义成「一部影片的框架」：它有自己的时间轴，通常由多个图层组成，每个图层对应一个素材项，比如视频、音频、动画文字、矢量图形、静图或灯光。素材是通过「给它建一个图层」的方式进入合成的。</p>
+
+  <p>这句话可以拆成三件具体的事：</p>
+
+  <ul>
+    <li>合成是一块画布。它有确定的长宽，观众最终看到的画面就是这个范围的框；框外的部分参与计算，但不进成片。</li>
+    <li>合成是一叠图层。同一个画布上可以放很多层，每一层的内容不同。</li>
+    <li>合成有自己的时间轴，每一层的出现和退场都在它上面。</li>
+  </ul>
+
+  <p>图层之间的关系按叠放顺序定：下面的层先画，上面的层后画，后画的会盖住先画的。Adobe 的表述是，图层在空间和时间上被排好之后，靠透明特性决定下层的哪些部分从上层后面露出来。</p>
+
+  <p>顺便把一个词固定下来：<b>图层</b>是合成软件里的说法，本课从头到尾用这一个词。剪辑软件里一条一条横向铺开的东西叫「轨道」，两者容易混，指的东西不一样。</p>
+
+  <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="左：四个图层在图层栈里从上到下是字幕、光效、主体、背景视频；右：合成结果是叠完之后的一张画面">
+<svg viewBox="0 0 700 460" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif" xmlns="http://www.w3.org/2000/svg">
+<text x="20" y="22" font-size="15" text-anchor="start" font-weight="600">一帧画面由几层叠成</text>
+<text x="20" y="60" font-size="15" text-anchor="start" font-weight="600">图层栈</text>
+<text x="20" y="84" font-size="14" text-anchor="start">同一块画布，一层挨着一层</text>
+<g fill="none">
+<rect x="20" y="126" width="260" height="240" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="42" y="142" width="140" height="42" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="42" y="196" width="140" height="42" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="42" y="250" width="140" height="42" rx="4" stroke="currentColor" stroke-width="1.5"/>
+<rect x="42" y="304" width="140" height="42" rx="4" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="52" y="168" font-size="14" text-anchor="start">字幕</text>
+<text x="52" y="222" font-size="14" text-anchor="start">光效</text>
+<text x="52" y="276" font-size="14" text-anchor="start">主体</text>
+<text x="52" y="330" font-size="14" text-anchor="start">背景视频</text>
+<text x="196" y="168" font-size="14" text-anchor="start">后画</text>
+<text x="196" y="330" font-size="14" text-anchor="start">先画</text>
+<text x="366" y="168" font-size="14" text-anchor="start">上</text>
+<text x="366" y="330" font-size="14" text-anchor="start">下</text>
+<text x="330" y="96" font-size="14" text-anchor="end">叠放顺序</text>
+<line x1="340" y1="142" x2="340" y2="346" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<line x1="340" y1="142" x2="334" y2="142" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<line x1="340" y1="346" x2="334" y2="346" stroke="currentColor" stroke-opacity="0.5" stroke-width="1.5"/>
+<text x="400" y="60" font-size="15" text-anchor="start" font-weight="600">合成结果</text>
+<text x="400" y="84" font-size="14" text-anchor="start">观众看到的就是这一层</text>
+<g fill="none">
+<rect x="400" y="126" width="260" height="164" rx="6" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="414" y="152" font-size="14" text-anchor="start">字幕</text>
+<text x="646" y="152" font-size="14" text-anchor="end">光效</text>
+<text x="414" y="210" font-size="14" text-anchor="start">主体</text>
+<text x="414" y="266" font-size="14" text-anchor="start">背景视频</text>
+<text x="20" y="418" font-size="14" text-anchor="start">合成把这几层从下往上合并成一张画面：底层先画，上层后画，每画一层都可能盖住</text>
+<text x="20" y="442" font-size="14" text-anchor="start">下面一部分。画布尺寸、帧率与时长，在新建合成的时候定下。</text>
+</svg>
+    <figcaption>图 2 · 一帧由几层叠成，底层先画、上层后画，最后只剩一张画面</figcaption>
+  </figure>
+
+  <p>这张图解释了一件事：观众看到的画面只有一个，它是几层合并之后的结果。做得好的时候，看不出里面有几层；要做局部改动，就得知道该动哪一层。</p>
+
+  <p>后续课程会用到这个结构：想把右下角提亮，就是加一层只覆盖右下角的光；想让标题出现，就是加一层文字；想让一个人的轮廓发光，就是让这一层的边缘往外扩散一圈。这些动作都要先有「帧是由层组成的」这个认识。</p>
+
+  <div class="lesson-note">
+    <b>合成的三个参数，先记住位置</b>
+    <p>合成的画布尺寸、帧率与时长在新建合成时定下，官方文档的建议是开工前按最终输出的介质来定——比如合成的画幅尺寸应当等于播放介质上的图像尺寸。这三个参数一改，所有图层都要跟着重新适配，所以本职是先定下来再动手。它们各自的确切含义与改动的代价，留到合成与图层那一课逐一讲。</p>
+  </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "一个合成里叠了四层，从下到上是：背景视频、主体、光效、字幕。\n现在把字幕这一层拖到主体下面，画面上会变成什么样？",
+    "opts": [
+      "主体不透明的地方把字幕盖住",
+      "字幕还在最上面，只是位置更低",
+      "主体与字幕都半透明地混在一起",
+      "画面不变，字幕位置由数值定"
+    ],
+    "ans": 0,
+    "why": "图层按叠放顺序画：下面的先画，上面的后画，后画的盖住先画的。\n字幕挪到主体下面，就先画字幕、再画主体，\n主体不透明的地方把它挡住了。\n改叠放顺序动的是谁盖住谁，不是把这一层挪个位置。"
+  },
+  {
+    "q": "合成的画布是 1920×1080，里面那层素材没铺满，四周留着黑边。\n\n① 这黑边是素材的事还是画布的事？\n② 想让它铺满，该动画布还是动这一层？改画布会怎样？",
+    "answer": "① 是素材的事：这一层比画布小，没盖住的地方就露出底色。\n② 动这一层：把它放大到盖满整块画布。\n改画布不行——画布只是观众看到的那个框，\n框变大，素材自己不会跟着变，黑边只会留得更多。",
+    "criteria": "① 说出「这一层比画布小」，得 2 分；\n只说「画布太大」而没提素材没铺满的，不给分。\n② 答「调这一层的缩放」并说出「改画布不会让素材自动跟着变」，得 2 分。"
+  }
+]'></div>
+
+  <h2>这门课按素材、画面、输出三段走</h2>
+
+  <p>这门课按「你会在哪一步卡住」分成三段，软件功能散在这三段里，不单独成章：</p>
+
+  <ol>
+    <li><b>素材账</b>：把素材收齐、看清参数、把不规整的修干净。屏幕录制与游戏内录常常是变帧率，它进合成软件会音画不同步、动作一顿一顿，要先把帧率规整成恒定的。这一段决定后面所有工作的底子。</li>
+    <li><b>画面</b>：重点在这一段。认图层与合成，学动画、局部处理、空间与镜头、光效与粒子、字幕，再把几段素材统一颜色、收一道质感，最后组装成成片。</li>
+    <li><b>输出</b>：按用途定帧率、码率与格式导出，让片子别人打开得了、平台传得上去。</li>
+  </ol>
+
+  <p>三段也对应配套项目「后期成片」的四个实验节点。课程推进的时候，每一段都在给那支最终成片添一块：素材账决定它能有多干净，画面那一大段决定它好不好看，输出决定它交到别人手上是什么样。</p>
+
+  <h2>三个问题</h2>
+
+  <p><b>为什么同一个片段，两边能改的地方不一样。</b> 因为它进两个软件时被当作不同的东西使用：在剪辑软件里它是一个整块，搬动它只影响时间；在合成软件里它是一层，可以被拆开、被叠加、被合成为一张新的画面。</p>
+
+  <p><b>为什么剪辑软件改不动画面里的东西。</b> 剪辑软件的设计目标是「把已有的素材排好」，它手里的素材是成品帧，一帧里的内容对它来说是不可分的。要改帧的内部，需要另一类软件，它的基本单位是图层。</p>
+
+  <p><b>什么时候该用哪个。</b> 看你要改的是时间还是画面。改顺序、改长短、改节奏、配乐、上字幕（这里指把做好的字幕贴上去），剪辑软件就够了；改一帧里的光、局部明暗、主体的位置、画面的统一色调，这些要在 AE 里做，做完之后回到剪辑软件排进成片。</p>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "小周装好 AE 的第一件事，是在界面里找剪映里的分割、转场与配乐。\n找了一会儿没找到顺手的入口，他判断：这软件还不如剪映。\n他卡住的根因是什么？",
+    "opts": [
+      "AE 的界面比剪映复杂，入口藏得太深",
+      "他拿改时间的问题去问改画面的软件",
+      "这三样 AE 里没有，只能回剪映里做",
+      "剪映的分割与转场是它独有的做法"
+    ],
+    "ans": 1,
+    "why": "分割、转场、配乐都是时间线上的事，主场在剪辑软件。\nAE 的基本单位是图层与合成，它回答的是这一帧里有什么。\n拿时间上的问题去问它，处处不对路是必然的。\n这类入口 AE 里也有，只是它不为这件事设计。"
+  },
+  {
+    "q": "小周在 AE 里花了一晚上，想把一段游戏录屏剪掉开头 3 秒、\n再在两段之间加个转场，越做越别扭。\n\n① 这一晚他做的事，毛病出在哪？\n② 装好 AE 之后，他第一件该弄清楚的是什么？",
+    "answer": "① 剪掉开头、加转场都是时间线上的事，主场在剪辑软件。\n在 AE 里做不是不行，但它不为这件事设计，别扭是正常的。\n② 先弄清素材本身：这段录屏的参数是多少、\n是不是变帧率、要不要先规整成恒定帧率。\n素材账不清楚，后面画面上的活都白做。",
+    "criteria": "① 说出「剪短与转场属于时间线上的事，主场在剪辑软件」，得 2 分；\n只答「AE 太难」或「他操作不熟」不给分。\n② 答出「先查素材参数与帧率、先规整素材」，得 2 分；\n答「先背菜单与界面」不给分——本课的坑正是这个。"
+  }
+]'></div>
+
+  <h2>回看自己的素材</h2>
+
+  <p>三步做完，对三类素材就有一张底账，后面每课取料都从它开始。</p>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">上手做</span>
+      <span class="lesson-practice__title">第 1 步 · 在剪映里做一次观察</span>
+    </div>
+
+      <p>挑一段自己的 MMD 输出放进剪映专业版，做四组操作各一次：把片段往后再拖 2 秒、裁掉结尾 1 秒、在中间分割一次后删掉后半段、给这一段套一个滤镜。</p>
+
+      <p>每做完一组，回答同一个问题：这一下改的是片段在时间线上的位置，还是这一帧里的画面内容？把四组的答案写在纸上。</p>
+
+      <p>等后面把 AE 装好，同一段素材会在 AE 里再放一次，那时用同一张纸上的问题再问一遍，两次的答案摆在一起就是本课要的那条分界。</p>
+  </div>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">上手做</span>
+      <span class="lesson-practice__title">第 2 步 · 摸一摸自己的三类素材</span>
+    </div>
+
+      <p>在文件管理器里把自己的素材过一遍，按游戏录制、屏幕录制、MMD 输出三类各挑一段记下来，每段写上三条：多大分辨率、多长、录的时候顺不顺（有没有卡顿或音画对不上的地方）。</p>
+  </div>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">上手做</span>
+      <span class="lesson-practice__title">第 3 步 · 给每段素材记一笔毛病</span>
+    </div>
+
+      <p>对着上一步的清单，给每段素材写下一处你早就觉得不对的地方——动作看着一阵一阵地抖、传上平台就发糊、拼在一起颜色对不上、某几秒特别糊——然后标上它属于哪一段的问题：</p>
+
+      <ul>
+        <li>素材账：帧率、参数、规整</li>
+        <li>画面：光效、局部处理、调色、字幕</li>
+        <li>输出：导出参数与格式</li>
+      </ul>
+
+      <p>这张表就是这门课的取材单。标不出属于哪一段也不要紧，先把观察记下来，后面的课会一个个对上号。</p>
+  </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "一段游戏录屏在播放器里看着流畅，进了合成软件却像幻灯片，\n动作还一阵一阵地抖。\n按本课的三段划分，这处毛病该记到哪一段？",
+    "opts": [
+      "素材账：这段录屏的帧率不匀",
+      "画面：局部处理没做到位",
+      "输出：导出时码率给低了",
+      "三段都不算：播放器的问题"
+    ],
+    "ans": 0,
+    "why": "在播放器里流畅、到合成里就抖，说明帧与帧的间隔本身不匀。\n游戏内录与屏幕录制常是变帧率，这是录制时就带上的毛病，\n所以归素材账：帧率、参数、规整。\n它不在这段素材的画面里，也不在导出那一步。"
+  },
+  {
+    "q": "三段素材各有一处不对，各归到课程三段里的哪一段？\n\n① MMD 输出：背景太亮，跟主体抢眼\n② 屏幕录制：帧率是一串很奇怪的小数\n③ 游戏录制：成片发给朋友，对方打不开",
+    "answer": "① 画面：属于局部处理与调色，改的是一部分画面的明暗。\n② 素材账：帧率与参数先看清，再决定要不要规整成恒定帧率。\n③ 输出：交付用的格式与参数没选对，先按对方的打开方式定格式。",
+    "criteria": "① 画面、② 素材账、③ 输出，三处全对得 3 分；\n错一处得 1 分，错两处及以上不得分。\n再各说一句这一段先解决什么，加 1 分。\n把①判成素材账（「素材本身太亮」）不给分：\n这里要改的是画面里一部分的明暗，不是录制时的参数。"
+  }
+]'></div>
+
+  <ul class="lesson-resources">
+    <li><a href="https://helpx.adobe.com/after-effects/desktop.html">After Effects 用户指南（总入口）</a><span class="lesson-resources__meta">官方文档 · 本科目「查书」的第一站，找不到内容时先在这里定位章节</span></li>
+    <li><a href="https://helpx.adobe.com/after-effects/desktop/get-started/planning-and-setup/planning-setup.html">规划和设置</a><span class="lesson-resources__meta">官方文档 · 开工前定分辨率、帧率、时长；素材为什么要先准备再导入</span></li>
+    <li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-compositions/composition-settings/composition-basics.html">合成基础</a><span class="lesson-resources__meta">官方文档 · 合成是「一部影片的框架」，以及图层与叠放顺序</span></li>
+  </ul>
+
+  <!-- ── 提问提示：固定写法，别删 ── -->
+
+  <div class="lesson-ask">
+    <b>没看懂？随时问</b>
+    把看不懂的段落（或报错）原样复制回会话，说一句哪里不懂就行，我只解释这一段，不打断你的进度。
+  </div>
+
+  <!-- ── 上/下节课指针由渲染器按 curriculum.yaml 的 nodes 顺序算（第一课无 --prev、最后一课无 --next） ── -->
+
+  <nav class="lesson-nav" aria-label="上一课 / 下一课">
+    <a class="lesson-nav__link lesson-nav__link--next" href="0002-video.params.html">
+      <span class="lesson-nav__dir">下节课</span>
+      <span class="lesson-nav__title">分辨率、帧率与码率</span>
+    </a>
+  </nav>
+
+  <footer class="lesson-footer">
+    StudyMate · 0001 从一段录屏说起 · 本地学习工作区
+  </footer>
+
+</article>
+
+<script src="../../../assets/sayo/sayo.js"></script>
+
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/lesson-toc.js" defer></script>
+<script>LearnTheme.wire(document.getElementById('lesson-theme-checkbox'));</script>
+</body>
+</html>
