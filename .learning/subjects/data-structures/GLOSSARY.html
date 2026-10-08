@@ -74,6 +74,8 @@
 <p><strong>内存（Memory）</strong>:<br>程序运行时存放数据的地方：按字节编号、可以按地址随机访问；变量、数组、堆上分配的空间都在这里。<br><em>Avoid</em>: 运行内存、RAM</p>
 <p><strong>地址（Address）</strong>:<br>内存里某个字节的编号；指针存的就是它，取地址与按地址访问是 C 里操作内存的两种基本动作。<br><em>Avoid</em>: 偏移（偏移是相对地址，不等于地址本身）</p>
 <p><strong>指针（Pointer）</strong>:<br>存放地址的变量；通过它能间接访问它指向的那块内存，这是 C 里实现链式存储的基础。<br><em>Avoid</em>: 地址（指针是"存放地址的变量"，不等于地址本身）</p>
+<p><strong>取地址（<code>&amp;x</code>）</strong>:<br>用 <code>&amp;</code> 取一个对象的地址，得到一个指向它的指针；取到的是"这个对象住在内存哪一格"，不是它的值。<br><em>Avoid</em>: 取指针、指向符</p>
+<p><strong>解引用（<code>*p</code>）</strong>:<br>用 <code>*</code> 沿着指针里存的地址去访问那个对象；写在赋值号左边就是改它的内容，写在右边就是读它的内容。<br><em>Avoid</em>: 指针符号（声明里的 <code>*</code> 是类型记号，跟表达式里的解引用是两件事，别混着叫）</p>
 <h2>已掌握</h2>
   <footer class="lesson-footer">
     StudyMate · 术语表 · 本地学习工作区
