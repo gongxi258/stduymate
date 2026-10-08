@@ -577,6 +577,25 @@ int main(void) {
       </ol>
   </div>
 
+  <div class="quiz" data-quiz='[
+  {
+    "q": "这段程序跑完，屏幕上出现三行：\n\n```term\nx  = 20\n&amp;x = 00000011D5DFFDB4\nsizeof(x) = 4\n```\n\n第三行那个 4 说的是 x 的什么？",
+    "opts": [
+      "x 这一格的内容：它现在存着 4",
+      "x 这一格的编号：地址末一位是 4",
+      "x 这一格占几个字节：它的宽度",
+      "这段程序一共用到了 4 个变量"
+    ],
+    "ans": 2,
+    "why": "sizeof(x) 量的是这个变量占几个字节，\n与它装着什么无关。\n这一版编译器上 int 占 4 字节，\n换成 long 就不是 4 了。\n另外两行才是变量身上另外两个量：\nx = 20 是内容，&amp;x 是地址。"
+  },
+  {
+    "q": "同一段程序跑了两次，各出现一行：\n\n```term\n第一次：x  = 20, &amp;x = 00000011D5DFFDB4\n第二次：x  = 20, &amp;x = 0000004B409FFD0C\n```\n\n① x 的内容与地址，各变了没有？\n② 地址为什么每次都不一样？\n③ 再跑很多遍，x 会一直是 20 吗？",
+    "answer": "① 内容没变：两次都是 20。\n地址变了：两串编号不一样。\n\n② 因为变量住在内存哪一格，\n每次运行由操作系统安排，位置不固定。\n所以某一次的具体数字看过就算。\n\n③ 会。程序里写的还是 int x = 20;，\n每次跑都把它放回 20。\n变的只是格子在哪里，\n不是格子里装的东西。",
+    "criteria": "① 内容不变、地址变了，\n两件都答对得 2 分，只答对一件给 1 分。\n② 答出「每次运行分到的内存位置不固定」，\n得 2 分；答「系统随机给的」也算对。\n③ 答「一直是 20」，得 1 分。\n答成「内容每次也变」的，这条不给分——\n那是把地址会变当成内容也会变。\n两件事混着答的，本题最多给 3 分。"
+  }
+]'></div>
+
   <div class="lesson-practice">
     <div class="lesson-practice__head">
       <span class="lesson-practice__level">练习</span>
@@ -590,11 +609,29 @@ int main(void) {
     printf("x = %d, *p = %d\n", x, *p);</code></pre>
 
       <ol>
-        <li><code>p</code> 没有被赋值，<code>x</code> 为什么会变？</li>
-        <li>把 <code>*p = 35;</code> 换成 <code>p = &amp;y;</code>（先声明 <code>int y = 30;</code>）——这一行还能改到 x 吗？为什么？</li>
+        <li>把 <code>*p = 35;</code> 换成 <code>p = &amp;y;</code>（先声明 <code>int y = 30;</code>）——这一行还能改到 x 吗？看输出说话。</li>
         <li>在 <code>*p = 35;</code> 这一行前后各加一句 <code>printf("x = %d\n", x);</code>，把三次 x 的值写下来。</li>
       </ol>
   </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "这段程序打印 x = 35, *p = 35：\n\n```c\n    int x = 20;\n    int *p = &amp;x;      /* 这一行给 p 赋了值 */\n    *p = 35;\n```\n\n从这几行看，p 好像没被赋过值。\n那 *p = 35 为什么能改到 x？",
+    "opts": [
+      "p 被赋过值：int *p = &amp;x 给它装上了 x 的地址",
+      "p 不用被赋值：这一行里的星号会把 x 当成它的目标",
+      "p 由编译器自动指向 x：同一段里第一个 int 就是它",
+      "p 没值也无所谓：*p = 35 写的是 x 这个名字本身"
+    ],
+    "ans": 0,
+    "why": "int *p = &amp;x; 这一行就是在给 p 赋值：\n把 x 的地址装进 p 这一格。\n所以 p 里有一个真实编号，\n*p = 35 顺着它落到 x 那一格上。\n声明里那个星号只说明 p 是指针，\n真正把地址给 p 的是等号后面的 &amp;x。"
+  },
+  {
+    "q": "这段程序后面有两种改法：\n\n```c\n    int x = 20, y = 30;\n    int *p = &amp;x;\n```\n\n改法一：留下 *p = 35; 这行，再打印 x。\n改法二：把它换成 p = &amp;y;，再打印 x。\n\n① 两种改法之后，x 各是多少？\n② 改法二改到的是谁？\n③ 都写 p，为什么一个改得到、\n　　另一个改不到？",
+    "answer": "① 改法一之后 x 是 35；\n改法二之后 x 还是 20。\n\n② 改法二的 p = &amp;y\n只是换了 p 装哪个地址，\n没有顺着地址写内容，\n所以 x、y 的内容都没动。\n往后写 *p 才会落到 y 上。\n\n③ 看等号左边写的是什么：\n*p = 35 的左边是 *p，\n它是「顺着地址访问那一格」，\n写进去的是 x 的内容；\np = &amp;y 的左边就是 p 自己，\n改的是 p 这一格，\n装上了 y 的地址。",
+    "criteria": "① 35 与 20 两个数都对，得 2 分。\n② 答出改法二没改到 x、\nx 还是 20，得 1 分；\n再答出「p = &amp;y 改的是 p 这一格」，\n得 1 分。\n③ 答出左边写 *p 是改那一格的内容、\n左边写 p 是改 p 自己，得 2 分。\n答成「p 没被赋过值」「p 失效了」的，\n第 ③ 条不给分——p 有值，只是值换了。\n答成「*p 总改最后写到的那个变量」的，\n也不给分。"
+  }
+]'></div>
 
   <div class="lesson-practice">
     <div class="lesson-practice__head">
@@ -613,11 +650,29 @@ int main(void) {
     printf("&amp;p = %p\n", (void *)&amp;p);</code></pre>
 
       <ol>
-        <li>两次 <code>*p</code> 输出不同，是 <code>p</code> 的内容变了还是 <code>*p</code> 这条写法变了？</li>
         <li>最后一行打印的 <code>&amp;p</code> 与前面两个变量的地址有什么关系？它是 x 或 y 的地址吗？</li>
         <li>加一句 <code>*p = *p + 1;</code>，输出里哪一个数变了？</li>
       </ol>
   </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "同一段程序里，两次打印 *p 得到不同的值：\n\n```c\n    int x = 20, y = 30;\n    int *p = &amp;x;\n    printf(\"*p = %d\\n\", *p);   /* 20 */\n    p = &amp;y;\n    printf(\"*p = %d\\n\", *p);   /* 30 */\n```\n\n同一个 *p 两次读到不同的数，变的是什么？",
+    "opts": [
+      "变的是 p 自己的地址：&amp;p 每次都不同",
+      "变的是 p 的内容：编号从 x 换成了 y",
+      "变的是 x 的内容：它顺手被改成了 30",
+      "变的是 p 的类型：它不再是 int * 了"
+    ],
+    "ans": 1,
+    "why": "p = &amp;y 改的是 p 这一格：\n里面装的编号从 x 的地址换成了 y 的地址。\n解引用落到哪一格，\n由 p 里装的那个地址决定。\n所以同一个写法 *p，\n第一次读到 x，第二次读到 y。\np 自己的地址（&amp;p）与它的内容\n（里面装哪个编号）是两回事。"
+  },
+  {
+    "q": "课件第 3 步那段程序，\n在两次打印 *p 之后又加了一行打印 &amp;p。\n\n① *p 两次打印为什么不同？\n② &amp;p 打印的是 x 或 y 的地址吗？\n　　它是谁的地址？",
+    "answer": "① 因为第二次打印之前执行了 p = &amp;y，\np 这一格里装的编号换成了 y 的地址。\np 指着哪一格，*p 就读哪一格的内容。\n\n② 不是。&amp;p 取的是 p 自己那一格的编号。\n指针自己也是一个变量，\n它住在另一格里，当然有另一个编号；\n所以 &amp;p 与 &amp;x、&amp;y 是不同的数。",
+    "criteria": "① 答出「p 里装的地址换了」，\n也就是两次指向不同，得 2 分；\n能从「改的是 p 的内容」\n这层说明的，再得 1 分。\n答成「*p 的写法变了」的，不给分。\n② 答出 &amp;p 是 p 自己的地址、\n指针自己也住在某一格里，得 2 分。\n答成「&amp;p 就是 x 或 y 的地址」的，\n不给分。\n想再练一步：加一句 *p = *p + 1; 再打印，\n会看到只有 y 变成 31、x 还是 20；\n答出这一点的，第 ① 条按满分算。"
+  }
+]'></div>
 
   <div class="lesson-practice">
     <div class="lesson-practice__head">
@@ -651,11 +706,28 @@ int main(void) {
 }</code></pre>
 
       <ol>
-        <li>调用 <code>swap_wrong(x, y)</code> 之后打印 <code>x</code>、<code>y</code>，为什么还是原来的两个数？</li>
-        <li>调用 <code>swap_right(&amp;x, &amp;y)</code> 时传进去的是哪两个值？</li>
         <li>在 <code>swap_right</code> 里加一行 <code>printf("pa = %p\n", (void *)pa);</code>，它打印的地址和 <code>main</code> 里哪个变量对得上？</li>
       </ol>
   </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "这段程序打印 x = 3, y = 8：\n\n```c\nvoid swap_wrong(int a, int b) {\n    int t = a;\n    a = b;\n    b = t;\n}\n\nint main(void) {\n    int x = 3, y = 8;\n    swap_wrong(x, y);\n    printf(\"x = %d, y = %d\\n\", x, y);\n    return 0;\n}\n```\n\n函数里那三行明明交换了，\n为什么 x、y 没变？",
+    "opts": [
+      "a、b 是调用时新划出的两格，改的一直是它们，没碰 x、y",
+      "a、b 与 x、y 是同样的两格，编译器把这三行赋值优化了",
+      "三行赋值的顺序写错了，先换 b 再换 a 才带出来",
+      "函数没有返回值，交换的结果就带不回 main 里面了吧"
+    ],
+    "ans": 0,
+    "why": "参数传递这一步给出的永远是副本：\n函数拿到 a、b 两个新格子，\n初始内容 3 和 8。\n三行赋值改的一直是这两格，\nmain 里的 x、y 没进函数。\n要让函数改到调用方，\n就得把地址传进去：\nswap_right(&amp;x, &amp;y) 收到的\n才是 x、y 的地址。"
+  },
+  {
+    "q": "换成带地址的版本：\n\n```c\nvoid swap_right(int *pa, int *pb) {\n    int t = *pa;\n    *pa = *pb;\n    *pb = t;\n}\n\n    int x = 3, y = 8;\n    swap_right(&amp;x, &amp;y);\n```\n\n① 调用 swap_right(&amp;x, &amp;y) 时，\n　　传出去的是哪两个值？\n② pa、pb 是副本这件事没变，\n　　这次为什么能改到 x、y？",
+    "answer": "① 传出去的是 x 与 y 的地址，\n也就是 &amp;x、&amp;y 这两个编号。\n不是 3 和 8。\n\n② 副本里装的东西换了。\n传值时副本里装的是 3 和 8，\n函数怎么改都出不了自己那两格；\n传地址时副本 pa、pb 里装的\n是 x、y 的编号，顺着编号写回去，\n落在的还是调用方那两格。",
+    "criteria": "① 答出传的是地址，\n也就是 &amp;x、&amp;y 这两个编号，得 2 分。\n答成「传的是 x、y 本身」，\n或「传的是 3 和 8」的，不给分。\n② 答出「副本里装的是地址，\n顺着地址能回到原件」，得 2 分。\n只答「传指针就能改」、\n说不出这一步的，给 1 分。\n两问分开答、没把「副本」与「地址」\n合成一句话的，说明两问都答清了，\n第 ② 条给满分。"
+  }
+]'></div>
 
   <h2>小结</h2>
 
