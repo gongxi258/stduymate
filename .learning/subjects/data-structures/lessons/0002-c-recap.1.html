@@ -279,7 +279,14 @@ int main(void) {
 
   <h2>传出去的是副本</h2>
 
-  <p>函数调用是解引用最常见的用场。先看一个没起作用的交换：</p>
+  <p>函数调用是解引用最常见的用场。参数传递这一步可以拆成两个各自独立的问题，本节后面每一处调用都能拿它们各问一次：</p>
+
+  <ol>
+    <li><b>函数拿到的是原件还是副本？</b> 这由 C 的参数传递规则决定，每一次调用都一样：函数里的参数得到的是<b>副本</b>，调用方那个变量本身不进函数。</li>
+    <li><b>这个副本里装的是什么？</b> 这由实参写成什么样决定：调用处写 <code>x</code>、<code>y</code>，副本里装的就是它们的<b>值</b>；写 <code>&amp;x</code>、<code>&amp;y</code>，副本里装的就是它们的<b>地址</b>。</li>
+  </ol>
+
+  <p>两问各有各的答案，而两个答案同时成立。先看一个没起作用的交换：</p>
 
   <pre data-lang="cpp"><code>#include &lt;stdio.h&gt;
 
@@ -298,7 +305,7 @@ int main(void) {
 
   <pre data-lang="term"><code>x = 3, y = 8</code></pre>
 
-  <p>函数体里那三行确实交换了两个值，可调用方这份 <code>x</code>、<code>y</code> 一点没变。原因在参数传递这一步：调用 <code>swap_wrong(x, y)</code> 时，函数得到的 <code>a</code>、<code>b</code> 是 <code>x</code>、<code>y</code> 的<b>副本</b>。函数里改的一直是 <code>a</code>、<code>b</code> 这两格，<code>main</code> 里的 <code>x</code>、<code>y</code> 从头到尾没被碰过。</p>
+  <p>函数体里那三行确实交换了两个值，可调用方这份 <code>x</code>、<code>y</code> 一点没变。拿上面两问对着这次调用各问一次：标准对这一步的规定是「实参先被求值，每个参数被赋予对应实参的值」，所以 <code>a</code>、<code>b</code> 是函数调用时新划出来的两格，<code>main</code> 里的 <code>x</code>、<code>y</code> 没有进函数——第一问的答案是<b>副本</b>；调用处写的是 <code>x</code>、<code>y</code> 两个名字，它们求值得到的 <code>3</code> 和 <code>8</code> 就是这两格里装的内容——第二问的答案是<b>值</b>。函数里改的一直是 <code>a</code>、<code>b</code> 这两格，<code>main</code> 里的 <code>x</code>、<code>y</code> 从头到尾没被碰过。</p>
 
   <p>要让函数改动调用方的变量，就得把地址传进去，让它在函数里通过解引用写回原格：</p>
 
@@ -318,6 +325,37 @@ int main(void) {
   <pre data-lang="term"><code>x = 8, y = 3</code></pre>
 
   <p>这次两个名字都换过来了。函数体同样只有三行赋值，起作用的差别发生在参数传递那一步：<code>swap_wrong</code> 收到的是 <code>3</code> 和 <code>8</code>，<code>swap_right</code> 收到的是 <code>x</code> 与 <code>y</code> 的地址。<code>pa</code>、<code>pb</code> 依然是副本，但副本里装的是地址，顺着地址就能回到调用方那一格。C 里只有一套参数传递规则，都是传值；要让函数改动调用方的变量，就传地址过去。</p>
+
+  <p>把两问在两个函数上并排摆出来：</p>
+
+  <table>
+    <thead>
+      <tr><th>问的</th><th>传值版</th><th>传地址版</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>调用写成</td><td><code>swap_wrong(x, y)</code></td><td><code>swap_right(&amp;x, &amp;y)</code></td></tr>
+      <tr><td>① 拿到的是原件还是副本？</td><td>副本</td><td>副本</td></tr>
+      <tr><td>② 副本里装的是什么？</td><td>值：<code>3</code>、<code>8</code></td><td>地址：<code>&amp;x</code>、<code>&amp;y</code></td></tr>
+      <tr><td>函数里改的是哪几格？</td><td><code>a</code>、<code>b</code> 这两格</td><td>顺着 <code>pa</code>、<code>pb</code> 摸到的 <code>x</code>、<code>y</code> 两格</td></tr>
+      <tr><td><code>main</code> 里的 <code>x</code>、<code>y</code></td><td>没变，还是 <code>3</code>、<code>8</code></td><td>变了，打印出 <code>x = 8, y = 3</code></td></tr>
+    </tbody>
+  </table>
+
+  <p>① 那一行两列相同，② 那一行两列不同，参数传递的差别就落在这一处：<b>是不是副本由传递规则定，副本里装什么由实参的写法定。</b></p>
+
+  <p>第二列按编号走一遍，两问的答案都会落到具体的格子上。设 <code>x</code> 在 <code>0x7ffd38</code>、<code>y</code> 在 <code>0x7ffd3c</code>（沿用下面那张图的编号）：</p>
+
+  <ol>
+    <li>调用 <code>swap_right(&amp;x, &amp;y)</code>，两个实参求值得到 <code>0x7ffd38</code> 与 <code>0x7ffd3c</code> 这两个编号。</li>
+    <li>第一问：<code>pa</code>、<code>pb</code> 是调用时新划出来的两格，各自有自己的编号（用 <code>&amp;pa</code>、<code>&amp;pb</code> 打印得出来），与 <code>main</code> 的 <code>x</code>、<code>y</code> 合起来是四块不同的格子——它们<b>是副本</b>。</li>
+    <li>第二问：这两格里装的内容是第 1 步求出的编号，<code>pa</code> 里是 <code>0x7ffd38</code>，<code>pb</code> 里是 <code>0x7ffd3c</code>。</li>
+    <li><code>int t = *pa;</code> 顺着 <code>pa</code> 里的 <code>0x7ffd38</code> 摸到 <code>main</code> 的 <code>x</code>，读出 <code>3</code>。</li>
+    <li><code>*pa = *pb;</code> 把 <code>pb</code> 指着的 <code>y</code> 的内容写进 <code>pa</code> 指着的那一格，写的是 <code>main</code> 的 <code>x</code>；<code>*pb = t;</code> 写的是 <code>main</code> 的 <code>y</code>。这两行解引用落在调用方那两格上，调用方看得见。</li>
+  </ol>
+
+  <p><code>swap_wrong</code> 的 <code>a</code>、<code>b</code> 在第 3 步之后就断了：两格里装的是 <code>3</code> 和 <code>8</code>，没有编号可以顺着往回走。读题时先认问的是哪一问——问「传出去的那两个值是什么」，要答的是第二问，也就是副本里装的 <code>&amp;x</code>、<code>&amp;y</code> 这两个编号；问「函数拿到的是原件还是副本」，要答的是第一问。两问分开答，「传出去的是副本」与「传出去的是地址」就能同时成立，合起来是一次完整的说法：<b>传出去的是一个装着地址的副本</b>。</p>
+
+  <p><b>记法</b>：副本不副本，管的是「改的是不是原件那一格」；副本里装什么，管的是「能不能顺着它摸到原件」——装值摸不到，装地址摸得到。</p>
 
   <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="左边传值时函数里的 a、b 是副本，右边传地址时函数里的 pa、pb 里装着 x、y 的地址">
 <svg viewBox="0 0 640 410" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
@@ -372,6 +410,11 @@ int main(void) {
 
     <figcaption>图 2 · 两次调用都传了副本，差别在于副本里装的是值还是地址</figcaption>
   </figure>
+
+  <div class="lesson-tip">
+    <b>卡住时先翻这一页</b>
+    <p>这一节的格子模型、<code>&amp;x</code> 与 <code>*p</code>、两问框架、两个 <code>swap</code> 的逐行走查，都收在一页速查里：<a href="../reference/指针与传参速查.html">指针与传参速查</a>。做练习时卡住就先翻它，再回来看正文。</p>
+  </div>
 
   <div class="quiz" data-quiz='[
   {

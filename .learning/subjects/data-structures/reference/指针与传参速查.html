@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>指针与传参速查 · 数据结构（408）</title>
+
+<!-- 共享层在 .learning/assets/，本科目在 .learning/subjects/<slug>/ 下，所以是 ../../../assets/ -->
+<link rel="stylesheet" href="../../../assets/sayo/sayo.css">
+<link rel="stylesheet" href="../../../assets/learn-theme.css">
+<link rel="stylesheet" href="../assets/style.css">
+
+<!-- 主题要在首帧前应用，避免闪白/闪黑 -->
+<script src="../../../assets/learn-theme.js"></script>
+<script>LearnTheme.apply();</script>
+
+<style>
+/* ── 速查页自己的一层：叠在科目课件层之上，只加"密度"与几块卡片 ──
+   颜色一律走 Sayo 令牌（--syo-*）与 Learn 令牌（--learn-*），深浅两套主题都由它们给，
+   所以这一页在 light / dark 下都不用另写一份。 */
+.lesson { max-width: 52rem; }
+
+.ref-nav {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  margin: 0 0 var(--syo-space-8); padding: 0;
+}
+.ref-nav a {
+  display: inline-block; padding: 3px 10px;
+  font-size: .8125rem; line-height: 1.7;
+  background: var(--syo-bg-surface);
+  border: 1px solid var(--syo-border);
+  border-radius: var(--syo-radius-full);
+  color: var(--syo-fg-muted); text-decoration: none;
+}
+.ref-nav a:hover { border-color: var(--syo-accent); color: var(--syo-accent); }
+
+.ref-grid {
+  display: grid; gap: var(--syo-space-4);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  margin: var(--syo-space-4) 0;
+}
+.ref-card {
+  padding: var(--syo-space-4);
+  background: var(--syo-bg-surface);
+  border: 1px solid var(--syo-border);
+  border-radius: var(--syo-radius-md);
+}
+.ref-card h3 { margin: 0 0 var(--syo-space-2); font-size: .9375rem; }
+.ref-card p:last-child { margin-bottom: 0; }
+.ref-card pre { margin: 0; }
+
+.ref-mnemonic {
+  padding: var(--syo-space-3) var(--syo-space-4);
+  background: var(--learn-soft-green);
+  border-left: 3px solid var(--syo-green);
+  border-radius: var(--syo-radius-md);
+}
+
+.ref-wrong {
+  margin: var(--syo-space-4) 0;
+  padding: var(--syo-space-4);
+  background: var(--learn-soft-red);
+  border-left: 3px solid var(--syo-red);
+  border-radius: var(--syo-radius-md);
+}
+.ref-wrong h3 { margin: 0 0 var(--syo-space-2); font-size: 1rem; }
+.ref-wrong p { margin-bottom: var(--syo-space-2); font-size: .9375rem; }
+.ref-wrong p:last-child { margin-bottom: 0; }
+
+.ref-table-tight th, .ref-table-tight td { padding: 6px 10px; font-size: .8438rem; }
+
+/* 「量」这类单字列不许竖着折行 */
+.ref-key { white-space: nowrap; }
+
+.ref-back {
+  margin-top: var(--syo-space-6);
+  font-size: .875rem; color: var(--syo-fg-muted);
+}
+</style>
+</head>
+
+<body class="lesson-body">
+
+<nav class="lesson-bar">
+  <a href="../index.html">← 返回科目</a>
+  <span>数据结构（408）</span>
+  <span class="lesson-bar__no">速查页</span>
+  <label class="syo-toggle syo-toggle--theme lesson-bar__toggle" title="切换深浅主题" aria-label="切换深浅主题">
+    <input type="checkbox" id="ref-theme-checkbox" checked>
+    <span class="syo-toggle-track"></span>
+    <span class="syo-toggle-knob">
+      <svg class="syo-toggle-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.5" stroke="#f57c00" stroke-width="1.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.34 4.34l1.77 1.77M13.89 13.89l1.77 1.77M4.34 15.66l1.77-1.77M13.89 6.11l1.77-1.77" stroke="#f57c00" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </span>
+  </label>
+</nav>
+
+<article class="lesson">
+
+  <header class="lesson-header">
+    <span class="lesson-header__eyebrow">参考 · 速查页 · 对应第 0002 课</span>
+    <h1>指针与传参速查</h1>
+    <p class="lesson-goal"><b>这一页管什么：</b>把这一课压成一页——变量住在哪一格、<code>&amp;x</code> 与 <code>*p</code> 各做什么、同一个 <code>*</code> 的两种角色、传值 / 传地址的两问框架、两个 <code>swap</code> 的逐行走查、三条常见误判。卡住时先翻这里，再回课件看正文。</p>
+  </header>
+
+  <nav class="ref-nav" aria-label="本页内容">
+    <a href="#cells">① 格子模型</a>
+    <a href="#addr">② 取地址与解引用</a>
+    <a href="#star">③ 同一个星号</a>
+    <a href="#params">④ 两问框架</a>
+    <a href="#walk">⑤ swap 逐行走查</a>
+    <a href="#pitfalls">⑥ 三条常见误判</a>
+    <a href="#reading">⑦ 读代码的顺序</a>
+  </nav>
+
+  <h2 id="cells">格子模型：名字、地址、内容</h2>
+
+  <p>程序运行时的数据都放在<strong>内存</strong>里。内存按字节编号，每个字节有一个编号，这个编号称为<strong>地址</strong>。一个变量就是给一块数据起的名字：编译器在编程序时给它划出若干字节，这个名字从此与那段地址绑在一起。于是同一个变量同时有三个可以观察的量。</p>
+
+  <table>
+    <thead>
+      <tr><th>量</th><th>怎么写出来</th><th>以 <code>int x = 20;</code> 为例</th><th>说明</th></tr>
+    </thead>
+    <tbody>
+      <tr><td class="ref-key">名字</td><td><code>x</code></td><td><code>x</code></td><td>写代码时用它。名字只活在程序里，运行时内存里没有名字，函数也只知道自己的参数名</td></tr>
+      <tr><td class="ref-key">地址</td><td><code>&amp;x</code></td><td><code>0x7ffd38</code></td><td>那一格的起始编号。同一段程序每次运行，整块栈的起始位置都可能不同，所以某一次的具体数字看过就算</td></tr>
+      <tr><td class="ref-key">内容</td><td><code>x</code></td><td><code>20</code></td><td>格里实际装的东西：可以读出来，也可以改掉</td></tr>
+    </tbody>
+  </table>
+
+  <figure class="lesson-figure lesson-figure--inline">
+    <svg viewBox="0 0 640 250" role="img" aria-label="三块变量格子，每格标出名字、地址与内容；指针 p 的内容是 x 的地址，箭头从 p 指回 x 那一格" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+      <defs><marker id="ref-arrow-1" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+      <text x="16" y="24" text-anchor="start" font-size="15">一块格子上能看见的三样东西：名字、地址、内容</text>
+      <text x="56" y="50" text-anchor="start" font-size="13">名字</text>
+      <text x="150" y="50" text-anchor="start" font-size="13">地址（格子编号）</text>
+      <text x="330" y="50" text-anchor="start" font-size="13">内容</text>
+      <g fill="none">
+        <rect x="40" y="58" width="430" height="48" rx="6" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="40" y="106" width="430" height="48" rx="6" stroke="currentColor" stroke-width="1.5"/>
+      </g>
+      <rect x="40" y="154" width="430" height="48" rx="6" fill="currentColor" fill-opacity="0.13" stroke="currentColor" stroke-width="1.5"/>
+      <text x="56" y="88" text-anchor="start" font-size="15">p</text>
+      <text x="150" y="88" text-anchor="start" font-size="13">0x7ffd44</text>
+      <text x="330" y="88" text-anchor="start" font-size="13">0x7ffd38</text>
+      <text x="56" y="136" text-anchor="start" font-size="15">y</text>
+      <text x="150" y="136" text-anchor="start" font-size="13">0x7ffd3c</text>
+      <text x="330" y="136" text-anchor="start" font-size="13">30</text>
+      <text x="56" y="184" text-anchor="start" font-size="15">x</text>
+      <text x="150" y="184" text-anchor="start" font-size="13">0x7ffd38</text>
+      <text x="330" y="184" text-anchor="start" font-size="13">20</text>
+      <path d="M 470 82 L 570 82 L 570 178 L 474 178" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ref-arrow-1)"/>
+      <text x="320" y="232" text-anchor="middle" font-size="13">p 的内容是 x 的地址；顺着这个编号摸到的，是 x 那一格</text>
+    </svg>
+    <figcaption>名字、地址、内容：同一个变量的三个可观察量；指针这一格的内容恰好是另一个变量的地址</figcaption>
+  </figure>
+
+  <p>指针是变量里特殊的一类：它的内容是一个地址。看它那一格时要分清两样东西——<code>&amp;p</code> 是这一格自己的编号，<code>p</code> 是这一格里装的编号，两者都是编号，说的却是两块不同的格子。</p>
+
+  <h2 id="addr">取地址与解引用</h2>
+
+  <p><code>&amp;</code> 是<strong>取地址运算符</strong>，<code>&amp;x</code> 读作「x 的地址」，结果是 x 所在格子的编号。<code>*</code> 写在表达式里是<strong>解引用</strong>，<code>*p</code> 读作「按 p 里的地址去访问那一格」。</p>
+
+  <table>
+    <thead>
+      <tr><th>写法</th><th>读作</th><th>结果</th><th>典型用途</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>x</code></td><td>x 的内容</td><td>那一格里装的东西</td><td>读值、改值</td></tr>
+      <tr><td><code>&amp;x</code></td><td>x 的地址</td><td>指向 x 的指针值</td><td>存进指针变量；作为实参传给函数</td></tr>
+      <tr><td><code>p</code></td><td>p 的内容</td><td>它当前指着的那一格的编号</td><td>换目标：<code>p = &amp;y</code></td></tr>
+      <tr><td><code>*p</code></td><td>按 p 里的地址访问</td><td>p 指着的那一格</td><td>写在赋值号左边＝改那一格；写在右边＝读那一格</td></tr>
+      <tr><td><code>&amp;p</code></td><td>p 自己的地址</td><td>p 这一格的编号</td><td>与 <code>&amp;x</code> 是两个不同的编号</td></tr>
+    </tbody>
+  </table>
+
+  <div class="ref-grid">
+    <div class="ref-card">
+      <h3>改目标：<code>p = &amp;y;</code></h3>
+      <p>改的是 p 自己这一格的内容，<code>x</code>、<code>y</code> 都不动。此后同一句 <code>*p</code> 落到 y 那一格。</p>
+    </div>
+    <div class="ref-card">
+      <h3>改内容：<code>*p = 35;</code></h3>
+      <p><code>p</code> 没有被赋值，改的是它当前指着的那一格：指着 x 就改 x，改成指着 y 就改 y。</p>
+    </div>
+  </div>
+
+  <p>解引用落到哪一格，由 <code>p</code> 的内容决定，与 <code>p</code> 自己住在哪一格无关。打印地址写成 <code>(void *)&amp;x</code>，<code>%p</code> 这个格式只接受通用指针。</p>
+
+  <h2 id="star">同一个 <code>*</code>，两种角色</h2>
+
+  <table>
+    <thead>
+      <tr><th>出现在哪</th><th>写法</th><th>它是什么</th><th>读法</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>声明里</td><td><code>int *p;</code></td><td>类型记号：p 的类型是「指向 int 的指针」</td><td>p 是一个指向 int 的指针</td></tr>
+      <tr><td>表达式里</td><td><code>*p</code></td><td>解引用运算符：按 p 里的地址访问那一格</td><td>顺着 p 去访问那一格</td></tr>
+    </tbody>
+  </table>
+
+  <p>声明里的 <code>*</code> 是类型的一部分，只跟着紧邻它的那一个名字走：</p>
+
+  <pre data-lang="cpp"><code>int *p, k;    /* p 是指向 int 的指针；k 是普通的 int 变量 */
+int *p, *k;   /* 两个都要指针，就得写两个星号 */
+int* p;       /* 与 int *p 同义；星号贴着类型还是贴着名字，只是排版 */</code></pre>
+
+  <p>与它配对的是 <code>&amp;</code>：<code>&amp;x</code> 取一个变量的地址，<code>&amp;p</code> 取指针变量自己的地址。</p>
+
+  <h2 id="params">传值还是传地址：两问框架</h2>
+
+  <p>函数调用里，参数传递可以拆成两个各自独立的问题。两问分开答，「传出去的是副本」与「传出去的是地址」才能同时成立。</p>
+
+  <ol>
+    <li><strong>函数拿到的是原件还是副本？</strong> 这由 C 的参数传递规则决定，每一次调用都一样：函数里的<strong>形参</strong>得到的是调用处<strong>实参</strong>的<strong>副本</strong>，调用方那个变量本身不进函数。标准（C17 §6.5.2.2）对这一步的规定是：实参先被求值，每个形参被赋予对应实参的值；函数可以改自己的参数，这些改动影响不到实参。</li>
+    <li><strong>这个副本里装的是什么？</strong> 这由实参写成什么样决定：写 <code>x</code>、<code>y</code>（传值调用），副本里装的是<strong>值</strong>；写 <code>&amp;x</code>、<code>&amp;y</code>（传地址调用），副本里装的是<strong>地址</strong>。</li>
+  </ol>
+
+  <p>术语对齐：<strong>形参</strong>是函数定义里写的参数名（<code>void swap_right(int *pa, int *pb)</code> 里的 <code>pa</code>、<code>pb</code>）；<strong>实参</strong>是调用处写的表达式（<code>swap_right(&amp;x, &amp;y)</code> 里的 <code>&amp;x</code>、<code>&amp;y</code>）。</p>
+
+  <table>
+    <thead>
+      <tr><th>问的</th><th>传值调用 <code>f(x, y)</code></th><th>传地址调用 <code>f(&amp;x, &amp;y)</code></th></tr>
+    </thead>
+    <tbody>
+      <tr><td>① 拿到的是原件还是副本</td><td>副本</td><td>副本</td></tr>
+      <tr><td>② 副本里装的是什么</td><td>值：<code>3</code>、<code>8</code></td><td>地址：<code>&amp;x</code>、<code>&amp;y</code></td></tr>
+      <tr><td>函数能改到调用方的变量吗</td><td>不能：改的是副本那两格</td><td>能：顺着副本里的地址解引用，写回原件那一格</td></tr>
+      <tr><td>一句话</td><td>传出去的是「装着值的副本」</td><td>传出去的是「装着地址的副本」</td></tr>
+    </tbody>
+  </table>
+
+  <p class="ref-mnemonic"><strong>记法</strong>：副本不副本，管的是「改的是不是原件那一格」；副本里装什么，管的是「能不能顺着它摸到原件」——装值摸不到，装地址摸得到。</p>
+
+  <p>题面问「传出去的那两个值是什么」，要答的是第二问：副本里装的那两个编号，传值调用是 <code>3</code>、<code>8</code>，传地址调用是 <code>&amp;x</code>、<code>&amp;y</code>。题面问「函数拿到的是原件还是副本」，要答的是第一问：副本。两问分开答，合起来是一次完整的说法——传出去的是一个装着地址的副本。</p>
+
+  <h2 id="walk">两个 swap 的逐行走查</h2>
+
+  <p>设 <code>x</code> 在 <code>0x7ffd38</code>、<code>y</code> 在 <code>0x7ffd3c</code>，两个变量在 <code>main</code> 里分别装着 <code>3</code> 与 <code>8</code>。</p>
+
+  <div class="ref-grid">
+    <div class="ref-card">
+      <h3>没起作用的一版：<code>swap_wrong</code></h3>
+      <pre data-lang="cpp"><code>void swap_wrong(int a, int b) {
+    int t = a;     /* t = 3 */
+    a = b;         /* a 变成 8 */
+    b = t;         /* b 变成 3 */
+}
+
+int main(void) {
+    int x = 3, y = 8;
+    swap_wrong(x, y);
+    /* 打印 x = 3, y = 8 */
+    printf("x = %d, y = %d\n", x, y);
+    return 0;
+}</code></pre>
+    </div>
+    <div class="ref-card">
+      <h3>换过来的那一版：<code>swap_right</code></h3>
+      <pre data-lang="cpp"><code>void swap_right(int *pa, int *pb) {
+    int t = *pa;   /* 顺着 pa 摸到 x：t = 3 */
+    *pa = *pb;     /* x 那一格写入 8 */
+    *pb = t;       /* y 那一格写入 3 */
+}
+
+int main(void) {
+    int x = 3, y = 8;
+    swap_right(&amp;x, &amp;y);
+    /* 打印 x = 8, y = 3 */
+    printf("x = %d, y = %d\n", x, y);
+    return 0;
+}</code></pre>
+    </div>
+  </div>
+
+  <table class="ref-table-tight">
+    <thead>
+      <tr><th>走到哪一步</th><th><code>swap_wrong(x, y)</code></th><th><code>swap_right(&amp;x, &amp;y)</code></th></tr>
+    </thead>
+    <tbody>
+      <tr><td>调用处：实参求值</td><td>得到 <code>3</code> 与 <code>8</code></td><td>得到 <code>0x7ffd38</code> 与 <code>0x7ffd3c</code></td></tr>
+      <tr><td>进函数：新划两格（副本）</td><td><code>a</code> 装 <code>3</code>，<code>b</code> 装 <code>8</code></td><td><code>pa</code> 装 <code>0x7ffd38</code>，<code>pb</code> 装 <code>0x7ffd3c</code></td></tr>
+      <tr><td>第一行赋值</td><td>读 <code>a</code>：<code>t = 3</code></td><td><code>*pa</code> 落到 <code>main</code> 的 <code>x</code>：<code>t = 3</code></td></tr>
+      <tr><td>第二行赋值</td><td>改 <code>a</code>：<code>a = 8</code></td><td><code>*pa = *pb</code>：<code>main</code> 的 <code>x</code> 变成 <code>8</code></td></tr>
+      <tr><td>第三行赋值</td><td>改 <code>b</code>：<code>b = 3</code></td><td><code>*pb = t</code>：<code>main</code> 的 <code>y</code> 变成 <code>3</code></td></tr>
+      <tr><td>回到 <code>main</code></td><td><code>x = 3, y = 8</code>（原样）</td><td><code>x = 8, y = 3</code>（换过来了）</td></tr>
+    </tbody>
+  </table>
+
+  <p>两版的差别只在第二问：<code>a</code>、<code>b</code> 里装的是值，改动走不出自己那两格；<code>pa</code>、<code>pb</code> 里装的是编号，顺着编号解引用落到的是 <code>main</code> 的格子。<code>pa</code>、<code>pb</code> 自己从头到尾没有被改过。</p>
+
+  <figure class="lesson-figure lesson-figure--inline">
+    <svg viewBox="0 0 640 320" role="img" aria-label="左边传值：函数里的 a、b 装的是 3 和 8；右边传地址：pa、pb 装的是 x、y 的地址，箭头顺着地址指回 main 的两格" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+      <defs><marker id="ref-arrow-2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+      <line x1="320" y1="16" x2="320" y2="288" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+      <text x="160" y="24" text-anchor="middle" font-size="15">传值：副本里装的是值</text>
+      <text x="480" y="24" text-anchor="middle" font-size="15">传地址：副本里装的是地址</text>
+      <g fill="none">
+        <rect x="40" y="48" width="220" height="40" rx="6" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="40" y="94" width="220" height="40" rx="6" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="380" y="48" width="220" height="40" rx="6" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="380" y="94" width="220" height="40" rx="6" stroke="currentColor" stroke-width="1.5"/>
+      </g>
+      <text x="56" y="74" text-anchor="start" font-size="15">x</text>
+      <text x="96" y="74" text-anchor="start" font-size="13">main 里，内容 3</text>
+      <text x="56" y="120" text-anchor="start" font-size="15">y</text>
+      <text x="96" y="120" text-anchor="start" font-size="13">main 里，内容 8</text>
+      <text x="396" y="74" text-anchor="start" font-size="15">x</text>
+      <text x="436" y="74" text-anchor="start" font-size="13">main 里，内容 3</text>
+      <text x="396" y="120" text-anchor="start" font-size="15">y</text>
+      <text x="436" y="120" text-anchor="start" font-size="13">main 里，内容 8</text>
+      <line x1="150" y1="134" x2="150" y2="166" stroke="currentColor" stroke-width="1.5" marker-end="url(#ref-arrow-2)"/>
+      <text x="160" y="158" text-anchor="start" font-size="13">传参：3、8</text>
+      <line x1="490" y1="134" x2="490" y2="166" stroke="currentColor" stroke-width="1.5" marker-end="url(#ref-arrow-2)"/>
+      <text x="500" y="158" text-anchor="start" font-size="13">传参：&amp;x、&amp;y</text>
+      <g fill="none">
+        <rect x="40" y="172" width="220" height="40" rx="6" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="40" y="218" width="220" height="40" rx="6" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="380" y="172" width="220" height="40" rx="6" stroke="currentColor" stroke-width="1.5"/>
+        <rect x="380" y="218" width="220" height="40" rx="6" stroke="currentColor" stroke-width="1.5"/>
+      </g>
+      <text x="56" y="198" text-anchor="start" font-size="15">a</text>
+      <text x="96" y="198" text-anchor="start" font-size="13">副本，装 3</text>
+      <text x="56" y="244" text-anchor="start" font-size="15">b</text>
+      <text x="96" y="244" text-anchor="start" font-size="13">副本，装 8</text>
+      <text x="396" y="198" text-anchor="start" font-size="15">pa</text>
+      <text x="436" y="198" text-anchor="start" font-size="13">副本，装 &amp;x</text>
+      <text x="396" y="244" text-anchor="start" font-size="15">pb</text>
+      <text x="436" y="244" text-anchor="start" font-size="13">副本，装 &amp;y</text>
+      <text x="160" y="288" text-anchor="middle" font-size="13">函数里改 a、b：改动出不了这两格</text>
+      <text x="480" y="288" text-anchor="middle" font-size="13">函数里写 *pa、*pb：落回上面那两格</text>
+      <path d="M 600 192 L 626 192 L 626 68 L 606 68" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ref-arrow-2)"/>
+      <path d="M 380 238 L 352 238 L 352 114 L 376 114" fill="none" stroke="currentColor" stroke-width="1.5" marker-end="url(#ref-arrow-2)"/>
+    </svg>
+    <figcaption>两次调用传出去的都是副本：装值的那份走不出自己那两格，装地址的那份顺着编号摸回调用方的格子</figcaption>
+  </figure>
+
+  <h2 id="pitfalls">三条常见误判</h2>
+
+  <section class="ref-wrong">
+    <h3>误判一：「星号跟整行」</h3>
+    <p><strong>错在哪</strong>：把声明里的 <code>*</code> 当成「整行都声明成指针」的标记，于是读 <code>int *p, k;</code> 时以为 <code>k</code> 也是指针。</p>
+    <p><strong>正确说法</strong>：声明里的 <code>*</code> 贴在名字上，只作用于紧邻它的那一个名字。<code>int *p, k;</code> 里 <code>p</code> 是指向 <code>int</code> 的指针、<code>k</code> 是普通的 <code>int</code>；两个都要指针就写 <code>int *p, *k;</code>。星号贴着类型写还是贴着名字写（<code>int* p</code> 与 <code>int *p</code>）只是排版，两种写法效果相同。</p>
+  </section>
+
+  <section class="ref-wrong">
+    <h3>误判二：「传指针就是传址」</h3>
+    <p><strong>错在哪</strong>：把「传地址」当成 C 的第二套参数传递规则，以为函数收到指针时拿到的是调用方的原件，或者以为「传值调用 / 传址调用」是两套可以挑的规则。</p>
+    <p><strong>正确说法</strong>：C 只有一套参数传递规则，都是传值。收指针的函数拿到的仍然是一个副本，只是这个副本里装的是地址。「传地址调用」这个名字说的是<strong>副本里装的东西是地址</strong>；传递规则还是传值这一套。</p>
+    <p>推论：函数里写 <code>pa = &amp;y;</code> 改的是副本这一格的内容，<code>main</code> 里的变量不受影响。要让函数改动调用方的指针变量本身，传进去的得是它自己的地址——那是后续课程的内容。</p>
+  </section>
+
+  <section class="ref-wrong">
+    <h3>误判三：「副本改不了原件」</h3>
+    <p><strong>错在哪</strong>：把第一问的答案当成整件事的结论——既然参数是副本，函数就一定改不到调用方的变量。这样 <code>swap_right</code> 能换过来就无从解释。</p>
+    <p><strong>正确说法</strong>：能不能改到原件由第二问决定。副本里装的是值，改动止步于副本那两格；副本里装的是地址，顺着地址解引用落到的那一格就是原件。<code>swap_right</code> 里三行赋值改的全是 <code>main</code> 的 <code>x</code>、<code>y</code>，而 <code>pa</code>、<code>pb</code> 自己没有被改过。</p>
+    <p>自查一句：看到 <code>*pa = ...</code>，先问 <code>pa</code> 里装的是谁的编号，写下去的就是那一格。</p>
+  </section>
+
+  <h2 id="reading">读一段指针代码的顺序</h2>
+
+  <ol>
+    <li>认格子：每个变量住在哪一格，地址是什么（<code>&amp;x</code>、<code>&amp;p</code> 都打印得出来）。</li>
+    <li>认星号：落在声明里看类型（<code>int *p</code> 说明 p 的类型），落在表达式里看落到哪一格（<code>*p</code> 是那一格的内容）。</li>
+    <li>看到 <code>*p</code> 或 <code>p-&gt;name</code>，先确认 <code>p</code> 指着东西：有没有被赋过地址、是不是 <code>NULL</code>。</li>
+    <li>看到函数调用，按两问问一遍：拿到的是副本（永远是）；副本里装的是值还是地址。</li>
+  </ol>
+
+  <p class="ref-back">对应课件：<a href="../lessons/0002-c-recap.1.html">0002 · 指针：变量住在哪里</a>　·　术语以 <a href="../GLOSSARY.html">科目术语表</a> 为准。</p>
+
+  <footer class="lesson-footer">
+    StudyMate · 速查页：指针与传参 · 本地学习工作区
+  </footer>
+
+</article>
+
+<script src="../../../assets/sayo/sayo.js"></script>
+<script>LearnTheme.wire(document.getElementById('ref-theme-checkbox'));</script>
+</body>
+</html>
