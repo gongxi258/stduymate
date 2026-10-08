@@ -168,7 +168,7 @@ int main(void) {
   <pre data-lang="cpp"><code>int  *p;    /* p 是指向 int 的指针：装着一个 int 变量的地址 */
 char *c;    /* 同样是「类型名 + 星号 + 变量名」；这里 c 用来装一个 char 变量的地址 */</code></pre>
 
-  <p>星号前面写什么类型，指针就指向什么类型。<code>int *p</code> 里的这个 <code>*</code> 是声明的一部分，它的作用是把 p 声明成指针类型，读作「<code>p</code> 是指向 <code>int</code> 的指针」。写 <code>int* p</code> 也合法、意思完全相同，两种写法在程序里的效果一样。</p>
+  <p>星号前面写什么类型，指针就指向什么类型。<code>int *p</code> 里的这个 <code>*</code> 是声明的一部分，它的作用是把 p 声明成指针类型，读作「<code>p</code> 是指向 <code>int</code> 的指针」。写 <code>int* p</code> 也合法、意思完全相同，两种写法在程序里的效果一样。要注意的是这个 <code>*</code> 只跟着紧邻它的那个名字走：<code>int *p, k;</code> 里 <code>p</code> 是指针、<code>k</code> 是普通的 <code>int</code> 变量，两个都要指针得写成 <code>int *p, *k;</code>。</p>
 
   <p>指针自己也是一个变量，因此它同样住在某个格子里、同样有自己的地址。这一点值得单独看一眼：<code>&amp;p</code> 与 <code>&amp;x</code> 是两个不同的编号，<code>p</code> 的内容是 <code>x</code> 的地址，而 <code>p</code> 自己的地址是另一个数。</p>
 
@@ -633,9 +633,10 @@ int main(void) {
   </ul>
 
   <ul class="lesson-resources">
-    <li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2310.pdf">ISO/IEC 9899（C17）标准草案 N2310 第 7.22.3 节 内存管理函数</a><span class="lesson-resources__meta">官方草案 · 本机已落盘；「返回空指针」「free 之后不能再用」这些契约的原文，本课的空指针一节按它写</span></li>
-    <li><a href="https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html">GCC 的 C 方言选项 <code>-std=c17 / -std=c23</code>（GCC 官方手册）</a><span class="lesson-resources__meta">官方文档 · 本机已落盘；编译命令里那个 <code>-std=c17</code> 是什么，按它核对</span></li>
-    <li>王道《2027 数据结构考研复习指导》第 1 章 绪论（1.1–1.2）<span class="lesson-resources__meta">书 · 本机有目录与章节结构（含原书页码），可查本章在这本书里的位置</span></li>
+    <li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2310.pdf">ISO/IEC 9899（C17）标准草案 N2310：6.3.2.1 左值、数组与函数指示符，6.3.2.3 指针，6.5.3.2 取地址与解引用运算符</a><span class="lesson-resources__meta">官方草案 · 本机已落盘；§6.3.2.3 第 3 段是空指针的定义、§6.5.3.2 第 3–4 段是 <code>&amp;</code> 与 <code>*</code> 的语义（脚注 106 列出了不能解引用的三类无效地址：空指针、对齐不当、对象生命周期结束），§6.3.2.1 第 3 段是数组到指针的转换</span></li>
+    <li><a href="https://inria.hal.science/hal-02383654v1/file/ModernC.pdf">Modern C（Jens Gustedt，第 2 版）第 11 章 · Pointers</a><span class="lesson-resources__meta">书 · 本机已落盘；§11.3.1 讲明数组访问与指针访问是同一件事（<code>A[i]</code> 与 <code>*(A+i)</code> 等价、数组名求值得到 <code>&amp;A[0]</code>），§11.1.3 是指针相减（单位是元素个数），§11.1.4–11.1.5 是指针有效性</span></li>
+    <li>ISO/IEC 9899（C17）标准草案 N2310 §6.7.6 声明符（本机已落盘）<span class="lesson-resources__meta">官方草案 · <code>int *p, k;</code> 里星号只把紧邻的那个名字声明成指针，另外的名字不受影响</span></li>
+    <li>ISO/IEC 9899（C17）标准草案 N2310 §6.5.2.1 数组下标、§6.5.2.2 函数调用（本机已落盘）<span class="lesson-resources__meta">官方草案 · <code>E1[E2]</code> 的定义是 <code>(*((E1)+(E2)))</code>；§6.5.2.2 的脚注 97 写明函数改不了参数本身、但能改所指向的对象</span></li>
   </ul>
 
   <div class="lesson-related">
