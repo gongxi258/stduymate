@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>从一次插入看数据结构 · 数据结构（408）</title>
+
+<!-- 共享层在 .learning/assets/，课件在 .learning/subjects/<slug>/lessons/ 下，所以是 ../../../assets/ -->
+<link rel="stylesheet" href="../../../assets/sayo/sayo.css">
+<link rel="stylesheet" href="../../../assets/learn-theme.css">
+<link rel="stylesheet" href="../assets/style.css">
+
+<!-- 主题要在首帧前应用，避免闪白/闪黑 -->
+<script src="../../../assets/learn-theme.js"></script>
+<script>LearnTheme.apply();</script>
+</head>
+
+<body class="lesson-body">
+
+<nav class="lesson-bar">
+  <a href="../index.html">← 返回课程</a>
+  <span>数据结构（408）</span>
+  <span class="lesson-bar__no">0001</span>
+  <!-- 课件页自带主题开关：学生从文件管理器直接打开课件时也能切暗色 -->
+  <label class="syo-toggle syo-toggle--theme lesson-bar__toggle" title="切换深浅主题" aria-label="切换深浅主题">
+    <input type="checkbox" id="lesson-theme-checkbox" checked>
+    <span class="syo-toggle-track"></span>
+    <span class="syo-toggle-knob">
+      <svg class="syo-toggle-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.5" stroke="#f57c00" stroke-width="1.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.34 4.34l1.77 1.77M13.89 13.89l1.77 1.77M4.34 15.66l1.77-1.77M13.89 6.11l1.77-1.77" stroke="#f57c00" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </span>
+  </label>
+</nav>
+
+<article class="lesson">
+
+  <header class="lesson-header">
+    <span class="lesson-header__eyebrow">0001 · 从一次插入看数据结构</span>
+    <h1>从一次插入看数据结构</h1>
+    <p class="lesson-goal"><b>本节目标：</b>能说清同一份数据换一种存法之后，哪一步变便宜、哪一步变贵。</p>
+  </header>
+
+  <!-- ── 正文：渲染器按内容文件（lessons/<序号>-<节点id>.md）产出，块词汇见 docs/规范/课件内容格式.md ── -->
+
+  <h2>一个学生每天都在碰的问题</h2>
+
+  <p>假设手机通讯录里存着 10 万条记录。要找一个人，不记得他排在哪儿，只知道姓名。</p>
+
+  <p>最直接的办法是从第一条开始，一条一条比对，直到名字对上。平均要比到一半，也就是 5 万次；运气最差的时候，10 万条全部比完。</p>
+
+  <p>换一个前提再看：这 10 万条记录在存入时，就按姓名排好了序。此时可以从整份通讯录的中间那条开始比。比完一次，就能判断目标要么在左半边、要么在右半边——另一半永远不用看了。每比一次，剩下的范围就减半：</p>
+
+  <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="折半查找的范围逐次减半，从 10 万条一直缩到 1 条">
+<svg viewBox="0 0 640 280" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="16" y="26" text-anchor="start" font-size="15">折半查找：每比一次，剩下的范围少一半</text>
+<g fill="none">
+<rect x="130" y="44" width="400.0" height="26" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<rect x="130" y="78" width="200.0" height="26" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<rect x="130" y="112" width="100.0" height="26" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<rect x="130" y="146" width="78.0" height="26" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<rect x="130" y="180" width="78.0" height="26" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<rect x="130" y="214" width="3" height="26" rx="1" fill="currentColor" fill-opacity="0.35"/>
+</g>
+<text x="118" y="62.0" text-anchor="end" font-size="13">第 1 次</text>
+<text x="140" y="62.0" text-anchor="start" font-size="13">剩下 100000</text>
+<text x="118" y="96.0" text-anchor="end" font-size="13">第 2 次</text>
+<text x="140" y="96.0" text-anchor="start" font-size="13">剩下 50000</text>
+<text x="118" y="130.0" text-anchor="end" font-size="13">第 3 次</text>
+<text x="140" y="130.0" text-anchor="start" font-size="13">剩下 25000</text>
+<text x="118" y="164.0" text-anchor="end" font-size="13">第 4 次</text>
+<text x="140" y="164.0" text-anchor="start" font-size="13">剩下 12500</text>
+<text x="118" y="198.0" text-anchor="end" font-size="13">第 5 次</text>
+<text x="140" y="198.0" text-anchor="start" font-size="13">剩下 6250</text>
+<text x="118" y="232.0" text-anchor="end" font-size="13">第 8 次</text>
+<text x="142" y="232.0" text-anchor="start" font-size="13">剩下 781</text>
+<text x="118" y="260" text-anchor="end" font-size="13">……</text>
+<text x="118" y="266" text-anchor="end" font-size="13" dominant-baseline="middle">第 17 次</text>
+<line x1="134" y1="250" x2="134" y2="266" stroke="currentColor" stroke-width="1.5"/>
+<line x1="134" y1="266" x2="142" y2="266" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="148" y="266" font-size="14" dominant-baseline="middle">剩下 1 个，就是它</text>
+</svg>
+
+    <figcaption>图 1 · 折半查找每比较一次，候选范围就减半，第 17 次缩到 1 条</figcaption>
+  </figure>
+
+  <p>从 10 万开始连续折半，折到第 17 次，剩下的范围就缩到了 1 条。也就是说，最坏情况下比较 17 次，就能把目标确定下来。</p>
+
+  <p>同一份数据，两种存法：</p>
+
+  <table>
+    <thead>
+      <tr><th>存法</th><th>按姓名查找一次，平均要比较几次</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>无序存放</td><td>50000</td></tr>
+      <tr><td>按姓名排序存放</td><td>不超过 17</td></tr>
+    </tbody>
+  </table>
+
+  <p>两种存法里躺着的是同一批记录，逐条比较这个动作也一模一样，代价却差了约三千倍。差别只在于：数据按什么方式组织。</p>
+
+  <p>换个角度，通讯录还要反复插人、删人。往一份按姓名排好序的记录里插入一条新记录，如果这些记录在内存里是挨着放的，那么插入位置之后的每一条都得往后挪一格；如果记录之间由"下一个元素在哪个地址"联系起来，那么插入只需要改动两处记录：</p>
+
+  <figure class="lesson-figure lesson-figure--inline" role="img" aria-label="上排是挨着存放的记录插入一条时后面三格整体右移，下排是各自记着下一个元素地址的记录插入时只改两处">
+<svg viewBox="0 0 640 330" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="16" y="18" text-anchor="start" font-size="15">顺序存储：在这一格插入，它后面每一格都要腾位置</text>
+<g fill="none">
+<rect x="50" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="112" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="174" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="236" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="298" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="360" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="81.0" y="68.0" text-anchor="middle" font-size="14">0</text>
+<text x="143.0" y="68.0" text-anchor="middle" font-size="14">2</text>
+<text x="205.0" y="68.0" text-anchor="middle" font-size="14">新</text>
+<text x="267.0" y="68.0" text-anchor="middle" font-size="14">6</text>
+<text x="329.0" y="68.0" text-anchor="middle" font-size="14">8</text>
+<text x="391.0" y="68.0" text-anchor="middle" font-size="14">10</text>
+<line x1="264.0" y1="30" x2="275.0" y2="30" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<line x1="326.0" y1="30" x2="337.0" y2="30" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<line x1="388.0" y1="30" x2="399.0" y2="30" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="329.0" y="112" text-anchor="middle" font-size="14">移动 3 个元素</text>
+<text x="16" y="176" text-anchor="start" font-size="15">链式存储：同一件事只改两处记录，数据本身一格都不用动</text>
+<g fill="none">
+<rect x="40" y="200" width="96" height="46" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="150" y="200" width="96" height="46" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="260" y="200" width="96" height="28" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="420" y="200" width="96" height="46" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="530" y="200" width="96" height="46" rx="6" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="88" y="228.0" text-anchor="middle" font-size="14">记录 0</text>
+<text x="198" y="228.0" text-anchor="middle" font-size="14">记录 1</text>
+<text x="308" y="219" text-anchor="middle" font-size="13">新记录</text>
+<text x="468" y="228.0" text-anchor="middle" font-size="14">记录 2</text>
+<text x="578" y="228.0" text-anchor="middle" font-size="14">记录 3</text>
+<line x1="246" y1="248" x2="420" y2="248" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="308" y="268" text-anchor="middle" font-size="13">插入前由记录 1 指向记录 2</text>
+<line x1="246" y1="214" x2="256" y2="214" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<line x1="356" y1="214" x2="416" y2="214" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="320.0" y="300" text-anchor="middle" font-size="14">只改两处记录：记录 1 记下新记录的地址，新记录记下记录 2 的地址</text>
+</svg>
+
+    <figcaption>图 2 · 同一件事在两种存法下的动作次数</figcaption>
+  </figure>
+
+  <h2>存法决定每一步的代价</h2>
+
+  <p>上面两件事合起来说明了一个判断：<b>选择一种存法，等于同时给所有操作定下了代价</b>。按姓名查找在排序存放时变得极快，插入却可能牵动一大片数据；靠元素之间记地址的存法插入很省事，查找时却只能沿着这些地址一条条走下去。折半查找凭什么能直接跳到中间那一条？因为记录之间挨着放、每条的宽度相同，地址可以算出来；一旦改成靠地址联系，这套算法立刻失效。</p>
+
+  <p>把这两件事写成一张表，就是本课要建立的第一个判断习惯——先数一数，哪种操作出现得最多：</p>
+
+  <table>
+    <thead>
+      <tr><th>要做的操作</th><th>连续存放、按下标取用</th><th>靠地址联系</th></tr>
+    </thead>
+    <tbody>
+      <tr><td>取第 i 个元素</td><td>地址一步算出</td><td>从头走 i 步</td></tr>
+      <tr><td>按姓名查找</td><td>从头逐条比对；若已排序则可折半</td><td>从头逐条比对</td></tr>
+      <tr><td>在中间插入或删除</td><td>后面一片都要挪动</td><td>改动两处记录</td></tr>
+      <tr><td>顺序遍历全部元素</td><td>挨着走过</td><td>沿地址走过</td></tr>
+      <tr><td>每存一个元素的空间开销</td><td>只有记录本身</td><td>记录本身再加一处地址</td></tr>
+    </tbody>
+  </table>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "通讯录里一条记录是「张三 · 13800000000 · 家人」。\n有人顺手写了一句注释：\n\n```c\n/* 数据项：一条通讯录记录 */\n```\n\n这句注释错在哪？",
+    "opts": [
+      "错在层次：「张三」这类字段才是数据项，整条记录是数据元素",
+      "错在名字：整条记录该叫「数据」，各字段才叫「数据元素」",
+      "错在数量：一条记录由数据项组成，数据项不能只有三个",
+      "没错：数据项就是数据元素，两种叫法指的是同一个单位"
+    ],
+    "ans": 0,
+    "why": "数据项是描述对象的最小单位：姓名、电话、分组。\n一条记录由若干数据项组成，这个能独立对待的单位叫数据元素。\n三层的包含关系是：数据 &gt; 数据元素 &gt; 数据项。\n选项 4 把上下两层说成同一个东西，正是本课要拆开的那一步。"
+  },
+  {
+    "q": "一份体温登记表，每行是「姓名 日期 体温」，全校的记录合起来是一张表。\n\n① 指出这项数据里的数据项、数据元素与数据各是什么。\n② 数据项与数据元素的关系，用一句话说清。",
+    "answer": "① 数据项：姓名、日期、体温，是描述一次登记的最小单位。\n数据元素：一行登记「张三 3-14 36.5」。\n它由三个数据项组成，是数据的基本单位。\n数据：全校所有行合起来的那张表。\n\n② 一个数据元素由若干数据项组成；\n数据项是最小单位，不再往下分，数据元素是能独立对待的那个单位。",
+    "criteria": "① 三个层次各指对一样东西，得 2 分；\n把整行当数据项、或把单个字段当数据元素，这一条不给分。\n② 说出「元素由项组成、项是最小单位」这层包含关系，得 2 分。\n只重复术语名称、说不清谁包含谁，不给分。"
+  }
+]'></div>
+
+  <h2>换来换去的到底是什么</h2>
+
+  <p>到这里，被换来换去的东西还没有名字。通讯录里，姓名、电话、分组是三项最小的单位，称为<b>数据项</b>（data item）；一条完整的记录由若干数据项组成，这样一个能独立对待的单位称为<b>数据元素</b>（data element），它是数据的基本单位；全部记录合起来构成<b>数据</b>（data）。三者的关系是逐层包含的：</p>
+
+  <ul>
+    <li>数据项：姓名、电话、分组，是描述一个对象的最小单位。</li>
+    <li>数据元素：一条通讯录记录，由三个数据项组成，是数据的基本单位。</li>
+    <li>数据：10 万条记录的全集。</li>
+  </ul>
+
+  <p>回想刚才换过的东西：折半查找那一次，改动的是元素的存放方式，记录本身的三个数据项一个都没变。可见记录之间的关系（谁挨着谁）与记录本身在内存里怎么放，是两件可以分开看待的事。计算机学科把前一件称为<b>逻辑结构</b>，后一件称为<b>存储结构</b>。</p>
+
+  <p><b>逻辑结构</b>指数据元素之间的逻辑关系，与它们在计算机里怎么存放无关。它只有四类：</p>
+
+  <ul>
+    <li>集合：元素之间除了"同属一个整体"没有别的关系。</li>
+    <li>线性：元素排成一个序列，除了第一个和最后一个，每个元素都有唯一的前驱与后继。通讯录按姓名排序存放，就是这一类。</li>
+    <li>树形：一个元素可以对应多个下层元素，层次分明。</li>
+    <li>图状：元素之间可以任意地互相连接。</li>
+  </ul>
+
+  <p><b>存储结构</b>（也叫物理结构）指逻辑关系在计算机里的表示方式。同一份按姓名排好的通讯录，至少有两种存法：</p>
+
+  <ul>
+    <li>顺序存储：元素放在一段连续的空间里，第 i 个元素的地址可以算出来。开头第二幅图的上半部分画的就是它。</li>
+    <li>链式存储：元素放在任意的位置，每个元素额外记下下一个元素在哪里。它不要求元素挨着放。</li>
+  </ul>
+
+  <p>考试大纲里这一章还有索引存储与散列存储两类，分别靠索引表和散列函数定位元素，它们要到第七、八章才登场。</p>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "同一份 10 万条记录，第一天挨着放在一段连续的内存里，\n第二天改成一个节点记下一个节点的地址。\n前后两次，它的逻辑结构是什么？",
+    "opts": [
+      "两次都是线性，每次记录都有唯一的前驱与后继",
+      "第一天线性，第二天因为靠地址联系而变成图状结构",
+      "两次都是线性，第二天的线性关系由节点里的地址表示",
+      "第一天线性，第二天变成集合，只要求同属一份数据"
+    ],
+    "ans": 0,
+    "why": "逻辑结构只看元素之间的关系：每条记录有唯一的前驱与后继，就是线性。\n改存法换掉的是存储结构：\n同样这份线性关系，一次靠「挨着放」表示，一次靠「记下下一个的地址」表示。\n这份关系本身没动，所以两次都是线性。"
+  },
+  {
+    "q": "同事把通讯录从顺序存储改成了链式存储，\n原来的折半查找跑出来的结果却全错了，\n他怀疑是自己改坏了代码。\n\n① 折半查找为什么用不了？\n② 这件事说明算法与存储结构是什么关系？",
+    "answer": "① 折半查找每一步都要直接跳到当前范围的中间那条记录，\n这一步靠的是「记录挨着放、每条宽度相同」，地址能算出来。\n换成链式存储以后，节点散落在内存各处，\n要碰到中间那条只能从头一个个走，跳不过去。\n\n② 算法能做什么，受存储结构支持什么操作制约。\n存储结构一换，有些算法就失去了前提，得换算法。\n代码没有写坏，是前提不成立了。",
+    "criteria": "① 说出「折半要靠算地址直接跳」这个前提，得 2 分；\n再说出链式存储只能从头走 i 步、跳不过去，得 1 分。\n② 说出算法的可行性取决于存储结构提供的能力，得 2 分。\n只答「链表不能随机访问」而没有回到折半那一步的，第 ① 条不给分。"
+  }
+]'></div>
+
+  <h2>三要素与抽象数据类型</h2>
+
+  <p>有了逻辑结构与存储结构两个词，可以正式给出本学科的词条了。</p>
+
+  <p><b>数据结构</b>（data structure）指数据元素之间存在一种或多种特定关系的集合；一个完整的数据结构包含三个要素：<b>逻辑结构</b>、<b>存储结构</b>、定义在该结构上的<b>运算</b>。</p>
+
+  <p>运算指定义在数据上的操作，例如查找、插入、删除、遍历。它把前两个要素落到实处：只有把允许做哪些操作写清楚，才谈得上比较两种存储结构谁更合适。这也解释了一个容易忽略的顺位——<b>先定运算，再选存储</b>：通讯录若只需要"按姓名查找"，排序加折半是最好的方案；若还需要频繁插入删除，同一份数据就得换一种存法。</p>
+
+  <p>这里有一个容易被含糊过去的地方：三个要素是一次描述，其中的逻辑结构、存储结构与运算说的是同一个结构的三个方面。用一个例子可以看出它们各自扮演的角色。假设要实现"按姓名查找"这个运算：</p>
+
+  <ul>
+    <li>运算：输入一个姓名，输出对应的记录或"没找到"。</li>
+    <li>用顺序存储实现：把记录按姓名排序，折半查找。</li>
+    <li>用链式存储实现：沿地址逐条比对。</li>
+  </ul>
+
+  <p>三方面都成立，得到的却是两个代价完全不同的方案。所以换存储结构时，逻辑结构与运算的定义可以原样不动——这正是数据结构这门课最常用的一个做法。</p>
+
+  <p>上面两个方案都把"怎么做"一起写了出来。当做法也被固定下来时，这个数据结构就只有一种确定了。大多数时候，我们更希望只规定"能做什么"，把"怎么做"留给以后替换。</p>
+
+  <p><b>抽象数据类型</b>（Abstract Data Type，简称 ADT）指一个数学模型以及定义在该模型上的一组操作。它只说明"能做什么"，不说明"怎么做"：</p>
+
+  <ul>
+    <li>数据通讯录这个抽象数据类型，规定姓名与电话属于什么类型、允许哪些操作（查找、插入、删除、遍历），不规定用什么存。</li>
+    <li>顺序存储与链式存储，则是它的两个不同实现。</li>
+  </ul>
+
+  <p>这样安排的好处是：上层的操作接口写一次就不用再改，换存储只动底层实现。</p>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "下面三段是同一个「通讯录」的三份接口声明。\n哪一段真的做到了只规定能做什么？\n\n```c\n/* A */\nint  find(const char *name, Record *out);\nvoid insert(const Record *r);\n\n/* B */\nRecord *records;   /* 记录数组，动态扩容 */\nint     sorted;    /* 是否已按姓名排好序 */\n\n/* C */\nstruct Node { struct Node *next; Record r; };\nstruct Node *head;\n```",
+    "opts": [
+      "A：只给出能做什么，没规定内部用什么存",
+      "B：给出了查找、插入，还额外说明了排序状态",
+      "C：给出了链式结构，正好说明当前用哪种存法",
+      "三段都是：三份都把操作写清楚了，差别只在写法"
+    ],
+    "ans": 0,
+    "why": "抽象数据类型只规定能做什么：操作的名字、输入与输出。\nA 三段都是操作，数组还是链表随便换，调用方都不用改。\nB 把内部字段和有序状态一起写出去了，\nC 把节点结构写成接口的一部分。\n后两者都把做法钉死了，换实现就得改调用方。"
+  },
+  {
+    "q": "通讯录后来改成按「加入时间」追加，不再按姓名排序。\n\n① 先说清这一改动动的是哪一层？\n② 再说明哪些代码必须跟着改、哪些可以原样不动。",
+    "answer": "① 动的是存储那一层：记录在内存里怎么组织、是否有序变了。\n接口上那条「按姓名查找」的定义仍然成立，它没变。\n\n② 必须跟着改的：查找的内部实现。\n维护有序的那段动作要撤掉，折半换成逐条比对，\n存储里的排序状态也要一起去掉。\n\n可以原样不动的：所有调用方。\n它们照旧写 find(\"张三\", &amp;out)，签名与含义都没变；\n调用方本来也看不到它内部是否排序。",
+    "criteria": "① 说清改的是存储结构、不是运算的定义，得 2 分。\n② 指出内部实现必须改、调用方可以不动，得 2 分。\n只笼统答「数据结构的实现变了」而不区分这两层，第 ② 条不给分。"
+  }
+]'></div>
+
+  <h2>规模一变，差距就变</h2>
+
+  <p>回头再看表里那两个数字：50000 与 17，它们都是针对 10 万条记录算出来的。如果记录变成 20 万条呢？逐条比对平均要 10 万次，付出的代价翻了一倍；折半最多只比 18 次，因为 20 万连折 17 次还不够小。</p>
+
+  <p>这样的量有一个名字：<b>问题规模</b>（通常记作 <span class="math-inline">n</span>），指输入量的大小，在这里就是记录的条数。算法代价随规模增长的方式，是分析算法时唯一被关心的东西，因为机器快慢、语言实现、代码写法的差别都是常数倍的，换一台机器就变；而增长方式不随这些条件改变。为了标记这种增长方式，用一个记号 <b>O</b> 写在括号里表示数量级，于是：</p>
+
+  <ul>
+    <li>逐个比对全表：比较次数与 <span class="math-inline">n</span> 成正比，记作 <span class="math-inline">O(n)</span>。</li>
+    <li>排序后折半：比较次数约等于 <span class="math-inline">n</span> 反复折半的次数，也就是以 2 为底 <span class="math-inline">n</span> 的对数，记作 <span class="math-inline">O(\log n)</span>。</li>
+  </ul>
+
+  <p>先记住这两条结论的来历即可：<span class="math-inline">O(n)</span> 是"每条都要看一眼"，<span class="math-inline">O(\log n)</span> 是"每比一次扔掉一半"。记号怎么算、对数怎么来的，下一段课程会专门讲；在那之前，只需要会算本课这种具体数字。</p>
+
+  <div class="lesson-note">
+    <b>本课不写代码</b>
+    <p>本科目不要求在本课写出程序。配套项目「C 小容器库」最终要交的是一个能自己选型、带断言测试与性能对比的容器库；本课是这条线的起点，本课里出现的每一次"换一种存法"，后续每一课都会回到这个例子上加一块。</p>
+  </div>
+
+  <div class="quiz" data-quiz='[
+  {
+    "q": "手机里的通话记录只留最近 100 条：\n有新通话就插在最前面，满了就删掉最早的那条，\n平时几乎不按下标取用。\n\n① 顺序存储还是链式存储更合适？\n② 依据是哪一个量？这个量刚才你数的是哪一步？",
+    "answer": "① 链式存储更合适。\n\n② 依据是每种操作出现的次数。\n这里插入与删除最频繁，而且都发生在两端：\n链式存储在表头插入、删掉表尾都只改相邻记录的地址，一条元素都不挪；\n顺序存储每来一个新通话，就要把后面所有记录整体往后挪一格。\n每次操作都便宜，比单次最快更重要。",
+    "criteria": "① 选链式存储，得 1 分。\n② 说出「按操作次数决定」，得 2 分；\n再说出插删都集中在两端、顺序存储每次都要挪动一片，得 1 分。\n只答「链表插入删除是 O(1)」而没有回到操作次数的，第 ② 条不给分。"
+  },
+  {
+    "q": "还是这份通讯录：既要经常在中间插人删人，\n又要经常按下标取「第 2 万条」来对照。\n\n① 两种存法各会让你多付什么代价？\n② 有没有一种存法在这两件事上都不吃亏？\n③ 要改进，除了换存法还有别的路吗？",
+    "answer": "① 顺序存储：存的时候取用很快，地址一步算出；\n每插一个人，插入位置后面的一片都要往后挪。\n链式存储：插入删除只改几处地址；\n取第 2 万条得从头走 2 万步。\n\n② 单靠这两种存法做不到两头都快。\n一个把代价压在插入上，一个压在取用上。\n\n③ 有别的路：把两种存法叠起来用。\n例如在记录上面再建一份索引，先用索引定位到那条附近的地址，\n再去实际的数据里操作；或者换一种跟这两种都不一样的存法。",
+    "criteria": "① 两种存法各说对一处「多付什么」，得 2 分。\n② 答出单一存法不能两头都快，得 1 分。\n③ 说出「索引／另一种存法」这类第三条路，得 1 分；\n只要答出不是只能在两种里挑，就给分。"
+  }
+]'></div>
+
+  <h2>练习：通讯录的两种活法</h2>
+
+  <p>以下练习不写代码，只需要在纸上或计算器上算清楚每一步的代价。做完这一节，本科目的第一个判断习惯就建立了：<b>先数操作次数，再谈哪种存法好</b>。</p>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">练习</span>
+      <span class="lesson-practice__title">第 1 步 · 数一遍代价</span>
+    </div>
+
+      <p>第一题。一份 10 万条的通讯录，无序存放。</p>
+
+      <ol>
+        <li>查找一个人，最坏情况要比较多少次？平均多少次？</li>
+        <li>把查找改成折半，最坏比较多少次？</li>
+        <li>两个数字相差多少倍？</li>
+      </ol>
+
+      <p>算完把两个数字并排写下来。它们的比值就是"选存法"这件事的价值。</p>
+  </div>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">练习</span>
+      <span class="lesson-practice__title">第 2 步 · 换一个操作再数</span>
+    </div>
+
+      <p>第二题。同一份通讯录，改成在中间插入一条记录。</p>
+
+      <ol>
+        <li>若记录挨着放、插入位置之后还有 4 万条，要挪动多少条记录？</li>
+        <li>若记录各自记着下一个元素的地址，同样插入一条要改动几处？</li>
+        <li>现在把两个操作放在一起看：查找与插入，哪种存法在两件事上都不吃亏？</li>
+      </ol>
+
+      <p>第 3 问的答案，正是"数据结构没有最好，只有最合适"这句话的具体意思。</p>
+  </div>
+
+  <div class="lesson-practice">
+    <div class="lesson-practice__head">
+      <span class="lesson-practice__level">练习</span>
+      <span class="lesson-practice__title">第 3 步 · 给一段数据分好三层</span>
+    </div>
+
+      <p>第三题。一份体温登记表，每行是 <code>姓名 日期 体温</code>。</p>
+
+      <ol>
+        <li>指出这项数据里的数据项、数据元素与数据。</li>
+        <li>它的逻辑结构属于四类里的哪一类？依据是什么？</li>
+        <li>这些记录至少要完成"按姓名查最近一次体温"这个运算。说出一种存储结构和一种查找办法。</li>
+      </ol>
+
+      <p>第 3 问允许只写思路，不写代码。</p>
+  </div>
+
+  <h2>小结</h2>
+
+  <ul>
+    <li><b>数据结构</b>包含逻辑结构、存储结构与运算三个要素，三者合起来才算完整描述了一个结构。</li>
+    <li>逻辑结构说的是元素之间的关系（集合、线性、树形、图状），存储结构说的是这种关系在计算机里如何表示（顺序存储、链式存储是其中最常用的两类）。</li>
+    <li>判断一种存法是否合适，要看它施加在<b>运算</b>上的代价：查找多、插入少，与插入多、查找少，会推出不同的选择。</li>
+    <li>代价随问题规模 <span class="math-inline">n</span> 的增长方式才是稳定的量：逐条比对是 <span class="math-inline">O(n)</span>，排序后折半是 <span class="math-inline">O(\log n)</span>。</li>
+    <li>本课用的通讯录这一份数据，后面每一课都会回来改一次存法，直到它变成项目「C 小容器库」里的一个容器。</li>
+  </ul>
+
+  <ul class="lesson-resources">
+    <li>王道《2027 数据结构考研复习指导》第 1 章 绪论（1.1–1.2）<span class="lesson-resources__meta">书 · 考点与习题结构；本机有目录与章节结构（含原书页码）</span></li>
+    <li>严蔚敏、吴伟民《数据结构（C 语言版·第 2 版）》第 1 章<span class="lesson-resources__meta">书 · 中文数据结构术语的规范口径</span></li>
+    <li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2310.pdf">ISO/IEC 9899（C17）标准草案 N2310 第 7.22.3 节</a><span class="lesson-resources__meta">官方草案 · 本机已落盘；从第 5 课起用到的内存管理函数契约</span></li>
+  </ul>
+
+  <div class="lesson-related">
+    <a href="0002-c-recap.1.html">下节课：指针：变量住在哪里</a>
+  </div>
+
+  <!-- ── 提问提示：固定写法，别删 ── -->
+
+  <div class="lesson-ask">
+    <b>没看懂？随时问</b>
+    把看不懂的段落（或报错）原样复制回会话，说一句哪里不懂就行，我只解释这一段，不打断你的进度。
+  </div>
+
+  <!-- ── 上/下节课指针由渲染器按 curriculum.yaml 的 nodes 顺序算（第一课无 --prev、最后一课无 --next） ── -->
+
+  <nav class="lesson-nav" aria-label="上一课 / 下一课">
+    <a class="lesson-nav__link lesson-nav__link--next" href="0002-c-recap.1.html">
+      <span class="lesson-nav__dir">下节课</span>
+      <span class="lesson-nav__title">指针：变量住在哪里</span>
+    </a>
+  </nav>
+
+  <footer class="lesson-footer">
+    StudyMate · 0001 从一次插入看数据结构 · 本地学习工作区
+  </footer>
+
+</article>
+
+<script src="../../../assets/sayo/sayo.js"></script>
+<link rel="stylesheet" href="../../../assets/katex/katex.min.css">
+<script src="../../../assets/katex/katex.min.js" defer></script>
+<script src="../../../assets/lesson-math.js" defer></script>
+<script src="../assets/quiz.js" defer></script>
+<script src="../assets/lesson-toc.js" defer></script>
+<script>LearnTheme.wire(document.getElementById('lesson-theme-checkbox'));</script>
+</body>
+</html>

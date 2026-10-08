@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>资源清单 · 数据结构（408）</title>
+<link rel="stylesheet" href="../../assets/sayo/sayo.css">
+<link rel="stylesheet" href="../../assets/learn-theme.css">
+<link rel="stylesheet" href="assets/style.css">
+<script src="../../assets/learn-theme.js"></script>
+<script>LearnTheme.apply();</script>
+<style>
+.lesson h1 {
+  margin: var(--syo-space-2, 8px) 0 var(--syo-space-4, 16px);
+  font-size: clamp(1.6rem, 3.2vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--syo-fg-default);
+}
+</style>
+</head>
+<body class="lesson-body">
+<nav class="lesson-bar">
+  <a href="index.html">← 返回科目</a>
+  <span>数据结构（408）</span>
+  <span class="lesson-bar__no">资源清单</span>
+  <label class="syo-toggle syo-toggle--theme lesson-bar__toggle" title="切换深浅主题" aria-label="切换深浅主题">
+    <input type="checkbox" id="attachment-theme-checkbox" checked>
+    <span class="syo-toggle-track"></span>
+    <span class="syo-toggle-knob">
+      <svg class="syo-toggle-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.5" stroke="#f57c00" stroke-width="1.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.34 4.34l1.77 1.77M13.89 13.89l1.77 1.77M4.34 15.66l1.77-1.77M13.89 6.11l1.77-1.77" stroke="#f57c00" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </span>
+  </label>
+</nav>
+
+<article class="lesson">
+<h1>数据结构（408） Resources</h1>
+<blockquote><p>定位：<strong>延伸阅读 + 易变内容的核对来源</strong>，不是"知识来源清单"（模型已掌握稳定基础知识）。<br>稳定知识节点可以不在这里留条目；易变/版本相关内容必须在这里有核对过的官方来源。</p><p>本科目盘问结果（2026-10-05）：目标＝2027 年及以后的 408 数据结构一科，做到"能自己选型、写出带测试的实现"；配套项目＝手写 C 小容器库（动态数组→链表→栈→树→哈希表，带单元测试与性能对比）；实现语言一律 C；起点＝C 只会读改、指针/内存管理/递归零基础，复杂度所需数学忘过，集合与图没学。据此，本清单的重心是<strong>C 语言本身的规范与工具链</strong> + <strong>数据结构与算法的权威教材</strong>，而不是 408 应试书单。</p></blockquote>
+<h2>Knowledge</h2>
+<ul>
+<li><a href="https://xuanshu.hep.com.cn/front/book/findBookDetails?bookId=6aa97a0be119ac9729dd09ea" target="_blank" rel="noopener">Book/Article/Doc: 2027 年全国硕士研究生招生考试计算机学科专业基础考试大纲（教育部教育考试院 编，高等教育出版社）</a><br>一行说明：<strong>408 考纲的唯一官方原文</strong>（出版社官方书目页，ISBN 978-7-04-068451-3，2026-09 印次）。用于核对"这一版大纲里数据结构到底考哪几块、有没有增删"——考纲由教育部教育考试院编写、高教社独家出版，网上所有二手"大纲解析/汇编"都不是原文，只能用来定位、不能当依据。</li>
+<li><a href="reference/王道2027数据结构-目录结构.md">Local: 王道《2027 数据结构考研复习指导》目录与章节结构（本机 OCR 提取）</a><br>一行说明：本地扫描版教材的<strong>目录/章节结构</strong>（8 章 + 参考文献；32 个节、152 个小节，带原书印刷页码）。用途只有两个：把课件与练习的切分对到这本书的目录上；对照"408 常见考点集中在哪些小节"。<strong>不含任何正文</strong>——正文讲解不来自本书。</li>
+<li><a href="https://www.tup.tsinghua.edu.cn/bookscenter/book_10848801.html" target="_blank" rel="noopener">Book/Article/Doc: 数据结构（C 语言版·第 2 版） by 严蔚敏、吴伟民，清华大学出版社</a><br>一行说明：<strong>C 语言描述数据结构</strong>的国内标准教材（清华社官方图书页；ISBN 9787302703396，2025-10 出版；第 2 版新增红黑树、跳跃表、B+树、布隆过滤器）。用于课件与例子的中文术语对齐（"顺序表/单链表/线索二叉树"这一套叫法），以及 408 中文语境下的算法描述口径。官方书目页同时挂课件与样章下载。</li>
+<li><a href="https://www.tup.tsinghua.edu.cn/bookscenter/book_10848901.html" target="_blank" rel="noopener">Book/Article/Doc: 数据结构题集（C 语言版·第 2 版） by 严蔚敏、吴伟民、米宁，清华大学出版社</a><br>一行说明：《数据结构（C 语言版·第 2 版）》的官方配套题集（清华社官方图书页；ISBN 9787302703402）。用于给"改造/排错"类练习找 C 语言描述的原题出处；也是核对"某类结构在中式教材里通常怎么考"的参照物。</li>
+<li><a href="https://www.informit.com/store/c-programming-language-9780131103627" target="_blank" rel="noopener">Book/Article/Doc: The C Programming Language (2nd Edition) by Brian W. Kernighan &amp; Dennis M. Ritchie，Prentice Hall</a><br>一行说明：<strong>指针、数组、结构体、递归、动态内存</strong>这几块的正统讲法出处（出版社官方页）。学生自评"指针与内存管理、递归零基础"，这几章的讲授骨架按本书口径走，能避免用二手教程里那些似是而非的指针比喻。</li>
+<li><a href="https://www.ptpress.com.cn/" target="_blank" rel="noopener">Book/Article/Doc: 数据结构与算法分析——C 语言描述 by Mark Allen Weiss</a><br>一行说明：少见的一本<strong>既讲数据结构、又用 C 实现、还认真讲算法分析（增长阶、求和、递推式）</strong>的教材（人民邮电出版社图书检索入口，请按书名/作者查当期印次）。用途：把"实现一个结构"和"它的复杂度怎么来的"绑在一起讲；学生复杂度数学忘过，本书前两章的数学准备部分正对症。</li>
+<li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/projects" target="_blank" rel="noopener">Source: C 标准官方工作组的版本与勘误总表（ISO/IEC JTC1 SC22 WG14）</a> · 已落盘 <code>sources/wg14-c-standard-revisions.md</code><br>一行说明：C 语言标准（ISO/IEC 9899）各版本的<strong>官方状态表</strong>——C23 = ISO/IEC 9899:2024、C17 = ISO/IEC 9899:2018、C11、C99，以及每版对应的免费工作草案号（C23 对应 N3220、C17 对应 N2310）与官方勘误（CR）汇编。用于核对"某条语法/库函数是哪个版本才有的"，以及"我们该按哪一版 C 写代码"。</li>
+<li><a href="https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html" target="_blank" rel="noopener">Source: GCC 的 C 方言选项 <code>-std=c17 / -std=c23</code>（GCC 官方手册）</a> · 已落盘 <code>sources/gcc-c-dialect-options.md</code><br>一行说明：<strong>编译命令里那个 <code>-std=</code> 到底是什么</strong>（GCC 官方手册）。用于核对版本差异：C17 相对 C11 只修错不改特性、C23 才真正引入新东西（如 <code>typeof</code> 成为关键字）、以及 <code>gnu17/gnu23</code> 与严格 ISO 模式的区别——学生项目 Makefile 里的编译开关就按这里定。</li>
+<li><a href="https://gcc.gnu.org/onlinedocs/gcc/Standards.html" target="_blank" rel="noopener">Doc: GCC 语言标准支持与前置宏（<code>__STDC_VERSION__</code>）（GCC 官方手册）</a><br>一行说明：怎么在代码里<strong>查证</strong>当前编译器实际按哪个标准在编（<code>__STDC_VERSION__</code> 取值表）。用于"同一份源码在别人的机器上编不过"这类问题的自证，也用于 lab 里让学生亲手验证版本差异。</li>
+<li><a href="https://gcc.gnu.org/onlinedocs/gcc/Instrumentation-Options.html" target="_blank" rel="noopener">Doc: Program Instrumentation Options（<code>-fsanitize=address</code> 等）（GCC 官方手册）</a><br>一行说明：<strong>内存错误的自动化检查入口</strong>——AddressSanitizer 抓越界读写与 use-after-free、<code>-fprofile-arcs/-ftest-coverage</code> 出覆盖率。<strong>本机实测用不了</strong>：MinGW-w64（gcc 15.2.0）不带 libasan，<code>-fsanitize=address</code> 链接失败（<code>cannot find -lasan</code>）。所以本科目的 <code>mingw32-make test</code> 不依赖它，内存错误靠自写断言宏把问题逼到看得见；等以后换到 Linux 或 MSVC 工具链，再回来用这一页。</li>
+<li><a href="https://valgrind.org/docs/manual/quick-start.html" target="_blank" rel="noopener">Doc: Valgrind Memcheck 快速上手与用户手册（Valgrind 官方文档）</a><br>一行说明：另一套内存检查工具（官方 Quick Start；完整错误信息释义在同站 <code>mc-manual.html</code>）。<strong>本机没有 Valgrind</strong>（它主要面向 Linux/macOS），本科目不用它——留作以后在 Linux 环境下排查"没崩但结果不对"的未初始化内存问题时的入口。</li>
+<li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2310.pdf" target="_blank" rel="noopener">Doc: ISO C 标准草案 N2310（C17）、N1570（C11）（WG14 官方工作草案 PDF）</a><br>一行说明：<strong>标准原文本身</strong>的免费草案（不是二手转述）。用途：当某条库函数行为、某处未定义行为（UB）到底怎么规定有争议时，回来查原文；讲指针与内存管理时引"标准怎么说的"比引博客可靠。</li>
+<li><a href="https://www.open-std.org/jtc1/sc22/wg14/www/docs/n2310.pdf" target="_blank" rel="noopener">Source: C 标准草案 N2310（C17）§7.22.3 内存管理函数全文</a> · 已落盘 <code>sources/c17-standard-7.22.3-memory-management.md</code><br>一行说明：上一条那份草案里<strong>正好对着学生零基础缺口的一节</strong>（malloc / calloc / free / realloc / aligned_alloc），原文照录、未改写。用途：讲"动态数组为什么要成倍扩容、<code>realloc</code> 失败时旧块还在不在、<code>free</code> 之后指针为什么不能再碰"时逐句对照标准原文——学生最容易想当然的几条全在这一节，且篇幅只有一页半，可以直接当课件引文。</li>
+<li><a href="https://www.gnu.org/software/make/manual/html_node/index.html" target="_blank" rel="noopener">Doc: GNU Make 手册（GNU 官方手册）</a><br>一行说明：本科目实验课的载体是"源码 + 测试"，<strong>本机的测试命令是 <code>mingw32-make test</code></strong>（MinGW 发行版把 GNU make 装成 <code>mingw32-make</code>，PATH 里没有裸 <code>make</code>——实测 <code>C:\mingw64\bin\mingw32-make.exe</code>）；这份是 make 的官方文档。用途：写 Makefile 的规则、变量、模式规则、<code>.PHONY</code> 与"为什么改了头文件不重编"；实验一"把测试骨架跑起来"直接引它。</li>
+<li><a href="https://www.gnu.org/software/libc/manual/" target="_blank" rel="noopener">Doc: GNU C 库参考手册（glibc 官方手册）</a><br>一行说明：C 标准库函数在真实实现上的完整说明（malloc/realloc/内存分配、字符串与内存函数、错误码、locale 等）。用途：核对那些"标准里只给一句、实际怎么表现要看实现"的部分；讲 <code>malloc/realloc/free</code> 与容器扩容时用它对照。</li>
+<li><a href="https://en.cppreference.com/w/c" target="_blank" rel="noopener">Source: cppreference —— C 语言参考（社区维护、被广泛引用的对照手册）</a><br>一行说明：日常查"这个函数签名/头文件/返回什么"最快的对照手册，每条都标注了"哪个 C 版本引入"。用途：写代码时的即查即用入口；与上面的 WG14 官方草案配合使用（有争议时以标准草案为准）。<br>&lt;!-- 落盘失败：en.cppreference.com 走 Cloudflare 人机校验，自动抓取一律 403；正文本轮未能落 sources/，条目保留 url 供人工与下游采图访问 --&gt;</li>
+<li><a href="https://en.cppreference.com/w/c/memory/realloc" target="_blank" rel="noopener">Source: cppreference —— 指针声明与动态内存管理（<code>realloc</code> 词条）</a><br>一行说明：直接对准学生两个零基础缺口的两页——指针声明语法、以及 <code>malloc/realloc/free</code> 的契约（失败返回什么、<code>realloc</code> 失败时原块还在不在、size 为 0 怎么办）。用途：讲动态数组扩容时逐条对照，学生写错最多的地方就在这里。<br>&lt;!-- 落盘失败：en.cppreference.com 走 Cloudflare 人机校验，自动抓取一律 403；正文本轮未能落 sources/，条目保留 url 供人工与下游采图访问 --&gt;</li>
+</ul>
+<h2>Wisdom (Communities)</h2>
+<ul>
+<li><a href="https://stackoverflow.com/questions/tagged/c" target="_blank" rel="noopener">Stack Overflow —— C 语言标签</a><br>一行说明：问具体 C 实现问题的地方（提问要求附最小可复现示例，正好逼学生把问题缩小）。适合"我的 Makefile 为什么这样编不过""这段指针代码为什么打印垃圾值"这类可验证的问题；答案质量差异大，采纳前要到上面那几份官方文档里对一遍。</li>
+<li><a href="https://codeforces.com/" target="_blank" rel="noopener">Codeforces</a><br>一行说明：带实时评测的算法练习与讨论社区。用途：等链表、排序、哈希表学到能写之后，来这里做少量短题检验"想得对"和"写得对"的差距；不要把它当主教材，本科目不做大剂量刷题（见 MISSION 的 Out of scope）。</li>
+<li><a href="http://www.cskaoyan.com/" target="_blank" rel="noopener">王道论坛</a><br>一行说明：408 考生的公开讨论区（版块按科目分）。用途：找同期考生问"这一章 408 一般考到什么深度"、看别人怎么排进度；它是应试参照，<strong>不是知识来源</strong>，正文一律回教材与官方文档核对。</li>
+</ul>
+<h2>Gaps</h2>
+<ul>
+<li><strong>408 考纲数据结构部分的逐条考查点清单，查不到官方免费原文。</strong> 考纲（教育部教育考试院编写、高等教育出版社独家出版）只以纸质/正式出版物发行，无官网 PDF；官网上的"大纲解析""大纲配套 1000 题"是辅导书、不是原文。影响：只能保证"章级结构"对齐（本地那份目录结构 + 高教社书目页），不能断言"2027 版某小节新增/删减"。缓解：本清单第 1 条给的是出版社官方书目页，作为"哪一版、什么时候出"的核对入口；真正逐条考点，等学生的目标年份确定后按那一年的大纲书核对。</li>
+<li><strong>"408 考点 → 能编译能跑的 C 实现"这一层没有权威来源。</strong> 严蔚敏教材给 C 描述的算法，但配的是教材自己的抽象数据类型约定（如 <code>Status</code>/<code>ElemType</code> 宏体系），不是可直接 <code>make test</code> 的工程代码；英文教材（Weiss 等）给可运行实现，却不对 408 的考点口径。影响：把考点落成"源码 + 断言测试"这一步，得由课程自己设计，不能照抄任何一本书；lab 的骨架需要自己定，并明确标注"这是我们的工程约定，不是教材原文"。</li>
+<li><strong>复杂度理论（对数、求和、递推式）的补齐材料，与"能实测的 C 工具链"之间缺一座桥。</strong> 数学部分有 Weiss 前两章可依，实测有 <code>clock_gettime</code>/ASan/覆盖率可依，但"怎么设计一次可信的性能对比实验"（预热、重复次数、避免被优化掉、报告怎么写）没有权威教材直接对到 C 小容器库这种规模的项目上。影响：项目要求里的"性能对比"这一项，实验方法需要课程自己定规范，并把方法本身当成一个教学点而不是默认学生已会。</li>
+<li><strong>本地那份扫描版教材无法转成可检索正文，这是既定限制，不是待办。</strong> 扫描件无文字层、书签读不出，全书 404 页 OCR 的代价与版权风险都不划算；学生也只要了目录与章节结构，本清单据此只落了目录。影响：<code>reference/</code> 里只有目录结构一份，正文一律走公开权威来源；若以后需要某个具体章节的原文定位，只能查纸质书/原 PDF 对应页（换算规则见该文件文末说明）。</li>
+<li><strong>C 语言没有官方单元测试标准，<code>make test</code> 用什么测试载体需要课程自己拍板。</strong> 官方能引的只有编译器与 make 手册，测试框架（自己写断言宏 / Unity / CMocka / Criterion）各有取舍，没有"官方推荐"。影响：lab 第一课要明确选定一种（从"几十行的断言宏"起步最贴合学生的零基础起点），并把它写成课程约定。</li>
+<li><strong>Windows 上怎么拿到 make + gcc 这条工具链，没有单一权威入口。</strong> 官方文档分别属于 GNU make、GCC、MSYS2/MinGW-w64 各家，学生机器上的具体安装路径要靠课程给出步骤。影响：这条属于环境准备，需要课程（或本机安装器）补一份"本机怎么装、怎么验证装好了"的短文档，不能只丢链接。</li>
+</ul>
+  <footer class="lesson-footer">
+    StudyMate · 资源清单 · 本地学习工作区
+  </footer>
+</article>
+
+<script src="../../assets/sayo/sayo.js"></script>
+<script>LearnTheme.wire(document.getElementById('attachment-theme-checkbox'));</script>
+</body>
+</html>

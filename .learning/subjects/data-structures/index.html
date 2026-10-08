@@ -1,0 +1,1544 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="科目主页：大纲路线图（点击节点展开课件）与附件。">
+<title>数据结构（408） · 课程主页</title>
+
+<!-- Sayo UI（vendored，MIT）+ 本项目共享主题层。
+     科目页在 .learning/subjects/<slug>/ 下，共享层在 .learning/assets/，所以是 ../../assets/ -->
+<link rel="stylesheet" href="../../assets/sayo/sayo.css">
+<link rel="stylesheet" href="../../assets/learn-theme.css">
+
+<!-- 主题：首帧前应用已保存的主题（共享逻辑在 ../../assets/learn-theme.js，
+     暗色是默认（Sayo 的 Primer 暗色），亮色=我们的暖色系；URL 加 ?theme=light 可临时预览） -->
+<script src="../../assets/learn-theme.js"></script>
+<script>LearnTheme.apply();</script>
+
+<style>
+/* ═══════════════════════════════════════════════════════════════
+   科目主页（大纲路线图 + 附件）· 页面专属样式
+   组件来自 Sayo；主题与抬头背景图案在 learn-theme.css。
+   本页样式全部内联：主页是生成产物，生成器只替换 LEARN 数据占位符注释行，
+   其余内容原样保留。
+   ═══════════════════════════════════════════════════════════════ */
+
+/* ── 导航栏 ── */
+.learn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .875rem;
+  color: var(--syo-fg-muted);
+  text-decoration: none;
+  transition: color 160ms var(--syo-ease-out);
+}
+.learn-back:hover { color: var(--syo-accent); }
+
+/* ── 抬头 ── */
+.learn-hero { position: relative; overflow: hidden; }
+.learn-hero--subject { padding: clamp(30px, 4.5vw, 48px) 0 clamp(22px, 3vw, 30px); }
+.learn-hero__inner { position: relative; z-index: 1; }
+
+.learn-subject-head {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--syo-space-3);
+}
+
+.learn-subject-title {
+  margin: 0;
+  font-size: clamp(24px, 3.4vw, 32px);
+  font-weight: 600;
+  letter-spacing: -.02em;
+  line-height: 1.3;
+}
+
+.learn-subject-mission {
+  max-width: 62ch;
+  margin: var(--syo-space-2) 0 0;
+  font-size: .9375rem;
+  line-height: 1.7;
+  color: var(--syo-fg-muted);
+}
+
+/* ── 主体与区块 ── */
+.learn-main { padding-top: 0; }
+
+.learn-section { margin-top: var(--syo-space-8); }
+
+.learn-section__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--syo-space-2) var(--syo-space-4);
+  padding-bottom: var(--syo-space-3);
+  margin-bottom: var(--syo-space-4);
+  border-bottom: 1px solid var(--syo-border);
+}
+
+.learn-section__title { margin: 0; font-size: 1.0625rem; font-weight: 600; }
+
+.learn-section__hint {
+  margin-left: var(--syo-space-2);
+  font-family: var(--syo-font-mono);
+  font-size: .6875rem;
+  font-weight: 400;
+  color: var(--syo-fg-muted);
+}
+
+/* ── 状态概览条（数值由脚本从节点 DOM 统计） ── */
+.learn-overview { display: flex; flex-wrap: wrap; gap: var(--syo-space-3); }
+
+.learn-overview__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: .75rem;
+  color: var(--syo-fg-muted);
+}
+.learn-overview__item b {
+  font-family: var(--syo-font-mono);
+  font-size: .8125rem;
+  font-weight: 600;
+  color: var(--syo-fg-default);
+}
+
+.learn-overview__dot { width: 7px; height: 7px; border-radius: 50%; background: var(--learn-todo); }
+.learn-overview__item--learning .learn-overview__dot { background: var(--learn-learning); }
+.learn-overview__item--done     .learn-overview__dot { background: var(--learn-done); }
+.learn-overview__item--review   .learn-overview__dot { background: var(--learn-review); }
+.learn-overview__item--verified .learn-overview__dot { background: var(--learn-verified); }
+
+/* ── 在做的项目 ── */
+.learn-project { margin-top: var(--syo-space-6); }
+
+.learn-project__card {
+  padding: var(--syo-space-4) var(--syo-space-5);
+  background: var(--syo-bg-surface);
+  border: 1px solid var(--syo-border);
+  border-radius: var(--syo-radius-md);
+}
+
+.learn-project__label {
+  display: block;
+  font-family: var(--syo-font-mono);
+  font-size: .6875rem;
+  letter-spacing: .04em;
+  color: var(--syo-fg-muted);
+}
+
+.learn-project__current { margin: 6px 0 0; font-size: .9375rem; }
+
+.learn-project__lists {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--syo-space-6);
+  margin-top: var(--syo-space-3);
+}
+.learn-project__sub {
+  display: block;
+  font-size: .75rem;
+  color: var(--syo-fg-muted);
+  margin-bottom: 4px;
+}
+.learn-project__lists ul { margin: 0; padding-left: 1.1em; font-size: .8125rem; line-height: 1.9; }
+
+.learn-project__none {
+  margin: 0;
+  padding: var(--syo-space-4) var(--syo-space-5);
+  font-size: .875rem;
+  color: var(--syo-fg-muted);
+  border: 1px dashed var(--syo-border);
+  border-radius: var(--syo-radius-md);
+}
+
+/* ── 大纲路线图：分层卡片 ── */
+.learn-roadmap { display: flex; flex-direction: column; }
+
+.learn-level { display: flex; gap: var(--syo-space-4); }
+
+/* 左侧主脉：把各层串成一条线 */
+.learn-level__rail { position: relative; width: 18px; flex: none; }
+.learn-level__rail::before {
+  content: "";
+  position: absolute;
+  left: 8px; top: 0; bottom: 0;
+  width: 1px;
+  background: var(--syo-border);
+}
+.learn-level:first-child .learn-level__rail::before { top: 13px; }
+.learn-level:last-child .learn-level__rail::before { bottom: calc(100% - 13px); }
+
+.learn-level__dot {
+  position: absolute;
+  left: 4px; top: 8px;
+  width: 9px; height: 9px;
+  border-radius: 50%;
+  background: var(--syo-bg-base);
+  border: 1px solid var(--syo-border);
+}
+
+.learn-level__body { flex: 1; min-width: 0; padding-bottom: var(--syo-space-4); }
+
+.learn-level__label {
+  margin-bottom: var(--syo-space-2);
+  font-family: var(--syo-font-mono);
+  font-size: .6875rem;
+  color: var(--syo-fg-muted);
+}
+
+.learn-level__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(272px, 1fr));
+  gap: 10px;
+  /* 关键：默认 stretch 会让同层卡片被最高的一张拉齐，
+     看起来像"一起展开了"——改成 start，每张卡保持自身高度 */
+  align-items: start;
+}
+
+/* ── 节点卡（有课件的可点击展开） ── */
+.learn-node {
+  display: block;
+  padding: 12px 14px;
+  background: var(--syo-bg-surface);
+  border: 1px solid var(--syo-border);
+  border-radius: var(--syo-radius-md);
+  transition: border-color 160ms var(--syo-ease-out), transform 160ms var(--syo-ease-out);
+}
+.learn-node--expandable { cursor: pointer; }
+.learn-node:hover { border-color: var(--syo-accent); transform: translateY(-1px); }
+/* 展开时只给父卡片描边高亮，父卡片本身不长大——长大的是它下面的子卡片组 */
+.learn-slot[open] > .learn-node { border-color: var(--syo-accent); }
+
+/* 卡片不许被内容撑宽：details 是网格项、.learn-node 是它的子块，两层都要 min-width:0，
+   否则标题的 min-content（nowrap 中文串）会把卡片顶出所在列——"标题超出卡片宽度"就是这么来的 */
+.learn-slot, .learn-node { min-width: 0; }
+
+/* 父卡片作为 <summary>：去掉原生三角标记 */
+summary.learn-node { list-style: none; }
+summary.learn-node::-webkit-details-marker { display: none; }
+summary.learn-node:focus-visible { outline: 2px solid var(--syo-accent); outline-offset: 3px; }
+
+.learn-node__row { display: flex; align-items: center; gap: 8px; }
+
+.learn-node__dot { width: 8px; height: 8px; border-radius: 50%; flex: none; background: var(--learn-todo); }
+
+.learn-node__title {
+  margin: 0;
+  min-width: 0;
+  /* 标题最多两行：卡片这一行还有课型徽标/状态/箭头，一行放不下 16 字标题；
+     两行比省略号友好，也不至于把卡片撑高（上限由 gen_home.py 的软提醒兜着） */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  font-size: .875rem;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.learn-node__now {
+  flex: none;
+  padding: 1px 6px;
+  font-family: var(--syo-font-mono);
+  font-size: .625rem;
+  color: var(--syo-accent);
+  border: 1px solid var(--learn-line-accent);
+  border-radius: 999px;
+}
+
+/* 课型徽标：kind 为「实验」的节点（里程碑验收课）在标题行标出来 */
+.learn-node__kind {
+  flex: none;
+  padding: 1px 6px;
+  font-size: .625rem;
+  color: var(--syo-fg-muted);
+  border: 1px solid var(--syo-border);
+  border-radius: 999px;
+}
+
+.learn-node__status {
+  margin-left: auto;
+  flex: none;
+  font-size: .6875rem;
+  color: var(--syo-fg-muted);
+  white-space: nowrap;
+}
+
+.learn-node__nolesson {
+  margin-left: auto;
+  flex: none;
+  font-size: .6875rem;
+  color: var(--syo-fg-muted);
+  white-space: nowrap;
+}
+
+/* 展开箭头：纯 CSS 画的 V 形，展开时旋转 */
+.learn-node__caret {
+  flex: none;
+  width: 7px;
+  height: 7px;
+  margin-left: 2px;
+  margin-right: 3px;
+  border-right: 1.5px solid var(--syo-fg-muted);
+  border-bottom: 1.5px solid var(--syo-fg-muted);
+  transform: rotate(-45deg);
+  transition: transform 180ms var(--syo-ease-out);
+}
+.learn-slot[open] .learn-node__caret { transform: rotate(45deg); }
+
+.learn-node__objective {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+  margin: 6px 0 0;
+  font-size: .8125rem;
+  line-height: 1.55;
+  color: var(--syo-fg-muted);
+}
+
+.learn-node__foot { display: flex; align-items: center; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+
+.learn-node__prereq, .learn-node__chip, .learn-node__mastery, .learn-node__pct { display: inline-flex; }
+
+.learn-node__prereq {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  flex-wrap: wrap;
+  font-size: .6875rem;
+  color: var(--syo-fg-muted);
+}
+
+.learn-node__chip {
+  padding: 1px 6px;
+  font-size: .6875rem;
+  border: 1px solid var(--syo-border);
+  border-radius: var(--syo-radius-sm);
+  background: var(--syo-bg-base);
+}
+/* 「无前置」用虚线边框区分，不用 opacity：半透明文字会把对比度压到 2.4:1 */
+.learn-node__chip--none { border-style: dashed; }
+
+.learn-node__mastery {
+  flex: 1;
+  min-width: 36px;
+  height: 4px;
+  background: var(--learn-track);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.learn-node__mastery i { display: block; height: 100%; background: var(--syo-accent); border-radius: 999px; }
+
+.learn-node__pct {
+  font-family: var(--syo-font-mono);
+  font-size: .6875rem;
+  color: var(--syo-fg-muted);
+}
+
+/* ── 展开出来的课件子树：一群子卡片 ──
+   父卡片不变大；它下面长出一组子卡片，用一条竖线串起来。
+   竖线横坐标对齐父卡片的状态点（x=18px），所以看着就是从父节点长出来的。
+   子卡片组整体左内边距 30px → 相对子卡片，竖线在 -12px 处。 */
+.learn-node__children {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 10px;
+  padding-left: 30px;
+}
+
+.learn-child {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 8px 12px;
+  background: var(--syo-bg-surface);
+  border: 1px solid var(--syo-border);
+  border-radius: var(--syo-radius-sm);
+  font-size: .8125rem;
+  color: var(--syo-fg-body);
+  text-decoration: none;
+  transition: border-color 140ms var(--syo-ease-out), color 140ms var(--syo-ease-out);
+}
+/* 悬停只改颜色/描边，绝不能用 transform：子卡片一移动，
+   挂在它身上的竖线段与分支圆点会跟着偏，树线就断了 */
+.learn-child:hover { border-color: var(--syo-accent); color: var(--syo-accent); }
+.learn-child:focus-visible { outline: 2px solid var(--syo-accent); outline-offset: 2px; }
+
+/* 竖线：每个子卡片画自己那一段（跨过卡间 8px 间隙），最后一个只画到自身中点 */
+.learn-child::before {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: -9px;
+  bottom: -9px;
+  width: 1px;
+  background: var(--syo-border);
+}
+.learn-child:first-child::before { top: -16px; }   /* 向上接到父卡片 */
+.learn-child:last-child::before { bottom: 50%; }
+
+/* 肘：竖线拐进子卡片 */
+.learn-child::after {
+  content: "";
+  position: absolute;
+  left: -12px;
+  top: 50%;
+  width: 12px;
+  height: 1px;
+  background: var(--syo-border);
+}
+
+/* 分支圆点：落在竖线上，与外侧大纲的层级点同款 */
+.learn-child__dot {
+  position: absolute;
+  left: -15.5px;
+  top: 50%;
+  width: 7px;
+  height: 7px;
+  margin-top: -3.5px;
+  border-radius: 50%;
+  background: var(--syo-bg-base);
+  border: 1px solid var(--syo-border);
+  transition: border-color 140ms var(--syo-ease-out), background-color 140ms var(--syo-ease-out);
+}
+.learn-child:hover .learn-child__dot { border-color: var(--syo-accent); background: var(--syo-accent); }
+
+.learn-child__no { font-family: var(--syo-font-mono); font-size: .6875rem; color: var(--syo-fg-muted); }
+.learn-child__title { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+
+/* 状态着色：只用状态点，不给整卡上底色 */
+.learn-node--learning .learn-node__dot { background: var(--learn-learning); }
+.learn-node--done     .learn-node__dot { background: var(--learn-done); }
+.learn-node--review   .learn-node__dot { background: var(--learn-review); }
+.learn-node--verified .learn-node__dot { background: var(--learn-verified); }
+
+.learn-roadmap__empty,
+.learn-attachments__empty {
+  margin: 0;
+  padding: var(--syo-space-6) var(--syo-space-1);
+  font-size: .875rem;
+  color: var(--syo-fg-muted);
+}
+
+/* ── 附件区：纵向惯性滚动容器 ──
+   Sayo 的 .syo-inertia 默认是横排卡片轨道；附件要竖排，所以这里覆盖
+   （惯性 JS 本身是双轴的，纵向一样有惯性）。
+   滚动区必须"看起来就能滚"，否则用户只会看到一列被截断的附件：
+     · 面板外观（底色 + 描边 + 圆角）—— 和页面内容区分开，像个窗口
+     · 常驻滚动条 —— 一进页面就能看到右侧有滚动条
+     · 底部提示条（sticky）—— 明说"向下滚动查看更多"，滚到底自动隐藏
+     · tabindex=0 —— 键盘也能滚（见下方 HTML），焦点环给可见反馈 */
+.learn-attachments {
+  display: block;
+  max-height: 360px;
+  overflow-x: hidden;
+  overflow-y: auto;
+  padding: 4px 10px 0 12px;
+  background: var(--syo-bg-surface);
+  border: 1px solid var(--syo-border);
+  border-radius: var(--syo-radius-md);
+  scrollbar-width: thin;
+  scrollbar-color: var(--syo-fg-muted) var(--syo-bg-base);
+  scrollbar-gutter: stable;
+  overscroll-behavior: contain;
+  cursor: grab;
+}
+.learn-attachments:focus-visible { outline: 2px solid var(--syo-accent); outline-offset: 2px; }
+
+/* 常驻滚动条（Chrome/Safari）：一进页面就看得见 */
+.learn-attachments::-webkit-scrollbar { width: 9px; }
+.learn-attachments::-webkit-scrollbar-track { background: var(--syo-bg-base); border-radius: 999px; }
+.learn-attachments::-webkit-scrollbar-thumb {
+  background: var(--syo-fg-muted);
+  border: 2px solid var(--syo-bg-surface);
+  border-radius: 999px;
+}
+.learn-attachments:hover::-webkit-scrollbar-thumb { background: var(--syo-accent); }
+
+/* 底部提示条：吸在可视区底部；滚到底或内容不足一屏时由脚本隐藏 */
+.learn-attachments__more {
+  position: sticky;
+  bottom: 0;
+  margin: 0 -10px 0 -12px;
+  padding: 20px 12px 8px;
+  background: linear-gradient(to bottom, transparent, var(--syo-bg-surface) 62%);
+  font-family: var(--syo-font-mono);
+  font-size: .6875rem;
+  color: var(--syo-fg-muted);
+  text-align: center;
+  pointer-events: none;
+}
+.learn-attachments.is-end .learn-attachments__more,
+.learn-attachments.is-short .learn-attachments__more { display: none; }
+
+.learn-attachments__group + .learn-attachments__group { margin-top: var(--syo-space-4); }
+
+.learn-attachments__label {
+  margin-bottom: 6px;
+  font-family: var(--syo-font-mono);
+  font-size: .6875rem;
+  letter-spacing: .04em;
+  color: var(--syo-fg-muted);
+}
+
+.learn-attachment {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--syo-space-3);
+  padding: 9px 12px;
+  border-bottom: 1px solid var(--syo-border-muted);
+  color: inherit;
+  text-decoration: none;
+  /* 附件行全是链接：禁掉原生"拖链接"（会出幽灵图并抢走拖拽），
+     并禁止拖拽时选中文字——整个面板都要能当拖拽手柄用 */
+  -webkit-user-drag: none;
+  user-select: none;
+  transition: background-color 140ms var(--syo-ease-out), color 140ms var(--syo-ease-out);
+}
+.learn-attachment:hover { background: var(--syo-bg-base); color: var(--syo-accent); }
+.learn-attachment:last-child { border-bottom: 0; }
+
+.learn-attachment__title { font-size: .875rem; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.learn-attachment__meta {
+  flex: none;
+  font-family: var(--syo-font-mono);
+  font-size: .6875rem;
+  color: var(--syo-fg-muted);
+}
+
+/* ── 窄屏 ── */
+@media (max-width: 768px) {
+  .learn-level__grid { grid-template-columns: 1fr; }
+  .learn-attachment__meta { display: none; }
+}
+</style>
+</head>
+
+<body>
+<a class="learn-skip" href="#learn-content">跳到路线图</a>
+
+<nav class="syo-nav">
+  <span class="syo-nav-brand">
+    <a class="learn-back" href="../../../index.html">← 课程总览</a>
+  </span>
+
+  <div class="syo-nav-links">
+    <label class="syo-toggle syo-toggle--theme" id="learn-theme-toggle" title="切换深浅主题" aria-label="切换深浅主题">
+      <input type="checkbox" id="learn-theme-checkbox" checked>
+      <span class="syo-toggle-track"></span>
+      <span class="syo-toggle-knob">
+        <svg class="syo-toggle-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.5" stroke="#f57c00" stroke-width="1.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.34 4.34l1.77 1.77M13.89 13.89l1.77 1.77M4.34 15.66l1.77-1.77M13.89 6.11l1.77-1.77" stroke="#f57c00" stroke-width="1.2" stroke-linecap="round"/></svg>
+        <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
+      </span>
+    </label>
+  </div>
+</nav>
+
+<header class="learn-hero learn-hero--subject">
+  <!-- 抬头背景图案（本页不挂视差：视差只开在正文的惯性滚动与课件目录上） -->
+  <span class="learn-hero__grid" aria-hidden="true"></span>
+  <span class="learn-hero__nebula" aria-hidden="true"></span>
+  <span class="learn-hero__stars learn-hero__stars--far" aria-hidden="true"></span>
+  <span class="learn-hero__stars learn-hero__stars--near" aria-hidden="true"></span>
+
+  <div class="syo-container learn-hero__inner">
+    <div class="learn-subject-head">
+      <h1 class="learn-subject-title">数据结构（408）</h1>
+      <span class="syo-tag learn-status learn-status--active">进行中<span class="syo-tag-dot syo-tag-dot--blue"></span></span>
+    </div>
+    <p class="learn-subject-mission">为 2027 年及以后的计算机考研 408 打底：先把数据结构这一科从"看得懂"做到"写得出、讲得清"，同时把 C 语言与算法实现的底子补上——目标是让代码能力成为后面各科真正的地基，而不是只会背考点。</p>
+  </div>
+</header>
+
+<main class="syo-container learn-main" id="learn-content">
+
+  <!-- 在做的项目：gen_home.py 用 progress.yaml 的 project.current 渲染
+       （里程碑是路线图里 `kind: 实验` 的节点，不在这张卡片里） -->
+  <section class="learn-project" aria-label="在做的项目">
+    <div class="learn-project__card">
+  <span class="learn-project__label">在做的项目</span>
+  <p class="learn-project__current">C 小容器库：动态数组→链表→栈→树→哈希表，带断言测试与性能对比（里程碑＝大纲里的 6 个实验课节点）</p>
+</div>
+  </section>
+
+  <section class="learn-section" aria-labelledby="learn-roadmap-title">
+    <div class="learn-section__head">
+      <h2 class="learn-section__title" id="learn-roadmap-title">大纲路线图<span class="learn-section__hint" id="learn-roadmap-meta"></span></h2>
+      <!-- 状态概览条：数值由脚本从节点 DOM 统计（生成器不必为此准备占位符） -->
+      <div class="learn-overview" id="learn-overview">
+        <span class="learn-overview__item learn-overview__item--todo"><span class="learn-overview__dot"></span>未开始<b id="learn-count-todo">–</b></span>
+        <span class="learn-overview__item learn-overview__item--learning"><span class="learn-overview__dot"></span>学习中<b id="learn-count-learning">–</b></span>
+        <span class="learn-overview__item learn-overview__item--done"><span class="learn-overview__dot"></span>能独立应用<b id="learn-count-done">–</b></span>
+        <span class="learn-overview__item learn-overview__item--review"><span class="learn-overview__dot"></span>需要复习<b id="learn-count-review">–</b></span>
+        <span class="learn-overview__item learn-overview__item--verified"><span class="learn-overview__dot"></span>已通过项目验证<b id="learn-count-verified">–</b></span>
+      </div>
+    </div>
+
+    <!--
+      ============================================================
+      生成器渲染规范 1（gen_home.py 按此结构替换下方占位符整行）
+      ============================================================
+      · 占位符整行替换为 <div class="learn-roadmap">…层级…</div>；
+        没有大纲时替换为空字符串（空状态由页面脚本显示）。
+      · 分层：按 curriculum.yaml 的 prerequisites 算最长路径层级，第 1 层在前；
+        edges 用于校验与跨层依赖，不直接渲染。
+
+      <div class="learn-roadmap">
+        <div class="learn-level">
+          <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+          <div class="learn-level__body">
+            <div class="learn-level__label">第 1 层 · 2 个知识点</div>
+            <div class="learn-level__grid">
+
+              <details class="learn-slot" data-id="<节点id>">
+                <summary class="learn-node learn-node--learning learn-node--expandable">
+                  <span class="learn-node__row">
+                    <span class="learn-node__dot"></span>
+                    <span class="learn-node__title">节点标题</span>
+                    <span class="learn-node__now">当前</span>
+                    <span class="learn-node__status">学习中</span>
+                    <span class="learn-node__caret" aria-hidden="true"></span>
+                  </span>
+                  <span class="learn-node__objective">节点目标（objective）</span>
+                  <span class="learn-node__foot">
+                    <span class="learn-node__prereq">前置 <span class="learn-node__chip">前置节点名</span></span>
+                    <span class="learn-node__mastery"><i style="width:NN%"></i></span>
+                    <span class="learn-node__pct">NN%</span>
+                  </span>
+                </summary>
+                <div class="learn-node__children">
+                  <a class="learn-child" href="lessons/NNNN-xxx.html">
+                    <span class="learn-child__dot" aria-hidden="true"></span>
+                    <span class="learn-child__no">NNNN</span>
+                    <span class="learn-child__title">课件标题</span>
+                  </a>
+                  （该节点有几篇课件就写几张子卡片，按编号升序）
+                </div>
+              </details>
+              </article>
+
+              没有课件的节点（不可展开）：
+
+              <article class="learn-node learn-node--todo" data-id="<节点id>" data-status="未开始" data-mastery="0">
+                <span class="learn-node__row">
+                  <span class="learn-node__dot"></span>
+                  <span class="learn-node__title">节点标题</span>
+                  <span class="learn-node__nolesson">课件待生成</span>
+                </span>
+                <span class="learn-node__objective">节点目标（objective）</span>
+                <span class="learn-node__foot">
+                  <span class="learn-node__prereq">前置 <span class="learn-node__chip">前置节点名</span></span>
+                  <span class="learn-node__mastery"><i style="width:0%"></i></span>
+                  <span class="learn-node__pct">0%</span>
+                </span>
+              </article>
+
+            </div>
+          </div>
+        </div>
+        …
+      </div>
+
+      · 状态 class 映射：未开始→--todo；学习中与初步理解→--learning；
+        能独立应用→--done；需要复习→--review；已通过项目验证→--verified
+      · 状态文本写 progress.yaml 的原值；data-status 也写原值
+      · data-id 必须写课程节点 id（展开状态按它记忆）
+      · 有课件的节点：外层用原生 <details class="learn-slot" data-id="<节点id>">
+        （无 JS 也能展开、键盘天然可达）；父卡片本身是
+        <summary class="learn-node learn-node--<状态> learn-node--expandable">，
+        父卡片不会因为展开而变大——变高的是 details 容器本身；
+        它下面（details 内容区）是 <div class="learn-node__children">，
+        里面按编号升序放该节点的全部课件，每个课件是一张子卡片：
+          <a class="learn-child" href="lessons/NNNN-xxx.html">
+            <span class="learn-child__dot" aria-hidden="true"></span>
+            <span class="learn-child__no">NNNN</span>
+            <span class="learn-child__title">课件标题</span>
+          </a>
+      · 没有课件的节点：不加 --expandable、不用 details，
+        就是一张普通 <article class="learn-node learn-node--<状态>">，
+        标题所在行加 <span class="learn-node__nolesson">课件待生成</span>，不写 caret
+      · 卡片内的元素都用 <span>（summary 的内容模型是 phrasing content，
+        不要用 <div>/<p>）；objective 与 foot 用 display:block / flex 控制版式
+      · learn-node__now 只出现在状态为“学习中”的节点上
+      · 课型徽标：curriculum.yaml 里 `kind: 实验` 的节点（里程碑验收课），在标题行 title 之后
+        加 <span class="learn-node__kind">实验</span>；`概念` 与 `实操` 不加徽标
+        （有课件时，实验课的说明页也按普通子卡片列在 learn-node__children 里）
+      · 前置标签用 prerequisites 里每个 id 对应的节点 title；
+        没有前置时写 <span class="learn-node__chip learn-node__chip--none">无</span>
+      · 掌握度：i 的 width 用 mastery × 100；没有 mastery 时按 0 处理
+      · **卡片是地图不是教案**：标题与 objective 都**最多两行**（超出省略号截断），所以两者都要给
+        `title` 属性（悬停看全文：`<span class="learn-node__title" title="全文">`）。
+        两条软上限由 gen_home.py 在 stderr 提醒（不阻断）：标题 ≤16 字、objective ≤34 字；
+        更长的说明写进 problem / practice / 过关标准——那些字段不上卡片
+      ============================================================
+    -->
+    <div class="learn-roadmap">
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 1 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<details class="learn-slot" data-id="intro">
+  <summary class="learn-node learn-node--learning learn-node--expandable">
+    <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="从一次插入看数据结构">从一次插入看数据结构</span><span class="learn-node__now">当前</span><span class="learn-node__status">学习中</span><span class="learn-node__caret" aria-hidden="true"></span></span>
+    <span class="learn-node__objective" title="能说清同一个问题用不同存法，代价差在哪">能说清同一个问题用不同存法，代价差在哪</span>
+    <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip learn-node__chip--none">无</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+  </summary>
+  <div class="learn-node__children">
+    <a class="learn-child" href="lessons/0001-intro.html">
+      <span class="learn-child__dot" aria-hidden="true"></span>
+      <span class="learn-child__no">0001</span>
+      <span class="learn-child__title">从一次插入看数据结构</span>
+    </a>
+  </div>
+</details>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 2 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="c-recap.1" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="指针：变量住在哪里">指针：变量住在哪里</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能用地址与解引用解释一段指针代码的每一步">能用地址与解引用解释一段指针代码的每一步</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">从一次插入看数据结构</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 3 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="c-recap.2" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="结构体：把字段打包带走">结构体：把字段打包带走</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能用结构体与 typedef 定义并访问一个数据记录">能用结构体与 typedef 定义并访问一个数据记录</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">指针：变量住在哪里</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 4 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="c-recap.3" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="指针进阶与 const">指针进阶与 const</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能读写出二级指针与带 const 的声明，并说明它挡了什么">能读写出二级指针与带 const 的声明，并说明它挡了什么</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">结构体：把字段打包带走</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 5 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="c-recap.4" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="malloc与free的契约">malloc与free的契约</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能正确申请、检查、扩容与释放一块堆内存">能正确申请、检查、扩容与释放一块堆内存</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">指针进阶与 const</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 6 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="c-toolchain.1" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="让 mingw32 跑起来构建">让 mingw32 跑起来构建</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能用自己的 Makefile 编出并运行一个带测试的可执行文件">能用自己的 Makefile 编出并运行一个带测试的可执行文件</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">malloc与free的契约</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 7 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="c-testing.1" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="几十行写一个断言宏">几十行写一个断言宏</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能写出断言宏，让失败的测试报出行号并统计通过数">能写出断言宏，让失败的测试报出行号并统计通过数</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">让 mingw32 跑起来构建</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 8 层 · 2 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="c-recap.5" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="函数调用与调用栈">函数调用与调用栈</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能画出一次函数调用的栈帧进出过程">能画出一次函数调用的栈帧进出过程</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">几十行写一个断言宏</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="lab.1" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="实验一：把测试骨架跑起来">实验一：把测试骨架跑起来</span><span class="learn-node__kind">实验</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="交付一个 mingw32-make test 能红能绿的项目骨架">交付一个 mingw32-make test 能红能绿的项目骨架</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">让 mingw32 跑起来构建</span><span class="learn-node__chip">几十行写一个断言宏</span><span class="learn-node__chip">malloc与free的契约</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 9 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="c-recap.6" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="递归：函数调用自己">递归：函数调用自己</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能写出带基准情形的递归函数并说明它为何会终止">能写出带基准情形的递归函数并说明它为何会终止</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">函数调用与调用栈</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 10 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="analysis.math" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="对数、求和与递推式">对数、求和与递推式</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能算出常见求和式与递推式的增长阶">能算出常见求和式与递推式的增长阶</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">递归：函数调用自己</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 11 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="analysis.complexity" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="量一量算法的代价">量一量算法的代价</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能对一段代码给出时间与空间复杂度并说出依据">能对一段代码给出时间与空间复杂度并说出依据</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">对数、求和与递推式</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 12 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="analysis.bench" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="给两段代码计时">给两段代码计时</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能测出两段代码的运行时间并解释数据为何可信">能测出两段代码的运行时间并解释数据为何可信</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">量一量算法的代价</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 13 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="linear.seqlist" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="顺序表：一块连续的空间">顺序表：一块连续的空间</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能写出顺序表的插入删除并算出移动元素的次数">能写出顺序表的插入删除并算出移动元素的次数</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">给两段代码计时</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 14 层 · 3 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="linear.linkedlist.1" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="单链表：用指针串起来">单链表：用指针串起来</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能手写单链表的头插、尾插、按位查找与删除">能手写单链表的头插、尾插、按位查找与删除</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">顺序表：一块连续的空间</span><span class="learn-node__chip">指针进阶与 const</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="linear.seqlist.impl" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="动态数组：长度不够就扩容">动态数组：长度不够就扩容</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能写出自动扩容的数组容器并测出扩容策略的影响">能写出自动扩容的数组容器并测出扩容策略的影响</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">顺序表：一块连续的空间</span><span class="learn-node__chip">malloc与free的契约</span><span class="learn-node__chip">几十行写一个断言宏</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="capstone" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="串与模式匹配">串与模式匹配</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能说出 KMP 的 next 数组在避免什么重复比较">能说出 KMP 的 next 数组在避免什么重复比较</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">顺序表：一块连续的空间</span><span class="learn-node__chip">量一量算法的代价</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 15 层 · 3 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="linear.linkedlist.2" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="双链与循环的链表">双链与循环的链表</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能说出双链表与循环链表各自解决了单链表的什么问题">能说出双链表与循环链表各自解决了单链表的什么问题</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">单链表：用指针串起来</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="linear.compare" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="什么时候该用链表">什么时候该用链表</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能按访问与增删模式为场景选对存法并说明理由">能按访问与增删模式为场景选对存法并说明理由</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">单链表：用指针串起来</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="lab.2" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="实验二：交出动态数组">实验二：交出动态数组</span><span class="learn-node__kind">实验</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="交付带断言测试与扩容性能数据的动态数组">交付带断言测试与扩容性能数据的动态数组</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">动态数组：长度不够就扩容</span><span class="learn-node__chip">给两段代码计时</span><span class="learn-node__chip">顺序表：一块连续的空间</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 16 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="linear.linkedlist.impl" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="把链表封装成容器">把链表封装成容器</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能实现链表容器并以不透明句柄对外提供接口">能实现链表容器并以不透明句柄对外提供接口</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">单链表：用指针串起来</span><span class="learn-node__chip">双链与循环的链表</span><span class="learn-node__chip">malloc与free的契约</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 17 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="linear.linkedlist.3" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="让边界情况消失的写法">让边界情况消失的写法</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能写出哨兵结点、就地逆置与快慢指针三类操作">能写出哨兵结点、就地逆置与快慢指针三类操作</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">把链表封装成容器</span><span class="learn-node__chip">什么时候该用链表</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 18 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="stack.queue.stack" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="栈：后进先出">栈：后进先出</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能写出顺序栈与链栈的入栈出栈并判断栈空栈满">能写出顺序栈与链栈的入栈出栈并判断栈空栈满</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">让边界情况消失的写法</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 19 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="stack.queue.impl" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="栈与队列容器">栈与队列容器</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能为容器库写出栈与队列两个成品并让测试全绿">能为容器库写出栈与队列两个成品并让测试全绿</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">栈：后进先出</span><span class="learn-node__chip">动态数组：长度不够就扩容</span><span class="learn-node__chip">把链表封装成容器</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 20 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="stack.queue.apps" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="栈在括号与表达式中的应用">栈在括号与表达式中的应用</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能用栈判断括号匹配并把中缀表达式转成后缀">能用栈判断括号匹配并把中缀表达式转成后缀</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">栈与队列容器</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 21 层 · 2 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="stack.queue.queue" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="队列：先进先出">队列：先进先出</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能写出循环队列的入队出队并处理队空队满">能写出循环队列的入队出队并处理队空队满</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">栈与队列容器</span><span class="learn-node__chip">栈在括号与表达式中的应用</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="lab.3" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="实验三：交出四种容器">实验三：交出四种容器</span><span class="learn-node__kind">实验</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="交付链表、栈、队列三个容器并让全部断言通过">交付链表、栈、队列三个容器并让全部断言通过</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">把链表封装成容器</span><span class="learn-node__chip">让边界情况消失的写法</span><span class="learn-node__chip">栈与队列容器</span><span class="learn-node__chip">栈在括号与表达式中的应用</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 22 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="stack.queue.apps2" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="队列在遍历与调度中的应用">队列在遍历与调度中的应用</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能说清层次遍历与缓冲调度为何都要用队列">能说清层次遍历与缓冲调度为何都要用队列</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">队列：先进先出</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 23 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="stack.queue.array" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="数组存储与特殊矩阵压缩">数组存储与特殊矩阵压缩</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能算出对称矩阵与稀疏矩阵的存储位置与空间节省">能算出对称矩阵与稀疏矩阵的存储位置与空间节省</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">队列在遍历与调度中的应用</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 24 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="tree.basic" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="树：从目录结构说起">树：从目录结构说起</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能算出树的度、深度、结点数与叶子数的关系">能算出树的度、深度、结点数与叶子数的关系</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">数组存储与特殊矩阵压缩</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 25 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="tree.binary.basic" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="一棵二叉树能装多少结点">一棵二叉树能装多少结点</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能用二叉树性质算出结点数与高度，并写出顺序存储的下标关系">能用二叉树性质算出结点数与高度，并写出顺序存储的下标关系</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">树：从目录结构说起</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 26 层 · 2 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="tree.binary.traverse" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="二叉树的四种遍历">二叉树的四种遍历</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能手写前中后序递归遍历与非递归中序遍历">能手写前中后序递归遍历与非递归中序遍历</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">一棵二叉树能装多少结点</span><span class="learn-node__chip">递归：函数调用自己</span><span class="learn-node__chip">栈与队列容器</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="tree.forest" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="树与森林的存储与转换">树与森林的存储与转换</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能把树或森林转成二叉树并说明转换规则">能把树或森林转成二叉树并说明转换规则</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">一棵二叉树能装多少结点</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 27 层 · 2 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="tree.binary.threaded" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="线索二叉树">线索二叉树</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能画出中序线索二叉树并说明它省下了什么">能画出中序线索二叉树并说明它省下了什么</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">二叉树的四种遍历</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="tree.app" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="哈夫曼树与并查集">哈夫曼树与并查集</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能构造哈夫曼树并算出加权路径长度">能构造哈夫曼树并算出加权路径长度</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">树与森林的存储与转换</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 28 层 · 2 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="lab.4" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="实验四：交出二叉树容器">实验四：交出二叉树容器</span><span class="learn-node__kind">实验</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="交付带四种遍历与断言的二叉树容器">交付带四种遍历与断言的二叉树容器</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">二叉树的四种遍历</span><span class="learn-node__chip">一棵二叉树能装多少结点</span><span class="learn-node__chip">线索二叉树</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="graph.basic" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="图：把关系画成点与线">图：把关系画成点与线</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能算出一个图的度、边数与连通分量数">能算出一个图的度、边数与连通分量数</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">哈夫曼树与并查集</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 29 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="graph.store" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="邻接矩阵与邻接表">邻接矩阵与邻接表</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能按图的特点选对存储结构并说出空间代价">能按图的特点选对存储结构并说出空间代价</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">图：把关系画成点与线</span><span class="learn-node__chip">数组存储与特殊矩阵压缩</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 30 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="graph.traverse" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="图的遍历：BFS 与 DFS">图的遍历：BFS 与 DFS</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能写出图的广度优先与深度优先遍历并处理非连通图">能写出图的广度优先与深度优先遍历并处理非连通图</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">邻接矩阵与邻接表</span><span class="learn-node__chip">栈与队列容器</span><span class="learn-node__chip">队列在遍历与调度中的应用</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 31 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="graph.mst" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="最小生成树">最小生成树</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能手工跑出 Prim 与 Kruskal 的选边过程并算出总权">能手工跑出 Prim 与 Kruskal 的选边过程并算出总权</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">图的遍历：BFS 与 DFS</span><span class="learn-node__chip">哈夫曼树与并查集</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 32 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="graph.shortest" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="最短路径">最短路径</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能对照 Dijkstra 与 Floyd 的适用条件各跑一遍">能对照 Dijkstra 与 Floyd 的适用条件各跑一遍</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">最小生成树</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 33 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="graph.dag" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="拓扑排序找施工顺序">拓扑排序找施工顺序</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能对一张 AOV 网排出拓扑序并找出关键路径">能对一张 AOV 网排出拓扑序并找出关键路径</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">最短路径</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 34 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="search.basic" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="查找：从翻字典说起">查找：从翻字典说起</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能算出查找长度并区分静态与动态查找">能算出查找长度并区分静态与动态查找</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">拓扑排序找施工顺序</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 35 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="search.linear" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="顺序、折半与分块查找">顺序、折半与分块查找</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能用公式算出三种查找的成功与失败平均查找长度">能用公式算出三种查找的成功与失败平均查找长度</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">查找：从翻字典说起</span><span class="learn-node__chip">对数、求和与递推式</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 36 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="search.bst" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="二叉排序树与退化">二叉排序树与退化</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能画出插入删除后的 BST 并判断它是否退化">能画出插入删除后的 BST 并判断它是否退化</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">顺序、折半与分块查找</span><span class="learn-node__chip">二叉树的四种遍历</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 37 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="search.balanced" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="插一个键就转一次">插一个键就转一次</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能说出旋转如何恢复平衡并读懂红黑树的约束">能说出旋转如何恢复平衡并读懂红黑树的约束</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">二叉排序树与退化</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 38 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="search.btree" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="B 树与 B+树">B 树与 B+树</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能说出 B 树的阶、结点分裂过程与 B+树的差别">能说出 B 树的阶、结点分裂过程与 B+树的差别</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">插一个键就转一次</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 39 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="search.hash" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="散列表：用函数算出位置">散列表：用函数算出位置</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能设计散列函数并用公式算出平均查找长度">能设计散列函数并用公式算出平均查找长度</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">B 树与 B+树</span><span class="learn-node__chip">对数、求和与递推式</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 40 层 · 2 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="lab.5" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="实验五：交出哈希表容器">实验五：交出哈希表容器</span><span class="learn-node__kind">实验</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="交付哈希表容器并测出装填因子对查找的影响">交付哈希表容器并测出装填因子对查找的影响</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">散列表：用函数算出位置</span><span class="learn-node__chip">B 树与 B+树</span><span class="learn-node__chip">给两段代码计时</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="sort.basic" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="排序的基本概念">排序的基本概念</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能判断排序算法的稳定性并说清内外部排序的区别">能判断排序算法的稳定性并说清内外部排序的区别</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">散列表：用函数算出位置</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 41 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="sort.insert" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="像整理扑克牌那样插入">像整理扑克牌那样插入</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能手推插入排序每趟结果并说出希尔排序的改进点">能手推插入排序每趟结果并说出希尔排序的改进点</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">排序的基本概念</span><span class="learn-node__chip">动态数组：长度不够就扩容</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 42 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="sort.swap" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="一趟就位：快速排序">一趟就位：快速排序</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能手写快排并测出枢轴取法对性能的影响">能手写快排并测出枢轴取法对性能的影响</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">像整理扑克牌那样插入</span><span class="learn-node__chip">递归：函数调用自己</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 43 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="sort.select" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="选择排序与堆排序">选择排序与堆排序</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能干跑建堆与调整堆的过程并说出堆排序的复杂度">能干跑建堆与调整堆的过程并说出堆排序的复杂度</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">一趟就位：快速排序</span><span class="learn-node__chip">一棵二叉树能装多少结点</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 44 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="sort.merge" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="归并：两路合一路">归并：两路合一路</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能写出归并过程并说出基数排序每一趟在按什么分">能写出归并过程并说出基数排序每一趟在按什么分</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">选择排序与堆排序</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 45 层 · 1 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="sort.compare" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="各排序算法怎么选">各排序算法怎么选</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能按数据特征与稳定性要求选出合适的排序算法">能按数据特征与稳定性要求选出合适的排序算法</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">归并：两路合一路</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+  <div class="learn-level">
+    <div class="learn-level__rail"><span class="learn-level__dot"></span></div>
+    <div class="learn-level__body">
+      <div class="learn-level__label">第 46 层 · 2 个知识点</div>
+      <div class="learn-level__grid">
+<article class="learn-node learn-node--todo" data-id="sort.external" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="外部排序">外部排序</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="能算出多路归并的趟数并说出败者树的作用">能算出多路归并的趟数并说出败者树的作用</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">各排序算法怎么选</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+<article class="learn-node learn-node--todo" data-id="lab.6" data-status="未开始" data-mastery="0">
+  <span class="learn-node__row"><span class="learn-node__dot"></span><span class="learn-node__title" title="实验六：排序与查找集成">实验六：排序与查找集成</span><span class="learn-node__kind">实验</span><span class="learn-node__nolesson">课件待生成</span></span>
+  <span class="learn-node__objective" title="交付容器库的排序集合并给出排序算法对比表">交付容器库的排序集合并给出排序算法对比表</span>
+  <span class="learn-node__foot"><span class="learn-node__prereq">前置 <span class="learn-node__chip">一趟就位：快速排序</span><span class="learn-node__chip">各排序算法怎么选</span><span class="learn-node__chip">顺序、折半与分块查找</span></span><span class="learn-node__mastery"><i style="width:0%"></i></span><span class="learn-node__pct">0%</span></span>
+</article>
+      </div>
+    </div>
+  </div>
+</div>
+
+    <p class="learn-roadmap__empty" id="learn-roadmap-empty" hidden>这门课还没有大纲。回到会话里让 agent 生成课程吧。</p>
+  </section>
+
+  <section class="learn-section" aria-labelledby="learn-attachments-title">
+    <div class="learn-section__head">
+      <h2 class="learn-section__title" id="learn-attachments-title">附件<span class="learn-section__hint" id="learn-attachments-hint">拖动列表可惯性滚动</span></h2>
+    </div>
+
+    <!-- 纵向惯性滚动容器：Sayo 的 data-syo-inertia 自动初始化（.learn-attachments 覆盖成竖排）。
+         tabindex + role + aria-label 让键盘也能滚动，并且读屏能知道这是个可滚区域 -->
+    <div class="syo-inertia learn-attachments" data-syo-inertia
+         tabindex="0" role="region" aria-label="附件列表，可用方向键或拖动滚动">
+
+      <!--
+        ============================================================
+        生成器渲染规范 2
+        ============================================================
+        · 占位符整行替换为全部附件分组（容器、滚动行为与底部提示条由模板提供，生成器只出分组内容，
+          不要动容器上的 tabindex/role/aria-label，也不要删掉末尾的 .learn-attachments__more 提示条）；
+          一个附件都没有时替换为：
+          <p class="learn-attachments__empty">还没有附件。速查文档、术语表、学习记录都会出现在这里。</p>
+        · 分组顺序固定，空分组整组省略：
+
+        <div class="learn-attachments__group">
+          <div class="learn-attachments__label">参考文档</div>
+          <a class="learn-attachment" href="reference/http-status.html">
+            <span class="learn-attachment__title">HTTP 状态码速查</span>
+            <span class="learn-attachment__meta">reference/</span>
+          </a>
+        </div>
+
+        · 分组与数据源：
+          参考文档   ← reference/*.html（标题取页面标题或文件名，meta 写所在目录）
+          术语与资源 ← GLOSSARY.md（标题写“术语表”）、RESOURCES.md（标题写“资源清单”）
+          学习记录   ← learning-records/*.md（按编号升序）
+          会话摘要   ← sessions/*.md（按日期倒序，最新的在前）
+        · meta 写相对科目目录的路径（如 reference/ 或 learning-records/0012-xxx.md）
+        ============================================================
+      -->
+        <div class="learn-attachments__group">
+    <div class="learn-attachments__label">参考文档</div>
+    <a class="learn-attachment" href="reference/%E7%8E%8B%E9%81%932027%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84-%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84.html">
+      <span class="learn-attachment__title">王道《2027 数据结构考研复习指导》目录与章节结构 · 数据结构（408）</span>
+      <span class="learn-attachment__meta">reference/</span>
+    </a>
+  </div>
+  <div class="learn-attachments__group">
+    <div class="learn-attachments__label">术语与资源</div>
+    <a class="learn-attachment" href="GLOSSARY.html">
+      <span class="learn-attachment__title">术语表</span>
+      <span class="learn-attachment__meta">GLOSSARY.md</span>
+    </a>
+    <a class="learn-attachment" href="RESOURCES.html">
+      <span class="learn-attachment__title">资源清单</span>
+      <span class="learn-attachment__meta">RESOURCES.md</span>
+    </a>
+  </div>
+
+      <!-- 吸底提示条：内容超出一屏时出现，滚到底自动隐藏（脚本切换 class） -->
+      <p class="learn-attachments__more" aria-hidden="true">向下滚动查看更多 ↓</p>
+
+    </div>
+  </section>
+
+</main>
+
+<footer class="learn-footer syo-container">StudyMate · 本地学习工作区</footer>
+
+<script src="../../assets/sayo/sayo.js"></script>
+<script>
+(function () {
+  'use strict';
+
+  var root = document.documentElement;
+  var OPEN_KEY = 'le-open-nodes';
+
+  /* ---------- 主题开关（主题本身已在 <head> 里应用） ---------- */
+  LearnTheme.wire(document.getElementById('learn-theme-checkbox'));
+
+  /* ---------- 状态概览条 + 区块计数：从节点 DOM 统计 ---------- */
+  var nodes = Array.prototype.slice.call(document.querySelectorAll('.learn-node'));
+  var overviewEl = document.getElementById('learn-overview');
+  var roadmapMetaEl = document.getElementById('learn-roadmap-meta');
+  var roadmapEmptyEl = document.getElementById('learn-roadmap-empty');
+
+  if (nodes.length === 0) {
+    if (overviewEl) overviewEl.hidden = true;
+    if (roadmapMetaEl) roadmapMetaEl.textContent = '';
+    if (roadmapEmptyEl) roadmapEmptyEl.hidden = false;
+  } else {
+    var counts = { todo: 0, learning: 0, done: 0, review: 0, verified: 0 };
+    nodes.forEach(function (node) {
+      Object.keys(counts).forEach(function (key) {
+        if (node.classList.contains('learn-node--' + key)) counts[key]++;
+      });
+    });
+    Object.keys(counts).forEach(function (key) {
+      var el = document.getElementById('learn-count-' + key);
+      if (el) el.textContent = counts[key];
+    });
+    if (roadmapMetaEl) {
+      var lessonTotal = document.querySelectorAll('.learn-child').length;
+      roadmapMetaEl.textContent = nodes.length + ' 个知识点 · ' + lessonTotal + ' 篇课件';
+    }
+  }
+
+  /* ---------- 节点卡展开状态记忆 ----------
+     展开/收起本身是原生 <details>（无 JS 也能用、键盘可达），
+     这里只负责把展开过的节点 id 记在 localStorage，下次打开保持原样。 */
+  var OPEN_KEY = 'le-open-nodes';
+  var openSet = {};
+  try {
+    (JSON.parse(localStorage.getItem(OPEN_KEY) || '[]') || []).forEach(function (id) { openSet[id] = true; });
+  } catch (e) {}
+
+  function saveOpen() {
+    try { localStorage.setItem(OPEN_KEY, JSON.stringify(Object.keys(openSet))); } catch (e) {}
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('details.learn-slot'), function (slot) {
+    var id = slot.dataset.id || '';
+    if (id && openSet[id]) slot.open = true;
+
+    slot.addEventListener('toggle', function () {
+      if (!id) return;
+      if (slot.open) openSet[id] = true; else delete openSet[id];
+      saveOpen();
+    });
+  });
+
+  /* ---------- 附件区：计数、空状态与"可滚动"提示 ---------- */
+  var attachHintEl = document.getElementById('learn-attachments-hint');
+  var attachBox = document.querySelector('.learn-attachments');
+  var attachCount = document.querySelectorAll('.learn-attachment').length;
+
+  if (attachHintEl) {
+    var attachEmpty = document.querySelector('.learn-attachments__empty');
+    if (attachCount === 0) {
+      if (attachEmpty) attachEmpty.hidden = false;
+      attachHintEl.textContent = '还没有附件';
+    } else {
+      attachHintEl.textContent = attachCount + ' 项 · 可拖动或滚动查看';
+    }
+  }
+
+  /* 在链接上按下拖动 = 滚动，不是拖链接、也不是点击跳转。
+     容器的 mousedown 已经能启动 Sayo 的惯性（事件会从链接冒泡上来），
+     但浏览器默认还会做两件事，必须压掉：
+       · 原生链接拖拽（幽灵图会把后续 mousemove 抢走）→ dragstart preventDefault
+       · 松手时把这次拖拽当成一次 click → 位移超过阈值就吞掉这次 click
+     原地点击（位移 < 5px）与键盘回车不受影响，照常打开链接。 */
+  if (attachBox) {
+    attachBox.addEventListener('dragstart', function (event) { event.preventDefault(); });
+
+    var pressX = 0, pressY = 0, pressed = false;
+
+    attachBox.addEventListener('mousedown', function (event) {
+      pressed = true;
+      pressX = event.clientX;
+      pressY = event.clientY;
+    });
+    attachBox.addEventListener('touchstart', function (event) {
+      if (!event.touches || !event.touches.length) return;
+      pressed = true;
+      pressX = event.touches[0].clientX;
+      pressY = event.touches[0].clientY;
+    }, { passive: true });
+
+    /* 捕获阶段拦，先于链接的默认跳转 */
+    attachBox.addEventListener('click', function (event) {
+      if (!pressed) return;          // 键盘回车等：clientX/Y 为 0，不拦
+      pressed = false;
+      if (Math.abs(event.clientX - pressX) > 5 || Math.abs(event.clientY - pressY) > 5) {
+        event.preventDefault();
+        event.stopPropagation();
+      }
+    }, true);
+  }
+
+  /* 内容不足一屏 → 隐藏提示条（is-short）；滚到底 → 隐藏（is-end） */
+  if (attachBox) {
+    var syncAttachHint = function () {
+      var overflow = attachBox.scrollHeight - attachBox.clientHeight;
+      var atEnd = attachBox.scrollTop >= overflow - 4;
+      attachBox.classList.toggle('is-short', overflow <= 4);
+      attachBox.classList.toggle('is-end', overflow > 4 && atEnd);
+    };
+    syncAttachHint();
+    attachBox.addEventListener('scroll', syncAttachHint, { passive: true });
+    window.addEventListener('resize', syncAttachHint);
+  }
+})();
+</script>
+</body>
+</html>

@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>术语表 · 数据结构（408）</title>
+<link rel="stylesheet" href="../../assets/sayo/sayo.css">
+<link rel="stylesheet" href="../../assets/learn-theme.css">
+<link rel="stylesheet" href="assets/style.css">
+<script src="../../assets/learn-theme.js"></script>
+<script>LearnTheme.apply();</script>
+<style>
+.lesson h1 {
+  margin: var(--syo-space-2, 8px) 0 var(--syo-space-4, 16px);
+  font-size: clamp(1.6rem, 3.2vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--syo-fg-default);
+}
+</style>
+</head>
+<body class="lesson-body">
+<nav class="lesson-bar">
+  <a href="index.html">← 返回科目</a>
+  <span>数据结构（408）</span>
+  <span class="lesson-bar__no">术语表</span>
+  <label class="syo-toggle syo-toggle--theme lesson-bar__toggle" title="切换深浅主题" aria-label="切换深浅主题">
+    <input type="checkbox" id="attachment-theme-checkbox" checked>
+    <span class="syo-toggle-track"></span>
+    <span class="syo-toggle-knob">
+      <svg class="syo-toggle-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.5" stroke="#f57c00" stroke-width="1.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.34 4.34l1.77 1.77M13.89 13.89l1.77 1.77M4.34 15.66l1.77-1.77M13.89 6.11l1.77-1.77" stroke="#f57c00" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </span>
+  </label>
+</nav>
+
+<article class="lesson">
+<h1>数据结构（408） Glossary</h1>
+<p>这门课按计算机考研 408 的数据结构考纲走：先弄清"数据结构是什么、算法怎么评价"，再逐个拿下线性表、栈与队列、串、树与二叉树、图、查找、排序。所有实现都在 C 里手写，不借 STL。</p>
+<blockquote><p>两节都算这门课的<strong>规范用词</strong>：课件正文与配图用词以本文件为准。开课时先把主题词写进「待掌握」，<br>学生真的会用之后挪进「已掌握」——挪动本身就是一条学习记录。</p></blockquote>
+<h2>待掌握</h2>
+<p><strong>数据结构</strong>:<br>数据元素之间存在一种或多种特定关系的集合；一个完整的数据结构包含逻辑结构、存储结构与定义在其上的运算三方面。<br><em>Avoid</em>: 数据结构体</p>
+<p><strong>逻辑结构</strong>:<br>数据元素之间的逻辑关系——集合、线性、树形、图状四类，与它在计算机里怎么存无关。<br><em>Avoid</em>: 概念结构、抽象结构</p>
+<p><strong>存储结构</strong>:<br>逻辑结构在计算机里的表示，也叫物理结构；常见四类：顺序存储、链式存储、索引存储、散列存储。<br><em>Avoid</em>: 物理结构（首次出现可写"存储结构（物理结构）"，之后统一用「存储结构」）</p>
+<p><strong>抽象数据类型（ADT）</strong>:<br>一个数学模型以及定义在该模型上的一组操作；只说"能做什么"，不说"怎么做"。<br><em>Avoid</em>: 抽象类型、ADT 类型</p>
+<p><strong>算法</strong>:<br>对特定问题求解步骤的描述，是一个有穷的指令序列；有效算法具备有穷性、确定性、可行性、输入、输出五个特性。<br><em>Avoid</em>: 程序（程序可以不满足有穷性，两者不是一回事）</p>
+<p><strong>时间复杂度</strong>:<br>算法执行时间随问题规模 n 增长的数量级，用大 O 记号表示；只看最高阶项、忽略常数因子与低阶项。<br><em>Avoid</em>: 运行时间、耗时</p>
+<p><strong>空间复杂度</strong>:<br>算法运行所需的额外存储空间随问题规模 n 增长的数量级（不算输入本身占的空间）。<br><em>Avoid</em>: 内存占用、内存消耗</p>
+<p><strong>线性表</strong>:<br>n 个数据元素构成的有序序列；除首尾元素外，每个元素都有唯一的前驱与后继。<br><em>Avoid</em>: 列表、线性结构（线性结构是更大的类，线性表是其中一种）</p>
+<p><strong>顺序表</strong>:<br>用一段地址连续的存储单元依次存放线性表元素的实现，逻辑相邻即物理相邻，可以按下标随机存取。<br><em>Avoid</em>: 数组（数组是 C 里的类型；顺序表说的是"线性表用顺序存储实现"这件事）</p>
+<p><strong>链表</strong>:<br>用指针把物理位置不要求相邻的结点串起来的实现；单链表、双链表、循环链表、静态链表都是它的变形。<br><em>Avoid</em>: 链式表、链接表</p>
+<p><strong>栈</strong>:<br>只允许在同一端（栈顶）插入和删除的线性表，后进先出（LIFO）。<br><em>Avoid</em>: 堆（堆是另一种结构，也是排序算法里的名词，不要混用）</p>
+<p><strong>队列</strong>:<br>只允许在一端（队尾）插入、在另一端（队头）删除的线性表，先进先出（FIFO）。<br><em>Avoid</em>: 排队表、缓冲区（缓冲区只是队列的一种应用场景）</p>
+<p><strong>串</strong>:<br>由零个或多个字符组成的有限序列；模式匹配是它的核心运算，KMP 是其中一种线性时间算法。<br><em>Avoid</em>: 字符串（C 语境下首次出现可并列写"串（字符串）"，术语统一用「串」）</p>
+<p><strong>树</strong>:<br>n 个结点的有限集合：有且仅有一个根，其余结点分成若干互不相交的子树；二叉树是每个结点至多有两棵子树的特例。<br><em>Avoid</em>: 树形结构（那是"逻辑结构"层面的类名）</p>
+<p><strong>图</strong>:<br>由顶点集 V 与边集 E 构成的非线性结构，描述多对多关系；有向图、无向图、带权图是常见分类。<br><em>Avoid</em>: 网络（只在"网状结构"这种描述里用"网"字）</p>
+<p><strong>二叉树</strong>:<br>每个结点至多有两棵子树的树，且左右子树有次序之分；树的多数考点都落在二叉树上。<br><em>Avoid</em>: 二分树、二元树</p>
+<p><strong>二叉堆</strong>:<br>用完全二叉树的顺序存储实现的结构，满足"每个父结点都不大于（或不小于）它的孩子"；堆排序与优先队列靠它。<br><em>Avoid</em>: 堆（单说"堆"时先分清是它还是内存里的堆区）</p>
+<p><strong>邻接矩阵</strong>:<br>图的顺序存储：用一个二维数组 <code>A[i][j]</code> 表示顶点 i 与 j 之间有没有边（带权图则存权值）。<br><em>Avoid</em>: 邻接数组</p>
+<p><strong>邻接表</strong>:<br>图的链式存储：每个顶点挂一条链表，链上存与它相邻的顶点（带权图再加一个权值域）。<br><em>Avoid</em>: 邻接链表</p>
+<p><strong>快速排序</strong>:<br>每趟把一个枢轴放到它最终的位置、把区间分成两半再分别递归的交换类排序；平均 $O(n\log n)$，最坏 $O(n^2)$。<br><em>Avoid</em>: 快排（口语可用，正式写法用「快速排序」）</p>
+<p><strong>结点（Node）</strong>:<br>链表、树、图里存放数据的基本单元；由放数据的<strong>数据域</strong>与放关系的<strong>指针域</strong>组成（树里叫孩子指针、图里叫邻接指针）。<br><em>Avoid</em>: 节点（两种写法教材里都见得到，本课统一用「结点」）</p>
+<p><strong>数组</strong>:<br>一段连续存储单元上的同类型元素集合，靠下标算地址实现随机存取；它是"顺序存储"在 C 里的直接载体。<br><em>Avoid</em>: 矩阵（矩阵是数学对象，数组是它在内存里的存法）</p>
+<p><strong>双链表</strong>:<br>每个结点有两个指针域——一个指向前驱、一个指向后继的链表；换来的是反向遍历与"已知结点 O(1) 删除"。<br><em>Avoid</em>: 双向链表（本课统一用「双链表」）</p>
+<p><strong>循环队列</strong>:<br>用一段定长连续空间实现队列、让队尾绕回队头的做法；靠"牺牲一个单元"或计数器来区分队空与队满。<br><em>Avoid</em>: 环形队列、环形缓冲区</p>
+<p><strong>完全二叉树</strong>:<br>除最后一层外每层都填满、且最后一层的结点都靠左连续排列的二叉树；它的顺序存储下标关系最规整，堆就是它。<br><em>Avoid</em>: 满二叉树（满二叉树是完全二叉树的特例，别混用）</p>
+<p><strong>哈夫曼树</strong>:<br>带权路径长度最小的二叉树，由"每次合并两个权值最小的结点"构造出来；哈夫曼编码靠它把高频字符变短码。<br><em>Avoid</em>: 最优树</p>
+<p><strong>散列冲突</strong>:<br>两个不同关键字算出同一个散列地址的情形；解决办法分开放定址法与拉链法两大类。<br><em>Avoid</em>: 哈希冲突（可并列一次，术语统一用「散列冲突」）</p>
+<p><strong>数据（Data）</strong>:<br>信息的载体——描述客观事物属性的数、字符，以及一切能被程序识别与处理的符号的集合。<br><em>Avoid</em>: 信息（信息说的是内容，数据说的是承载它的形式）</p>
+<p><strong>数据元素（Data Element）</strong>:<br>数据的基本单位，通常作为一个整体被处理；它由若干数据项组成。<br><em>Avoid</em>: 结点（结点是链表、树里的存储单元，不等于数据元素）</p>
+<p><strong>数据项（Data Item）</strong>:<br>构成数据元素的、不可再分的最小单位；一条学生记录里的学号、姓名各是一个数据项。<br><em>Avoid</em>: 字段（"字段"是数据库与结构体语境的说法，本课统一用「数据项」）</p>
+<p><strong>运算（Operation）</strong>:<br>定义在某种逻辑结构上的一组操作（插入、删除、查找……）；"定义"只说它能做什么，"实现"才说怎么做。<br><em>Avoid</em>: 操作（同义；首次出现可并列写"运算（操作）"，之后统一用「运算」）</p>
+<p><strong>内存（Memory）</strong>:<br>程序运行时存放数据的地方：按字节编号、可以按地址随机访问；变量、数组、堆上分配的空间都在这里。<br><em>Avoid</em>: 运行内存、RAM</p>
+<p><strong>地址（Address）</strong>:<br>内存里某个字节的编号；指针存的就是它，取地址与按地址访问是 C 里操作内存的两种基本动作。<br><em>Avoid</em>: 偏移（偏移是相对地址，不等于地址本身）</p>
+<p><strong>指针（Pointer）</strong>:<br>存放地址的变量；通过它能间接访问它指向的那块内存，这是 C 里实现链式存储的基础。<br><em>Avoid</em>: 地址（指针是"存放地址的变量"，不等于地址本身）</p>
+<h2>已掌握</h2>
+  <footer class="lesson-footer">
+    StudyMate · 术语表 · 本地学习工作区
+  </footer>
+</article>
+
+<script src="../../assets/sayo/sayo.js"></script>
+<script>LearnTheme.wire(document.getElementById('attachment-theme-checkbox'));</script>
+</body>
+</html>

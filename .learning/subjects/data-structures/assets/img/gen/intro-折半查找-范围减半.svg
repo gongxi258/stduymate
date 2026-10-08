@@ -1,0 +1,29 @@
+<svg viewBox="0 0 640 280" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="16" y="26" text-anchor="start" font-size="15">折半查找：每比一次，剩下的范围少一半</text>
+<g fill="none">
+<rect x="130" y="44" width="400.0" height="26" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<rect x="130" y="78" width="200.0" height="26" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<rect x="130" y="112" width="100.0" height="26" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<rect x="130" y="146" width="78.0" height="26" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<rect x="130" y="180" width="78.0" height="26" rx="4" fill="currentColor" fill-opacity="0.10" stroke="currentColor" stroke-width="1.5"/>
+<rect x="130" y="214" width="3" height="26" rx="1" fill="currentColor" fill-opacity="0.35"/>
+</g>
+<text x="118" y="62.0" text-anchor="end" font-size="13">第 1 次</text>
+<text x="140" y="62.0" text-anchor="start" font-size="13">剩下 100000</text>
+<text x="118" y="96.0" text-anchor="end" font-size="13">第 2 次</text>
+<text x="140" y="96.0" text-anchor="start" font-size="13">剩下 50000</text>
+<text x="118" y="130.0" text-anchor="end" font-size="13">第 3 次</text>
+<text x="140" y="130.0" text-anchor="start" font-size="13">剩下 25000</text>
+<text x="118" y="164.0" text-anchor="end" font-size="13">第 4 次</text>
+<text x="140" y="164.0" text-anchor="start" font-size="13">剩下 12500</text>
+<text x="118" y="198.0" text-anchor="end" font-size="13">第 5 次</text>
+<text x="140" y="198.0" text-anchor="start" font-size="13">剩下 6250</text>
+<text x="118" y="232.0" text-anchor="end" font-size="13">第 8 次</text>
+<text x="142" y="232.0" text-anchor="start" font-size="13">剩下 781</text>
+<text x="118" y="260" text-anchor="end" font-size="13">……</text>
+<text x="118" y="266" text-anchor="end" font-size="13" dominant-baseline="middle">第 17 次</text>
+<line x1="134" y1="250" x2="134" y2="266" stroke="currentColor" stroke-width="1.5"/>
+<line x1="134" y1="266" x2="142" y2="266" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="148" y="266" font-size="14" dominant-baseline="middle">剩下 1 个，就是它</text>
+</svg>

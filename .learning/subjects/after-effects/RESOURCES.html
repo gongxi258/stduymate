@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>资源清单 · After Effects 合成与后期</title>
+<link rel="stylesheet" href="../../assets/sayo/sayo.css">
+<link rel="stylesheet" href="../../assets/learn-theme.css">
+<link rel="stylesheet" href="assets/style.css">
+<script src="../../assets/learn-theme.js"></script>
+<script>LearnTheme.apply();</script>
+<style>
+.lesson h1 {
+  margin: var(--syo-space-2, 8px) 0 var(--syo-space-4, 16px);
+  font-size: clamp(1.6rem, 3.2vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--syo-fg-default);
+}
+</style>
+</head>
+<body class="lesson-body">
+<nav class="lesson-bar">
+  <a href="index.html">← 返回科目</a>
+  <span>After Effects 合成与后期</span>
+  <span class="lesson-bar__no">资源清单</span>
+  <label class="syo-toggle syo-toggle--theme lesson-bar__toggle" title="切换深浅主题" aria-label="切换深浅主题">
+    <input type="checkbox" id="attachment-theme-checkbox" checked>
+    <span class="syo-toggle-track"></span>
+    <span class="syo-toggle-knob">
+      <svg class="syo-toggle-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.5" stroke="#f57c00" stroke-width="1.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.34 4.34l1.77 1.77M13.89 13.89l1.77 1.77M4.34 15.66l1.77-1.77M13.89 6.11l1.77-1.77" stroke="#f57c00" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </span>
+  </label>
+</nav>
+
+<article class="lesson">
+<h1>After Effects 合成与后期 Resources</h1>
+<blockquote><p>定位：<strong>延伸阅读 + 易变内容的核对来源</strong>，不是"知识来源清单"（模型已掌握稳定基础知识）。<br>稳定知识节点可以不在这里留条目；易变/版本相关内容必须在这里有核对过的官方来源。</p><p>本科目是<strong>软件工具类</strong>科目，重心在下面第 2 节：AE 的版本差异、界面位置、菜单名、导出与编码设置、系统/显卡要求，<strong>核对来源一律 Adobe 官方文档</strong>（helpx.adobe.com 的 After Effects 用户指南）。第三方教程站与视频只作延伸阅读（第 1、3 节），不作核对来源。</p><p>第 2 节各条已落盘 <code>sources/</code>。落盘正文是给大纲与讲解做对齐用的<strong>离线快照</strong>（抓取日期 2026-10-05 前后），页内菜单路径与选项名可能随版本变化；学生与讲解要核对的永远是条目标题里那个<strong>原址</strong>。</p></blockquote>
+<h2>Knowledge</h2>
+<h3>1) 给学生的延伸阅读</h3>
+<ul>
+<li><a href="https://helpx.adobe.com/after-effects/desktop.html" target="_blank" rel="noopener">Doc: After Effects 用户指南（总入口）</a><br>一行说明：AE 官方帮助的目录页，本科目"查书"的第一站；所有下面的官方页都从它出发，找不到内容时先在这里定位章节。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/get-started/planning-and-setup/planning-setup.html" target="_blank" rel="noopener">Doc: 规划和设置</a> · 已落盘 <code>sources/ae-ug-ci-intro.md</code><br>一行说明：开工前定分辨率/帧率/时长、项目与合成的规划套路；开课第 1-2 课（补视频参数与图层概念）时对照它讲"参数是要先定的"。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-compositions/composition-settings/composition-basics.html" target="_blank" rel="noopener">Doc: 合成基础</a> · 已落盘 <code>sources/ae-composition-basics.md</code><br>一行说明：合成＝画布＋时间轴＋图层栈的定义，合成设置各项的含义；讲"合成与图层的概念"时的官方依据。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/get-started/get-familiar-with-the-interface/workspaces-panels-viewers.html" target="_blank" rel="noopener">Doc: 工作区、面板和查看器</a> · 已落盘 <code>sources/ae-workspaces-panels.md</code><br>一行说明：面板布局与自定义工作区；学生第一次打开 AE 迷路时按它认界面（界面位置属易变内容，以第 2 节的原址为准）。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-footage-items/import-and-interpret-footage-items/importing-interpreting-footage-items.html" target="_blank" rel="noopener">Doc: 导入和解释素材项目</a> · 已落盘 <code>sources/ae-import-interpret-footage.md</code><br>一行说明：<strong>本科目最关键的一页</strong>——解释素材（帧率、像素长宽比、透明通道 premultiplied/straight、色彩）；第 3 课讲素材准备与"素材为什么会抖/会不同步"时的主要依据。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/import-files/interlaced-video-and-separating-fields/importing-interpreting-video-audio.html" target="_blank" rel="noopener">Doc: 导入和解释视频与音频</a> · 已落盘 <code>sources/ae-import-interpret-video-audio.md</code><br>一行说明：隔行/场序、3:2 下拉、音频采样与声道；碰到老素材或录屏格式怪异时查这里。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/get-started/supported-file-formats/supported-file-formats.html" target="_blank" rel="noopener">Doc: 支持的文件格式</a> · 已落盘 <code>sources/ae-supported-file-formats.md</code><br>一行说明：AE 能读什么、能写什么；素材"导不进来"时第一处核对（属易变内容，见第 2 节）。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/animate-in-after-effects/animation-basics/animation-basics.html" target="_blank" rel="noopener">Doc: 动画基础</a> · 已落盘 <code>sources/ae-animation-basics.md</code><br>一行说明：关键帧是什么、属性怎么被时间驱动；零基础学生第一次理解"关键帧"从这里读。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/animate-in-after-effects/animation-keyframes/setting-selecting-deleting-keyframes.html" target="_blank" rel="noopener">Doc: 设置、选择和删除关键帧</a> · 已落盘 <code>sources/ae-setting-keyframes.md</code><br>一行说明：关键帧的增删改与导航操作细节；动手做第一条动画时的操作手册。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/animate-in-after-effects/animation-keyframes/keyframe-interpolation.html" target="_blank" rel="noopener">Doc: 关键帧插值</a> · 已落盘 <code>sources/ae-keyframe-interpolation.md</code><br>一行说明：线性/贝塞尔/定格、缓入缓出；讲"为什么动作看起来生硬"的原因与修法。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-transparency-and-compositing/work-with-alpha-channels-and-masks/alpha-channels-masks-mattes.html" target="_blank" rel="noopener">Doc: Alpha 通道与蒙版</a> · 已落盘 <code>sources/ae-alpha-channels-masks.md</code><br>一行说明：透明通道原理与蒙版用法；学生"听说过透明通道没用过"的补课正篇。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/drawing-painting-and-paths/work-with-masks/create-masks.html" target="_blank" rel="noopener">Doc: 创建蒙版</a> · 已落盘 <code>sources/ae-create-masks.md</code><br>一行说明：蒙版形状、羽化、叠加模式的操作面。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-transparency-and-compositing/work-with-track-mattes-and-traveling-mattes/track-mattes-and-traveling-mattes.html" target="_blank" rel="noopener">Doc: 轨道遮罩与移动遮罩</a> · 已落盘 <code>sources/ae-track-mattes.md</code><br>一行说明：用另一图层当"剪刀"的两种做法；做局部光效/局部调色的常用手段。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-layers/work-with-layer-blending-modes/blending-modes-layer-styles.html" target="_blank" rel="noopener">Doc: 混合模式与图层样式</a> · 已落盘 <code>sources/ae-blending-modes.md</code><br>一行说明：图层叠加关系（加色/滤色/叠加…）；"让光效真的亮起来"的一手依据。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-layers/3d-layers/3d-layers.html" target="_blank" rel="noopener">Doc: 3D 图层</a> · 已落盘 <code>sources/ae-3d-layers.md</code><br>一行说明：把平面图层放进三维空间的坐标与朝向；MISSION 里"这段为什么上 3D 图层"要能讲清，依据在这。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-layers/camera-layer/cameras-lights-points-interest.html" target="_blank" rel="noopener">Doc: 摄像机、灯光与目标点</a> · 已落盘 <code>sources/ae-cameras-lights.md</code><br>一行说明：虚拟摄像机与灯光的参数含义、景深与投影；做镜头运动与"打光"感时用。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/animate-in-after-effects/track-motion/tracking-stabilizing-motion-cs5.html" target="_blank" rel="noopener">Doc: 跟踪与稳定运动</a> · 已落盘 <code>sources/ae-tracking-stabilizing.md</code><br>一行说明：跟踪器、稳定器、跟踪数据怎么用；素材本身在抖时的正解（与录屏抖动的区别要讲清）。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/animate-in-after-effects/track-mask/rigid-mask-tracking.html" target="_blank" rel="noopener">Doc: 蒙版跟踪</a> · 已落盘 <code>sources/ae-mask-tracking.md</code><br>一行说明：让蒙版自动跟着画面里的物体走。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/roto-brush-and-refine-matte/roto-brush/roto-brush-refine-matte.html" target="_blank" rel="noopener">Doc: Roto Brush 与 Refine Matte</a> · 已落盘 <code>sources/ae-roto-brush.md</code><br>一行说明：把移动的人/物从画面里"抠"出来；抠像技能的主教程。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/animate-in-after-effects/work-with-keying-effects/keying-effects.html" target="_blank" rel="noopener">Doc: 键控（Keying）效果</a> · 已落盘 <code>sources/ae-keying-effects.md</code><br>一行说明：Keylight 等去背效果与溢色处理；绿幕/纯色背景去背时查。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/animate-in-after-effects/time-stretching-and-time-remapping/time-stretching-time-remapping.html" target="_blank" rel="noopener">Doc: 时间伸缩与时间重映射</a> · 已落盘 <code>sources/ae-time-remapping.md</code><br>一行说明：慢动作/变速与帧混合；让游戏录制的动作更有表现力的手段，也涉及帧率关系。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/animating-text/text-animation/animating-text.html" target="_blank" rel="noopener">Doc: 文字动画</a> · 已落盘 <code>sources/ae-text-animation.md</code><br>一行说明：文字动画器、逐字出入、路径文字；字幕与标题动效的正篇。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/apply-effects-and-animation-presets/list-of-effects/simulation-effects.html" target="_blank" rel="noopener">Doc: 效果清单——模拟效果（粒子一类）</a> · 已落盘 <code>sources/ae-simulation-effects.md</code><br>一行说明：Particle World / CC Particle Systems 等粒子与模拟类效果的参数；做粒子光效时按需查参数表。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/apply-effects-and-animation-presets/list-of-effects/generate-effects.html" target="_blank" rel="noopener">Doc: 效果清单——生成效果</a> · 已落盘 <code>sources/ae-generate-effects.md</code><br>一行说明：渐变、闪电、光斑、音频频谱等"从无到有"的效果；光效主力的参数表。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/apply-effects-and-animation-presets/list-of-effects/stylize-effects.html" target="_blank" rel="noopener">Doc: 效果清单——风格化效果</a> · 已落盘 <code>sources/ae-stylize-effects.md</code><br>一行说明：辉光（Glow）、噪点、阈值等"给画面加质感"的效果；"画面有质感"这一步的常客。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/adjust-colors/color-basics/color-basics.html" target="_blank" rel="noopener">Doc: 色彩基础</a> · 已落盘 <code>sources/ae-color-basics.md</code><br>一行说明：色深（8/16/32 bpc）、色域与 Gamma 的入门定义；补"色彩"概念时的第一处。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/adjust-colors/color-management/color-management.html" target="_blank" rel="noopener">Doc: 颜色管理工作流程</a> · 已落盘 <code>sources/ae-color-management.md</code><br>一行说明：工作空间与输入/输出色彩空间、显示变换；素材"色彩不一致"的根源与修法在这（属易变内容，见第 2 节）。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/adjust-colors/work-with-color-correction-effects/color-correction-effects.html" target="_blank" rel="noopener">Doc: 颜色校正效果</a> · 已落盘 <code>sources/ae-color-correction-effects.md</code><br>一行说明：Lumetri、曲线、色相/饱和度等校正工具的作用与参数；调色环节的主力手册。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/view-and-preview/preview-video-and-audio/previewing.html" target="_blank" rel="noopener">Doc: 预览</a> · 已落盘 <code>sources/ae-previewing.md</code><br>一行说明：预览分辨率、跳过帧、缓存；内存偏紧的机器上"怎么看画面而不卡死"的操作依据。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-expressions/expression-basics/expression-basics.html" target="_blank" rel="noopener">Doc: 表达式基础</a> · 已落盘 <code>sources/ae-expression-basics.md</code><br>一行说明：表达式是什么、语法与常用写法；只学到够用（本课到"改写小片段"为止，不做插件级开发）。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-projects/after-effects-projects/projects.html" target="_blank" rel="noopener">Doc: 项目（.aep）与项目设置</a> · 已落盘 <code>sources/ae-project-settings.md</code><br>一行说明：项目文件结构、自动保存、素材收集（Collect Files）；实验课交 .aep 工程时要按它讲工程该怎么组织。</li>
+<li><a href="https://www.adobe.com/learn/after-effects" target="_blank" rel="noopener">Doc: Adobe Learn — After Effects 教程与分步引导</a><br>一行说明：Adobe 官方出品的视频与分步教程（延伸阅读，非核对来源）；卡在操作上时按功能名在这里找官方演示。</li>
+<li><a href="https://handbrake.fr/docs/en/latest/technical/frame-rates.html" target="_blank" rel="noopener">Doc: HandBrake 文档——帧率（VFR / CFR / PFR）</a> · 已落盘 <code>sources/handbrake-frame-rates.md</code><br>一行说明：用一句"变帧率就是播放中切换帧率"把 VFR/CFR 讲清楚的对照材料（第三方文档，仅作概念对照与工具参照，不作 AE 行为依据）。</li>
+</ul>
+<h3>2) 易变内容的官方核对来源</h3>
+<blockquote><p>一条一个"要核对什么"。往下游走的时候，讲解里凡是写"菜单在哪、选项叫什么、默认值是多少"，都要能指到这节里的某一条。</p></blockquote>
+<ul>
+<li><a href="https://helpx.adobe.com/after-effects/desktop.html" target="_blank" rel="noopener">Source: After Effects 用户指南（总入口）</a><br>一行说明：核对<strong>章节位置与导航本身</strong>的变化——AE 帮助已迁到新版目录结构（<code>/after-effects/desktop/…</code>），老教程里的 <code>/after-effects/using/…</code> 链接会 403/失效，一切路径以本页目录为准。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/get-started/technical-requirements/system-requirements.html" target="_blank" rel="noopener">Source: After Effects 系统要求（当前版本）</a> · 已落盘 <code>sources/ae-system-requirements.md</code><br>一行说明：核对<strong>当前版本对系统/内存的要求</strong>（原文页适用于 AE 26.x 系列）；学生 15.2 GB 内存偏紧的结论要以它＋FAQ 为准，且<strong>每次开课季复核一次</strong>。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/get-started/after-effects-faq/faq.html" target="_blank" rel="noopener">Source: After Effects FAQ（含内存基线）</a> · 已落盘 <code>sources/ae-faq.md</code><br>一行说明：核对<strong>内存基线口径</strong>——官方原文："Adobe 建议每核心 4 GB 或更多；16 GB 是同时开多个程序时的良好基线"；也是"网页版/PDF 版手册入口"的官方说法。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/get-started/technical-requirements/2025.html" target="_blank" rel="noopener">Source: After Effects 25.x 系统要求</a> · 已落盘 <code>sources/ae-system-requirements-2025.md</code><br>一行说明：核对<strong>版本差异对硬件门槛的影响</strong>（25.x 与当前版的差别）；旧机器/旧教程对不上号时用这页比对。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/get-started/technical-requirements/basics-gpu-after-effects.html" target="_blank" rel="noopener">Source: GPU 与 GPU 驱动程序要求</a> · 已落盘 <code>sources/ae-gpu-requirements.md</code><br>一行说明：核对<strong>显卡与驱动的门槛</strong>——驱动该装哪一档（Studio 驱动）、哪些 GPU 技术被支持、什么情况下需要更新驱动。</li>
+<li><a href="https://helpx.adobe.com/premiere/desktop/get-started/technical-requirements/hardware-accelerated-decoding-and-encoding.html" target="_blank" rel="noopener">Source: 硬件加速解码与编码（支持列表）</a> · 已落盘 <code>sources/ae-gpu-acceleration-hardware-encoding.md</code><br>一行说明：核对<strong>RTX 4060 上硬件编码到底走不走得通</strong>——这张表按显卡/编解码器逐项列出支持情况，是"要不要开硬件加速"的官方依据。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/render-and-export/basics-of-rendering-and-exporting/basics-rendering-exporting.html" target="_blank" rel="noopener">Source: 渲染与导出基础</a> · 已落盘 <code>sources/ae-basics-rendering-exporting.md</code><br>一行说明：核对<strong>导出这一整条链的最新做法</strong>（渲染队列 / 输出模块 / 渲染设置 / 导出模式），老教程里"只能输出 MOV 再转码"的说法在这页对照更新。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/render-and-export/export-h-264-from-the-after-effects/exporting-h264-from-the-after-effects-render-queue.html" target="_blank" rel="noopener">Source: 从渲染队列导出 H.264</a> · 已落盘 <code>sources/ae-export-h264-render-queue.md</code><br>一行说明：核对<strong>"AE 能不能直接出 H.264"这一条版本差异</strong>——现行版本可在输出模块里直接选 H.264（含 5/15/40 Mbps 三档预设与硬/软编码），旧教程"AE 不能出 MP4"的说法据此作废。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/render-and-export/render-and-export-images/rendering-exporting-still-images-still.html" target="_blank" rel="noopener">Source: 导出静帧与静帧序列</a> · 已落盘 <code>sources/ae-render-export-images.md</code><br>一行说明：核对<strong>交作业用的静帧/序列导出设置</strong>（PNG 序列、单帧导出）。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/render-and-export/convert-and-reformat-video-footage/converting-movies.html" target="_blank" rel="noopener">Source: 转换影片（换容器与编码）</a> · 已落盘 <code>sources/ae-converting-movies.md</code><br>一行说明：核对<strong>素材格式转换与转码路径</strong>（把录屏素材转成 AE 好处理的格式），属"素材准备"这一块的官方做法。</li>
+<li><a href="https://helpx.adobe.com/media-encoder/desktop/encoding-and-exporting/export-settings-reference.html" target="_blank" rel="noopener">Source: Media Encoder 导出设置参考</a> · 已落盘 <code>sources/ae-media-encoder-export-settings.md</code><br>一行说明：核对<strong>编码参数的具体名字与含义</strong>——帧率、码率（CBR/VBR/1-pass/2-pass）、H.264 profile/level、时间插值、关键帧间隔、音频码率；讲"码率与格式"这一课时逐项对照。</li>
+<li><a href="https://helpx.adobe.com/media-encoder/desktop/system-requirements/2025.html" target="_blank" rel="noopener">Source: Media Encoder 系统要求</a> · 已落盘 <code>sources/ae-media-encoder-sysreq.md</code><br>一行说明：核对<strong>配套转码工具的门槛</strong>（要装 Media Encoder 时的版本与要求）。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/render-and-export/multi-frame-rendering/multi-frame-rendering.html" target="_blank" rel="noopener">Source: 多帧渲染（Multi-Frame Rendering）</a> · 已落盘 <code>sources/ae-multi-frame-rendering.md</code><br>一行说明：核对<strong>渲染加速与内存占用的取舍</strong>——多帧渲染吃内存，低内存机器要不要关、怎么关，以这页为准。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/memory-storage-performance/memory-and-storage/memory-storage1.html" target="_blank" rel="noopener">Source: 内存与存储</a> · 已落盘 <code>sources/ae-memory-storage.md</code><br>一行说明：核对<strong>内存分配、磁盘缓存、清理（Purge）机制</strong>；"15.2 GB 该怎么配"的依据页。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/memory-storage-performance/improve-performance/improve-performance.html" target="_blank" rel="noopener">Source: 提升性能</a> · 已落盘 <code>sources/ae-improve-performance.md</code><br>一行说明：核对<strong>省内存/提速的官方手段清单</strong>（预览分辨率、代理、缓存、关闭不用的程序），本课"低配做法"必须从这页挑。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/troubleshooting/fixed-and-known-issues/after-effects-low-memory-warning-mechanism.html" target="_blank" rel="noopener">Source: 低内存时的行为与提示</a> · 已落盘 <code>sources/ae-low-memory-warning.md</code><br>一行说明：核对<strong>低内存横幅、预览范围被压缩、第三方效果漏内存</strong>这些现象的解释与官方排查步骤。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/troubleshooting/fixed-and-known-issues/allocate-memory-error.html" target="_blank" rel="noopener">Source: 无法分配内存（故障排查）</a> · 已落盘 <code>sources/ae-allocate-memory-error.md</code><br>一行说明：核对<strong>内存报错的官方处置</strong>；学生交实验课报错时按这页对号。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/adjust-colors/color-management/color-management.html" target="_blank" rel="noopener">Source: 颜色管理工作流程</a> · 已落盘 <code>sources/ae-color-management.md</code><br>一行说明：核对<strong>色彩管理的开关、工作空间与显示变换在现行版本里的位置与默认值</strong>（这一块的界面改动最频繁，别用第三方教程的截图）。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-expressions/expression-basics/expression-basics.html" target="_blank" rel="noopener">Source: 表达式基础</a> · 已落盘 <code>sources/ae-expression-basics.md</code><br>一行说明：核对<strong>表达式语法与内置对象</strong>的现行写法；课上只用到一小撮，但写法必须以官方页为准。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/what-s-new/whats-new.html" target="_blank" rel="noopener">Source: What's New（新增功能）</a> · 已落盘 <code>sources/ae-whats-new.md</code><br>一行说明：核对<strong>版本差异与功能新旧</strong>——哪些功能是本版才有、哪些已改位置；开课季与讲"为什么老教程对不上"时先看这页。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/what-s-new/release-notes-after-effects.html" target="_blank" rel="noopener">Source: 发行说明（Release Notes）</a> · 已落盘 <code>sources/ae-release-notes.md</code><br>一行说明：核对<strong>具体版本号与更新时间</strong>（判断教程新旧、判断某功能从哪一版开始存在）。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/work-with-other-applications/work-with-dynamic-link/dynamic-link-effects.html" target="_blank" rel="noopener">Source: Dynamic Link（与 Premiere 联动）</a> · 已落盘 <code>sources/ae-dynamic-link.md</code><br>一行说明：核对<strong>与 Adobe 系剪辑软件联动的方式与前提</strong>；本课主线是"AE 出成片交给剪映"，这条只在学生想改走 Adobe 路线时用（属易变内容）。</li>
+<li><a href="https://helpx.adobe.com/after-effects/desktop/get-started/get-familiar-with-the-interface/general-user-interface-items.html" target="_blank" rel="noopener">Source: 常规用户界面项</a> · 已落盘 <code>sources/ae-general-ui-items.md</code><br>一行说明：核对<strong>界面元素与菜单名的现行叫法</strong>（中文界面下同一个东西的译名也以官方中文页为准）。</li>
+</ul>
+<h2>Wisdom (Communities)</h2>
+<ul>
+<li><a href="https://community.adobe.com/t5/after-effects/ct-p/ct-after-effects" target="_blank" rel="noopener">Adobe Support Community — After Effects 版块</a><br>一行说明：官方社区，贴报错信息与 .aep 结构问题最容易被 Adobe 员工/资深用户接住；导出报错、内存报错优先来这里搜英文报错原文。</li>
+<li><a href="https://www.reddit.com/r/AfterEffects/" target="_blank" rel="noopener">r/AfterEffects</a><br>一行说明：上手期问"这条做法对不对、有没有更省的写法"最快；贴"前后对比"求批改也合适。</li>
+<li><a href="https://www.videocopilot.net/tutorials/" target="_blank" rel="noopener">Video Copilot — 教程与插件站</a><br>一行说明：光效/粒子一类"画面冲击力"教程的经典来源（业界公认、免费系列为主）；<strong>只能作延伸阅读</strong>，其界面与导出做法常是旧版本，核对一律回第 2 节。</li>
+<li><a href="https://www.adobe.com/learn/after-effects" target="_blank" rel="noopener">Adobe Learn — After Effects 教程页</a><br>一行说明：官方教程库，适合按功能名找分步演示；与第 1 节最后一条同一入口。</li>
+</ul>
+<h2>Gaps</h2>
+<ul>
+<li><strong>变帧率（VFR）素材的官方成文指导：缺。</strong> 游戏/屏幕录制的 VFR 素材"导入 AE 会抖、会音画不同步"这条，我<strong>没有在 Adobe 官方文档里找到专门成文的页</strong>。官方最接近的两处是：<code>sources/ae-import-interpret-footage.md</code>（"解释素材"里的 Conform To Frame Rate，并明确警告<strong>改帧率会让视频与音频失去同步</strong>、要同时伸缩音视频用 Time Stretch）、以及 <code>sources/ae-media-encoder-export-settings.md</code>（导出时指定帧率＋时间插值）。<strong>结论：课程应把 VFR 处理教成"入库前先规整成恒定帧率（用 Media Encoder 或 HandBrake 等转码）"，而不是在 AE 里硬拗</strong>——但这条路是工程惯例而非官方专文，讲课时要如实说明来源层级。</li>
+<li><strong>VFR/CFR 的概念说明只有第三方文档。</strong> <code>sources/handbrake-frame-rates.md</code>（HandBrake 官方文档）能讲清 VFR/CFR/PFR，但它是编码工具的文档、不是 AE 文档，且页面自带"本文是草稿"的声明；只能当概念对照，不能当 AE 行为依据。</li>
+<li><strong>系统要求页里的具体数值（内存/显卡/磁盘的表）。</strong> Adobe 把配置明细放在<strong>需要 JavaScript 渲染的表格</strong>里，本机抓取工具抓下来只有表头（<code>sources/ae-system-requirements.md</code> 只有 1.9 KB 就是这个原因），<code>web_fetch</code> 类工具同样只拿到导航。本课已能核到的是 FAQ 的官方内存基线（每核心 4 GB 或更多、16 GB 为多程序同开的良好基线）与 GPU 页的驱动/技术口径；<strong>逐项数值（最小/推荐内存、显存、磁盘空间）需总控在浏览器里人肉核对一次，或改用带 JS 渲染的抓取工具</strong>，然后回填本清单。</li>
+<li><strong>编码参数的"该选多少"缺权威建议。</strong> Media Encoder 参考页说明了每个参数<strong>是什么</strong>（码率、profile/level、关键帧间隔、时间插值），但<strong>没给"交付给剪映/上传平台该选什么值"</strong>的权威建议。课程里这部分只能按"参数含义＋实验对比"来教，不能假托官方口径。</li>
+<li><strong>稳定知识的教材级来源偏薄。</strong> 合成原理、色彩与编码基础本可以靠教材，但本次没有把某本教材的<strong>具体章节</strong>核到可引用的程度（Steve Wright《Digital Compositing for Film and Video》有现行版次与出版社页面，但未逐章核对，故不列条目）。<strong>建议</strong>：这两课先以官方文档的相关页（合成基础、色彩基础、颜色管理）＋项目实验为锚；若总控想补教材，需再派一轮带章节级核对的检索。</li>
+<li><strong>抓不动的站点（供下游 <code>image-scout</code> 参考）。</strong> ① <strong>helpx.adobe.com</strong>：普通 HTTP 客户端（含 <code>curl</code> / PowerShell <code>Invoke-WebRequest</code>）一律 <strong>403</strong>，需要用带完整浏览器请求头的抓取器（本轮用 Python + 浏览器 UA/<code>Sec-Fetch-*</code> 头成功，约 50 页）。② <strong>helpx 的系统要求页</strong>：即便拿到 HTML，配置表是 JS 渲染的，静态抓取为空。③ <strong>developer.mozilla.org</strong>：静态抓取只回 8 字节（纯 JS 站），本轮已弃用该来源。④ <strong>routledge.com</strong>：出版社页有机器人拦截，逐页信息可能抓不到。可正常抓取的：helpx 的普通帮助页、<code>handbrake.fr/docs</code>、<code>community.adobe.com</code>、<code>adobe.com/learn</code>。</li>
+</ul>
+  <footer class="lesson-footer">
+    StudyMate · 资源清单 · 本地学习工作区
+  </footer>
+</article>
+
+<script src="../../assets/sayo/sayo.js"></script>
+<script>LearnTheme.wire(document.getElementById('attachment-theme-checkbox'));</script>
+</body>
+</html>

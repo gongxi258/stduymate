@@ -1,0 +1,40 @@
+<svg viewBox="0 0 640 330" role="img" aria-hidden="true" fill="currentColor" font-family="system-ui, 'Segoe UI', 'Microsoft YaHei', sans-serif">
+<defs><marker id="tip" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="currentColor"/></marker></defs>
+<text x="16" y="18" text-anchor="start" font-size="15">顺序存储：在这一格插入，它后面每一格都要腾位置</text>
+<g fill="none">
+<rect x="50" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="112" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="174" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="236" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="298" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+<rect x="360" y="40" width="62" height="46" rx="0" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="81.0" y="68.0" text-anchor="middle" font-size="14">0</text>
+<text x="143.0" y="68.0" text-anchor="middle" font-size="14">2</text>
+<text x="205.0" y="68.0" text-anchor="middle" font-size="14">新</text>
+<text x="267.0" y="68.0" text-anchor="middle" font-size="14">6</text>
+<text x="329.0" y="68.0" text-anchor="middle" font-size="14">8</text>
+<text x="391.0" y="68.0" text-anchor="middle" font-size="14">10</text>
+<line x1="264.0" y1="30" x2="275.0" y2="30" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<line x1="326.0" y1="30" x2="337.0" y2="30" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<line x1="388.0" y1="30" x2="399.0" y2="30" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="329.0" y="112" text-anchor="middle" font-size="14">移动 3 个元素</text>
+<text x="16" y="176" text-anchor="start" font-size="15">链式存储：同一件事只改两处记录，数据本身一格都不用动</text>
+<g fill="none">
+<rect x="40" y="200" width="96" height="46" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="150" y="200" width="96" height="46" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="260" y="200" width="96" height="28" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="420" y="200" width="96" height="46" rx="6" stroke="currentColor" stroke-width="1.5"/>
+<rect x="530" y="200" width="96" height="46" rx="6" stroke="currentColor" stroke-width="1.5"/>
+</g>
+<text x="88" y="228.0" text-anchor="middle" font-size="14">记录 0</text>
+<text x="198" y="228.0" text-anchor="middle" font-size="14">记录 1</text>
+<text x="308" y="219" text-anchor="middle" font-size="13">新记录</text>
+<text x="468" y="228.0" text-anchor="middle" font-size="14">记录 2</text>
+<text x="578" y="228.0" text-anchor="middle" font-size="14">记录 3</text>
+<line x1="246" y1="248" x2="420" y2="248" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+<text x="308" y="268" text-anchor="middle" font-size="13">插入前由记录 1 指向记录 2</text>
+<line x1="246" y1="214" x2="256" y2="214" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<line x1="356" y1="214" x2="416" y2="214" stroke="currentColor" stroke-width="1.5" marker-end="url(#tip)"/>
+<text x="320.0" y="300" text-anchor="middle" font-size="14">只改两处记录：记录 1 记下新记录的地址，新记录记下记录 2 的地址</text>
+</svg>

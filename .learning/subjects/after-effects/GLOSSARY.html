@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>术语表 · After Effects 合成与后期</title>
+<link rel="stylesheet" href="../../assets/sayo/sayo.css">
+<link rel="stylesheet" href="../../assets/learn-theme.css">
+<link rel="stylesheet" href="assets/style.css">
+<script src="../../assets/learn-theme.js"></script>
+<script>LearnTheme.apply();</script>
+<style>
+.lesson h1 {
+  margin: var(--syo-space-2, 8px) 0 var(--syo-space-4, 16px);
+  font-size: clamp(1.6rem, 3.2vw, 2.25rem);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--syo-fg-default);
+}
+</style>
+</head>
+<body class="lesson-body">
+<nav class="lesson-bar">
+  <a href="index.html">← 返回科目</a>
+  <span>After Effects 合成与后期</span>
+  <span class="lesson-bar__no">术语表</span>
+  <label class="syo-toggle syo-toggle--theme lesson-bar__toggle" title="切换深浅主题" aria-label="切换深浅主题">
+    <input type="checkbox" id="attachment-theme-checkbox" checked>
+    <span class="syo-toggle-track"></span>
+    <span class="syo-toggle-knob">
+      <svg class="syo-toggle-sun" viewBox="0 0 20 20" fill="none" aria-hidden="true"><circle cx="10" cy="10" r="3.5" stroke="#f57c00" stroke-width="1.5"/><path d="M10 2v2.5M10 15.5V18M2 10h2.5M15.5 10H18M4.34 4.34l1.77 1.77M13.89 13.89l1.77 1.77M4.34 15.66l1.77-1.77M13.89 6.11l1.77-1.77" stroke="#f57c00" stroke-width="1.2" stroke-linecap="round"/></svg>
+      <svg class="syo-toggle-moon" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M16.5 12.5A6 6 0 019 4.5a6 6 0 007.5 8z" stroke="#5c6bc0" stroke-width="1.5" stroke-linejoin="round"/></svg>
+    </span>
+  </label>
+</nav>
+
+<article class="lesson">
+<h1>After Effects 合成与后期 Glossary</h1>
+<p>这门课只解决"画面怎么变好"：把素材导入 AE，用图层与效果把画面拼起来、加光效与字幕、调色、再输出成片。剪辑本身（选段、拼接、节奏）交给剪映这类工具，不在本课范围。</p>
+<blockquote><p>两节都算这门课的<strong>规范用词</strong>：课件正文与配图用词以本文件为准。开课时先把主题词写进「待掌握」，<br>学生真的会用之后挪进「已掌握」——挪动本身就是一条学习记录。</p></blockquote>
+<h2>待掌握</h2>
+<p><strong>合成（Composition）</strong>:<br>AE 里承载一个镜头或一段片子的容器，有自己的尺寸、帧率与时长；素材必须先放进合成才能被处理。<br><em>Avoid</em>: 工程（工程是 <code>.aep</code> 文件本身，一个工程里可以有很多个合成）</p>
+<p><strong>图层（Layer）</strong>:<br>合成里一层独立的素材或元素；上面图层盖住下面图层，顺序动一下画面就变。<br><em>Avoid</em>: 轨道（那是剪辑软件的叫法）</p>
+<p><strong>预合成（Precompose）</strong>:<br>把一个或多个图层打包成新的合成，再把这个合成当成单个图层使用；用来把复杂结构收成一层。<br><em>Avoid</em>: 编组（那是"分组管理"，不改变渲染层次）</p>
+<p><strong>关键帧（Keyframe）</strong>:<br>在某个时间点给参数定一个值，让 AE 在两个关键帧之间自动算出中间状态。<br><em>Avoid</em>: 动画点</p>
+<p><strong>缓动（Easing）</strong>:<br>关键帧之间的速度曲线——匀速是线性，慢起慢停是缓动；运动自不自然几乎全看这里。<br><em>Avoid</em>: 曲线（"曲线"还指调色曲线，说慢动作用「缓动」）</p>
+<p><strong>蒙版（Mask）</strong>:<br>画在<strong>某个图层自己身上</strong>的形状，用来裁掉或露出这层的一部分。<br><em>Avoid</em>: 遮罩（中文 AE 语境里 <code>Mask</code> 与 <code>Matte</code> 是两个东西，别混用）</p>
+<p><strong>遮罩（Matte）</strong>:<br>用<strong>另一个图层的内容</strong>决定当前图层哪里显示——文字跟着画面出现、画面只留在字里，都是它。<br><em>Avoid</em>: 蒙版（同上，两者别互换）</p>
+<p><strong>固态层（Solid）</strong>:<br>AE 自带生成的一层纯色画面，常用来当背景、光效载体或遮罩源。<br><em>Avoid</em>: 色块层</p>
+<p><strong>效果（Effect）</strong>:<br>挂在图层上的处理模块（模糊、发光、扭曲、抠像…）；同一图层可叠多个，顺序会影响结果。<br><em>Avoid</em>: 滤镜（那是图片软件的叫法）</p>
+<p><strong>表达式（Expression）</strong>:<br>写给某个参数的一小段脚本，让参数自己算（如让某层一直跟随另一层）；本课只学够用的写法。<br><em>Avoid</em>: 脚本（脚本指整份 <code>.jsx</code>，表达式只挂在单个参数上）</p>
+<p><strong>渲染队列（Render Queue）</strong>:<br>把合成排进队列、按"输出模块"设置导出成成片的地方；和"预览"是两件事。<br><em>Avoid</em>: 导出面板</p>
+<p><strong>帧率与帧混合（Frame Rate / Frame Blending）</strong>:<br>素材帧率与合成帧率不一致时要处理——补帧让运动顺滑，丢帧让它变卡；屏幕录制常是变帧率，必须先在导入前转成固定帧率。<br><em>Avoid</em>: 帧数</p>
+<p><strong>抠像（Keying）</strong>:<br>把画面里的某个颜色或背景去掉，留下主体（绿幕、纯色背景最常用）。<br><em>Avoid</em>: 去背、扣图</p>
+<p><strong>跟踪与稳定（Tracking / Stabilization）</strong>:<br>跟踪是让元素跟着画面里的某一点走，稳定是把抖动的画面理平；两者常配合使用。<br><em>Avoid</em>: 防抖</p>
+<p><strong>调色（Lumetri 颜色）</strong>:<br>调节画面的曝光、对比、白平衡与风格化色调；目的是让不同素材看起来像同一支片子的。<br><em>Avoid</em>: 滤镜调色（那是指套预设）</p>
+<p><strong>像素（Pixel）</strong>:<br>画面上的最小方点，一张图就是像素的网格；"放大后看到方块"看到的正是它。<br><em>Avoid</em>: 象素、点</p>
+<p><strong>分辨率（Resolution）</strong>:<br>画面的像素尺寸（如 1920×1080）；它决定画面细节以及占用的内存与磁盘，和"清晰度"不是一回事。<br><em>Avoid</em>: 清晰度、画质</p>
+<p><strong>色相环（Hue Wheel）</strong>:<br>把色相沿圆周排列、饱和度沿半径排列的示意图；AE 的三色轮调色就是在它上面挑颜色。<br><em>Avoid</em>: 色轮（"色轮"也指调色面板本身，指这张图时用「色相环」）</p>
+<p><strong>色彩空间（Color Space）</strong>:<br>给颜色数值定的一套坐标系（sRGB、Rec.709、Lab……）；同一个 RGB 数值在不同空间里对应不同颜色，素材"颜色对不上"多半出在这里。<br><em>Avoid</em>: 色域（色域是某个空间能覆盖的颜色范围，是空间的属性，不等于空间）</p>
+<p><strong>绿幕（Green Screen）</strong>:<br>拍摄时当背景的纯色幕布（绿色或蓝色）；抠不干净通常是布光不匀、有褶皱或反光造成的。<br><em>Avoid</em>: 蓝幕（同为纯色背景；首次出现可并列写"绿幕（蓝幕同理）"）</p>
+<p><strong>羽化（Feather）</strong>:<br>让蒙版边缘在"完全不显示"与"完全显示"之间留一段过渡带；边缘太硬看着像剪纸，靠它软化。<br><em>Avoid</em>: 柔化、虚化（虚化指模糊效果）</p>
+<p><strong>运动模糊（Motion Blur）</strong>:<br>物体快速移动时画面上的拖影；AE 里要同时打开图层与合成的运动模糊开关才看得到，它是"真实感"的关键一笔。<br><em>Avoid</em>: 拖影（口语可用，术语统一用「运动模糊」）</p>
+<h2>已掌握</h2>
+  <footer class="lesson-footer">
+    StudyMate · 术语表 · 本地学习工作区
+  </footer>
+</article>
+
+<script src="../../assets/sayo/sayo.js"></script>
+<script>LearnTheme.wire(document.getElementById('attachment-theme-checkbox'));</script>
+</body>
+</html>
